@@ -22,6 +22,7 @@ public class TestOp extends OpMode {
     private CRServo duccL, duccR;
     private boolean direction, togglePrecision;
     private double factor;
+    //test
     boolean reverse;
     private Rev2mDistanceSensor Distance;
     EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
