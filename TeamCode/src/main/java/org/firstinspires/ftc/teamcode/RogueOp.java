@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
 //not paying attention in CS2 pog
 //this is the competition teleop. please make it clean. Seb on May 7th, 2021.
 @TeleOp(name="RogueOp")
@@ -27,7 +28,10 @@ public class RogueOp extends OpMode{
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
     final int top = 0;
-
+    final int liftGrav = (int)(9.8 * 3);
+    private LiftPID liftPID = new LiftPID(.022, 0, 0);
+    int liftError = 0;
+    int liftTargetPos = 0;
 
     @Override
     public void init() {
@@ -151,6 +155,7 @@ public class RogueOp extends OpMode{
     }
 
     public void lift() {
+
         if (gamepad2.dpad_up) {
             lift.setPower(.6);
         } else if (gamepad2.dpad_down) {
@@ -160,15 +165,17 @@ public class RogueOp extends OpMode{
         }
     }
 
-    public void autolift() {
+    public void macroLift() {
+
+        liftError = liftTargetPos - lift.getCurrentPosition();
         if(toggleUp.nowTrue()){ // this scares me too much
-            lift.setTargetPosition(top);
-            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lift.setPower(.6);
+            liftTargetPos = top;
+
+            lift.setPower(liftPID.getCorrection(liftError));
         } if(toggleDown.nowTrue()) {
-            lift.setTargetPosition(0);
-            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lift.setPower(-.1);
+            liftTargetPos = 0;
+
+            lift.setPower(liftPID.getCorrection(liftError));
         }
 
 
