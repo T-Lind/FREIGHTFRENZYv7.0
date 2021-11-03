@@ -159,8 +159,8 @@ public class TestOp extends OpMode {
 
     public void duccSpin() {
         if (gamepad1.a) {
-            duccL.setPower(1);
-            duccR.setPower(1);
+            duccL.setPower(-1);
+            duccR.setPower(-1);
         } else {
             duccL.setPower(0);
             duccR.setPower(0);
