@@ -24,7 +24,9 @@ public class RogueOp extends OpMode{
     //test
     boolean reverse;
     private Rev2mDistanceSensor Distance;
-    EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
+    EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
+    EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
+    final int top = 0;
 
 
     @Override
@@ -84,6 +86,8 @@ public class RogueOp extends OpMode{
 
     @Override
     public void loop() {
+        toggleUp.updateStart(gamepad2.dpad_up);
+        toggleDown.updateStart(gamepad2.dpad_down);
 
         //toggles precision mode if the right stick button is pressed
         if (gamepad1.left_stick_button)
@@ -154,6 +158,20 @@ public class RogueOp extends OpMode{
         } else {
             lift.setPower(0);
         }
+    }
+
+    public void autolift() {
+        if(toggleUp.nowTrue()){ // this scares me too much
+            lift.setTargetPosition(top);
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift.setPower(.6);
+        } if(toggleDown.nowTrue()) {
+            lift.setTargetPosition(0);
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift.setPower(-.1);
+        }
+
+
     }
 
     public void duccSpin() {
