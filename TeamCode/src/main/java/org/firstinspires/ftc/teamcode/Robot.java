@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 //import org.firstinspires.ftc.teamcode.Camera;
-
+//aman is a sussy baka
 //import gayness
 
 public class Robot extends Auto {
