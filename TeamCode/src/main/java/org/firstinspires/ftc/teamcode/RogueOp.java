@@ -29,9 +29,10 @@ public class RogueOp extends OpMode{
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
     final int top = -1000;
     final int liftGrav = (int)(9.8 * 3);
-    private LiftPID liftPID = new LiftPID(.03, 0, .01);
+    private LiftPID liftPID = new LiftPID(-.05, 0, -.01);
     int liftError = 0;
     int liftTargetPos = 0;
+    boolean find = false;
 
     @Override
     public void init() {
@@ -151,7 +152,7 @@ public class RogueOp extends OpMode{
 
     public void speak() {
         if (gamepad1.dpad_left) {
-            telemetry.speak("FOR JON IN JON ON JON");
+            telemetry.speak("for jon in jon on jon");
         }
     }
 
@@ -171,14 +172,15 @@ public class RogueOp extends OpMode{
         liftError = liftTargetPos - lift.getCurrentPosition();
         if(toggleUp.nowTrue()){ // this scares me too much
             liftTargetPos = top;
-
+            find = true;
         } else if(toggleDown.nowTrue()) {
             liftTargetPos = 0;
-
-
+            find = false;
+            lift.setPower(0);
         }
-        lift.setPower(liftPID.getCorrection(liftError));
-
+        if(find) {
+            lift.setPower(liftPID.getCorrection(liftError));
+        }
 
     }
 

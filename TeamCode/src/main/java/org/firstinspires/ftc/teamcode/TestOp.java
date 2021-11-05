@@ -149,7 +149,7 @@ public class TestOp extends OpMode {
 
     public void lift() {
         if (gamepad1.dpad_up) {
-            lift.setPower(.7);
+            lift.setPower(.8);
         } else if (gamepad1.dpad_down) {
             lift.setPower(-.1);
         } else {
@@ -159,8 +159,8 @@ public class TestOp extends OpMode {
 
     public void duccSpin() {
         if (gamepad1.a) {
-            duccL.setPower(-1);
-            duccR.setPower(-1);
+            duccL.setPower(1);
+            duccR.setPower(1);
         } else {
             duccL.setPower(0);
             duccR.setPower(0);
