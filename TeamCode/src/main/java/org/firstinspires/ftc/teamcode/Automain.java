@@ -1,23 +1,30 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 @Autonomous
 public class Automain extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
-    private DcMotorEx leftFront, rightFront, leftBack, rightBack;
+    private DcMotorEx leftFront, rightFront, leftBack, rightBack,intake, lift;
+    private CRServo duccL, duccR;
+    private Servo v4b1, v4b2, dep;
     //private HardwareMap hardwareMap;
     private final double WHEEL_RADIUS = 3.77953;
     private final double GEAR_RATIO = (double) 1;
@@ -47,6 +54,23 @@ public class Automain extends LinearOpMode //creates class
 
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        duccL = hardwareMap.crservo.get("DL");
+        duccR = hardwareMap.crservo.get("DR");
+        v4b1.setDirection(Servo.Direction.REVERSE);
+        duccL.setDirection(DcMotorSimple.Direction.REVERSE);
+        v4b1 = hardwareMap.servo.get("v4b1");
+        v4b2 = hardwareMap.servo.get("v4b2");
+        dep = hardwareMap.servo.get("dep");
+
         motors = new DcMotorEx[]{leftFront, leftBack, rightFront, rightBack};
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -282,8 +306,166 @@ public class Automain extends LinearOpMode //creates class
         initializeMotors();
         //moveByWheelEncoders(0, 100, 0.5, "straight");
 
-        moveBot(new int[]{1, 1, 1, 1}, 50, 0.5, false);
+        //moveBot(new int[]{1, 1, 1, 1}, 50, 0.5, false);
+        blueMovement();
     }
+    public void turn(double turnAmount) throws InterruptedException {//right is negative sdlijhfkjdhfjklashdflkasdhjklfahsdjklfhasjkldfhlasjdkhfjkasfdhlk
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        resetEncoders();
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        turnAmount=-turnAmount;
+        double startAngle = angles.firstAngle;
+        double desiredAngle = startAngle+turnAmount;
+        if(desiredAngle>=180) desiredAngle=-180+desiredAngle%180;
+        else if(desiredAngle<=-180) desiredAngle=180-(-desiredAngle%180);
+        int turnFactor = (int) (turnAmount/Math.abs(turnAmount));// (turnAmount/Math.abs(turnAmount) determines if right or left. if left this value will be -1 and swap power values
+        double initialPower;
+        double minSpeed;
+        if(Math.abs(turnAmount)<=85&&Math.abs(angles.firstAngle)>45){
+            initialPower=.5;
+            minSpeed=.15;
+        }
+        else if(Math.abs(turnAmount)<=45){
+            initialPower=.4;
+            minSpeed=.1;
+        }
+        else{
+            initialPower=1;
+            minSpeed=.4;
+        }
+
+//        telemetry.addData("RF",rightFront.getPower());
+//        telemetry.addData("LB",leftBack.getPower());
+//        telemetry.addData("RB",rightBack.getPower());
+        telemetry.addData("desired angle change", turnAmount);
+        telemetry.addData("current angle", angles.firstAngle);
+        telemetry.addData("start angle", startAngle);
+        telemetry.addData("degrees turned", Math.abs(angles.firstAngle-startAngle));
+        telemetry.addData("desired angle", desiredAngle);
+        telemetry.addData("distance to desired", Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle)));
+        telemetry.addData("initial power", initialPower);
+        telemetry.addData("current power", leftFront.getPower());
+        telemetry.update();
+
+        leftFront.setPower(-initialPower*turnFactor);
+        rightFront.setPower(initialPower*turnFactor);
+        leftBack.setPower(-initialPower*turnFactor);
+        rightBack.setPower(initialPower*turnFactor);
+
+        while((int)Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))>5){ // (angles.firstAngle-startAngle-Math.abs(turnAmount)) is the difference between current angle and desired. Closer to desired angle = lower value.
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            leftFront.setPower(-Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
+            rightFront.setPower(Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
+            leftBack.setPower(-Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
+            rightBack.setPower(Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
+
+
+//            telemetry.addData("LF",leftFront.getPower());
+//            telemetry.addData("RF",rightFront.getPower());
+//            telemetry.addData("LB",leftBack.getPower());
+//            telemetry.addData("RB",rightBack.getPower());
+            telemetry.addData("desired angle change", turnAmount);
+            telemetry.addData("current angle", angles.firstAngle);
+            telemetry.addData("start angle", startAngle);
+            telemetry.addData("degrees turned", Math.abs(angles.firstAngle-startAngle));
+            telemetry.addData("desired angle", desiredAngle);
+            telemetry.addData("distance to desired", Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle)));
+            telemetry.addData("initial power", initialPower);
+            telemetry.addData("current power", leftFront.getPower());
+            telemetry.update();
+            heartbeat();
+        }
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+//        ElapsedTime wait = new ElapsedTime();
+//        while(wait.milliseconds()<5000){
+//            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//            telemetry.addData("desired angle change", turnAmount);
+//            telemetry.addData("current angle", angles.firstAngle);
+//            telemetry.addData("start angle", startAngle);
+//            telemetry.addData("degrees turned", Math.abs(angles.firstAngle-startAngle));
+//            telemetry.addData("desired angle", desiredAngle);
+//            telemetry.addData("distance to desired", Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle)));
+//            telemetry.addData("initial power", initialPower);
+//            telemetry.addData("current power", leftFront.getPower());
+//            telemetry.update();
+//            heartbeat();
+//        }
+    }
+    public void blueMovement() throws InterruptedException{ //scenario is the opencv duck position
+        moveByWheelEncoders(0, 5, .5,"straight");
+
+
+       /* if(gamepad1.x) {
+         if (scenario == 0) {
+               moveByWheelEncoders(0, 5, .5,"straight");
+               turn(90); //trying to make it face backwards
+               moveByWheelEncoders(0,10, .5,"straight");
+               moveByWheelEncoders(0,7, .5, "strafe left");
+               moveByWheelEncoders(0,5,.5,"straight");
+               //intaking is next
+
+             moveByWheelEncoders(0, -5, .5,"straight");
+             moveByWheelEncoders(0,-10, .5,"straight");
+             moveByWheelEncoders(0,7, .5, "strafe right");
+             //deposit
+             //then repeat this process
+         }
+         if (scenario == 1) {
+
+         }
+         if (scenario == 2) {
+
+         }
+     }
+      if(gamepad1.y) {
+          if (scenario == 0) {
+
+          }
+          if (scenario == 1) {
+
+          }
+          if (scenario == 2) {
+
+          }
+      }*/
+    }
+    public void Redmovement(int scenario) throws InterruptedException{
+        if(scenario == 0){
+
+        }
+        if(scenario == 1){
+
+        }
+        if(scenario == 2){
+
+        }
+
+    }
+    public void intake(){
+        intake.setPower(1);
+
+    }
+    public void lift(){
+        v4b1.setPosition(.79);
+        v4b2.setPosition(.79);
+        dep.setPosition(.43);
+
+        lift.setPower(.6);
+    }
+
 
 }
 
