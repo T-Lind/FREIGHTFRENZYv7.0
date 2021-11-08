@@ -7,15 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-
-
-import org.opencv.core.Mat;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -28,10 +19,6 @@ public class Automain extends LinearOpMode //creates class
     BNO055IMU imu;
     private DcMotorEx leftFront, rightFront, leftBack, rightBack;
     //private HardwareMap hardwareMap;
-    private WebcamName weCam;
-    private OpenCvCamera camera;
-    protected Vision pipeline;
-
     private final double WHEEL_RADIUS = 3.77953;
     private final double GEAR_RATIO = (double) 1;
     private final double TICKS_PER_REVOLUTION = 537.6;
@@ -40,12 +27,10 @@ public class Automain extends LinearOpMode //creates class
     private double initialAngle;
     private ElapsedTime runtime;
 
-
-
     private final double TPI = TICKS_PER_REVOLUTION / (2 * Math.PI * GEAR_RATIO * WHEEL_RADIUS);
     private PID forwardPID = new PID(.022, 0, 0.0033);
     private PID strafePID = new PID(.024, 0, 0.0033);
-    public void initialize() {
+    public void initialize(){
 
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
         leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
@@ -76,28 +61,9 @@ public class Automain extends LinearOpMode //creates class
         initialAngle = angles.firstAngle;
 
         runtime = new ElapsedTime();
-        weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
-        pipeline = new Vision();
-        camera.setPipeline(pipeline);
 
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-//        camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            // @Override
-            public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-        });
 
     }
-
-
-
 
     public void moveBot(int[] dir, int distance, double power, boolean withIntake) throws InterruptedException {
         //moveBot(1, 1, 2, 2, -24, .60, true); //Forwward
@@ -316,7 +282,7 @@ public class Automain extends LinearOpMode //creates class
         initializeMotors();
         //moveByWheelEncoders(0, 100, 0.5, "straight");
 
-        //moveBot(new int[]{1, 1, 1, 1}, 50, 0.5, false);
+        moveBot(new int[]{1, 1, 1, 1}, 50, 0.5, false);
     }
 
 }

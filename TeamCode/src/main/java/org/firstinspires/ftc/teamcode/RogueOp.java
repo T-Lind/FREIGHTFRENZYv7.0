@@ -33,6 +33,7 @@ public class RogueOp extends OpMode{
     int liftError = 0;
     int liftTargetPos = 0;
     boolean find = false;
+    boolean extend = false;
 
     @Override
     public void init() {
@@ -173,13 +174,24 @@ public class RogueOp extends OpMode{
         if(toggleUp.nowTrue()){ // this scares me too much
             liftTargetPos = top;
             find = true;
+            extend = true;
         } else if(toggleDown.nowTrue()) {
+            v4b1.setPosition(.79);
+            v4b2.setPosition(.79);
             liftTargetPos = 0;
             find = false;
             lift.setPower(0);
         }
         if(find) {
             lift.setPower(liftPID.getCorrection(liftError));
+
+        }
+        if(extend) {
+            if(Math.abs(liftError) < 100){
+                v4b1.setPosition(.19);
+                v4b2.setPosition(.19);
+                extend = false;
+            }
         }
 
     }
