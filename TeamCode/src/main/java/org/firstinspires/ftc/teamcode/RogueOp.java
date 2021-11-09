@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name="RogueOp")
 public class RogueOp extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift;
+    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, liftB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean direction, togglePrecision;
@@ -27,9 +27,9 @@ public class RogueOp extends OpMode{
     private Rev2mDistanceSensor Distance;
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
-    final int top = -950;
+    final int top = 950;
     final int liftGrav = (int)(9.8 * 3);
-    private LiftPID liftPID = new LiftPID(-.375, 0, -.05);
+    private LiftPID liftPID = new LiftPID(-.03, 0, 0);
     int liftError = 0;
     int liftTargetPos = 0;
     boolean find = false;
@@ -62,9 +62,18 @@ public class RogueOp extends OpMode{
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        lift.setDirection(DcMotor.Direction.REVERSE);
+
+        liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
+        liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        liftB.setDirection(DcMotor.Direction.REVERSE);
 
         v4b1 = hardwareMap.servo.get("v4b1");
         v4b2 = hardwareMap.servo.get("v4b2");
@@ -184,10 +193,11 @@ public class RogueOp extends OpMode{
             liftTargetPos = 0;
             find = false;
             lift.setPower(0);
+            liftB.setPower(lift.getPower());
         }
         if(find) {
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
-
+            liftB.setPower(lift.getPower());
         }
         if(extend) {
             if(Math.abs(liftError) < 100){

@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name="DebugOp")
 public class DebugOp extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift;
+    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, liftB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean direction, togglePrecision;
@@ -35,10 +35,10 @@ public class DebugOp extends OpMode{
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -52,9 +52,18 @@ public class DebugOp extends OpMode{
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        lift.setDirection(DcMotor.Direction.REVERSE);
+
+        liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
+        liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        liftB.setDirection(DcMotor.Direction.REVERSE);
 
         v4b1 = hardwareMap.servo.get("v4b1");
         v4b2 = hardwareMap.servo.get("v4b2");
@@ -67,6 +76,8 @@ public class DebugOp extends OpMode{
         v4b1.setDirection(Servo.Direction.REVERSE);
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "spit");
+
+
 
 
 
