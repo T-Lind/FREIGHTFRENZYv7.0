@@ -7,11 +7,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous
 public class Automain extends LinearOpMode //creates class
@@ -30,6 +37,11 @@ public class Automain extends LinearOpMode //creates class
     private final double TPI = TICKS_PER_REVOLUTION / (2 * Math.PI * GEAR_RATIO * WHEEL_RADIUS);
     private PID forwardPID = new PID(.022, 0, 0.0033);
     private PID strafePID = new PID(.024, 0, 0.0033);
+
+    private WebcamName weCam;
+    private OpenCvCamera camera;
+    private UltiamteGoalDeterminationPipeline pipeline;
+
     public void initialize(){
 
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
@@ -62,25 +74,20 @@ public class Automain extends LinearOpMode //creates class
 
         runtime = new ElapsedTime();
 
-       /* weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
+       weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
-        pipeline = new Vision();
+        pipeline = new UltiamteGoalDeterminationPipeline();
         camera.setPipeline(pipeline);
-
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-//        camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             // @Override
             public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
         });
 
-    */
+
 
     }
 
