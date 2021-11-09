@@ -151,7 +151,7 @@ public class TestOp extends OpMode {
         if (gamepad1.dpad_up) {
             lift.setPower(.8);
         } else if (gamepad1.dpad_down) {
-            lift.setPower(-.1);
+            lift.setPower(-.01);
         } else {
             lift.setPower(0);
         }

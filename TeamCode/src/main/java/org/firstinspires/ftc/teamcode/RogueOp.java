@@ -27,9 +27,9 @@ public class RogueOp extends OpMode{
     private Rev2mDistanceSensor Distance;
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
-    final int top = -1000;
+    final int top = -950;
     final int liftGrav = (int)(9.8 * 3);
-    private LiftPID liftPID = new LiftPID(-.05, 0, -.01);
+    private LiftPID liftPID = new LiftPID(-.375, 0, -.05);
     int liftError = 0;
     int liftTargetPos = 0;
     boolean find = false;
@@ -77,6 +77,7 @@ public class RogueOp extends OpMode{
         v4b1.setDirection(Servo.Direction.REVERSE);
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "spit");
+
 
 
 
@@ -133,6 +134,7 @@ public class RogueOp extends OpMode{
 
         telemetry.addData("lift", lift.getCurrentPosition());
         telemetry.addData("liftTargetPos", liftTargetPos);
+        telemetry.addData("lift power", lift.getPower());
         telemetry.update();
 
 
@@ -176,6 +178,7 @@ public class RogueOp extends OpMode{
             find = true;
             extend = true;
         } else if(toggleDown.nowTrue()) {
+            extend = false;
             v4b1.setPosition(.79);
             v4b2.setPosition(.79);
             liftTargetPos = 0;
@@ -183,7 +186,7 @@ public class RogueOp extends OpMode{
             lift.setPower(0);
         }
         if(find) {
-            lift.setPower(liftPID.getCorrection(liftError));
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
 
         }
         if(extend) {
@@ -207,14 +210,14 @@ public class RogueOp extends OpMode{
     }
 
     public void deposit() {
-        if (gamepad2.x) {
+        if (gamepad2.y) {
             v4b1.setPosition(.19);
             v4b2.setPosition(.19);
-            //intake position
-        } else if (gamepad2.y) {
+            //dep position
+        } else if (gamepad2.x) {
             v4b1.setPosition(.79);
             v4b2.setPosition(.79);
-            //deposit position
+            //in position
         } else if (gamepad2.b) {
             v4b1.setPosition(.5);
             v4b2.setPosition(.5);
@@ -224,7 +227,7 @@ public class RogueOp extends OpMode{
         if (gamepad2.right_trigger > .5) {
             dep.setPosition(.5);
         } else {
-            dep.setPosition(.43);
+            dep.setPosition(.4);
         }
     }
 
