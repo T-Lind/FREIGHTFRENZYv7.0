@@ -34,6 +34,7 @@ public class RogueOp extends OpMode{
     int liftTargetPos = 0;
     boolean find = false;
     boolean extend = false;
+    boolean succing = false;
 
     @Override
     public void init() {
@@ -154,10 +155,13 @@ public class RogueOp extends OpMode{
     public void succ() {
         if (gamepad1.left_trigger > .5) {
             intake.setPower(-1);
+            succing = true;
         } else if (gamepad1.left_bumper) {
             intake.setPower(1);
+            succing = true;
         } else {
             intake.setPower(0);
+            succing = false;
         }
 
     }
@@ -182,7 +186,7 @@ public class RogueOp extends OpMode{
     public void macroLift() {
 
         liftError = liftTargetPos - lift.getCurrentPosition();
-        if(toggleUp.nowTrue()){ // this scares me too much
+        if(toggleUp.nowTrue() && !succing){ // this scares me too much
             liftTargetPos = top;
             find = true;
             extend = true;
@@ -220,7 +224,7 @@ public class RogueOp extends OpMode{
     }
 
     public void deposit() {
-        if (gamepad2.y) {
+        if (gamepad2.y && !succing) {
             v4b1.setPosition(.19);
             v4b2.setPosition(.19);
             //dep position
@@ -228,7 +232,7 @@ public class RogueOp extends OpMode{
             v4b1.setPosition(.79);
             v4b2.setPosition(.79);
             //in position
-        } else if (gamepad2.b) {
+        } else if (gamepad2.b && !succing) {
             v4b1.setPosition(.5);
             v4b2.setPosition(.5);
             //vertical position for asserting dominance
