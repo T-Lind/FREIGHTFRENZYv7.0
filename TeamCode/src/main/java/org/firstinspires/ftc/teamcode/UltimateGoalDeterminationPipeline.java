@@ -24,9 +24,9 @@ class UltiamteGoalDeterminationPipeline extends OpenCvPipeline
         FOUR
     }
 
-    private static final Point box = new Point(180, 100);
+    private static final Point box = new Point(10, 10);
     private static final Scalar green = new Scalar(0, 255, 0);
-    private static final int width = 40, height = 50;
+    private static final int width = 10, height = 10;
     private static final int rings4 = 150, rings1 = 120;
     private int avg, scenario;
     private Point pointA;
@@ -48,8 +48,10 @@ class UltiamteGoalDeterminationPipeline extends OpenCvPipeline
 
     public void initialize()
     {
-        pointA = new Point(box.x, box.y);
-        pointB = new Point(box.x + width, box.y + height);
+        //pointA = new Point(box.x, box.y);
+        //pointB = new Point(box.x + width, box.y + height);
+        pointA = new Point(10, 10);
+        pointB = new Point(20, 20);
         YCrCb = new Mat();
         Cb = new Mat();
         regional = Cb.submat(new Rect(pointA, pointB));

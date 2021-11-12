@@ -22,6 +22,20 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+
+
+
 @Autonomous
 public class Automain extends LinearOpMode //creates class
 { //test test
@@ -78,7 +92,7 @@ public class Automain extends LinearOpMode //creates class
 
         telemetry.addData("Others initialized", 1);
         telemetry.update();
-/*
+
         weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
         telemetry.addData("Cam initialized", 2);
         telemetry.update();
@@ -98,14 +112,14 @@ public class Automain extends LinearOpMode //creates class
         telemetry.addData("Camera and pipeline initialized", 4);
         telemetry.update();
 
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
             // @Override
             public void onOpened() {
                 telemetry.addData("Stream started", 5);
                 telemetry.update();
 
 
-                camera.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(160, 120, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
@@ -115,9 +129,8 @@ public class Automain extends LinearOpMode //creates class
         });
 
         telemetry.addData("Initialization done", 6);
-
         telemetry.update();
-*/
+
 
     }
 

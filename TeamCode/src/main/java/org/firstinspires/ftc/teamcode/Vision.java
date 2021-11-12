@@ -29,20 +29,25 @@ public class Vision extends OpenCvPipeline {
     /*
      * The core values which define the location and size of the sample regions
      */
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(80,70);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(80,60);
 
-    static final int REGION_WIDTH = 35;
-    static final int REGION_HEIGHT = 25;
+    static final int REGION_WIDTH = 10;
+    static final int REGION_HEIGHT = 10;
 
     final int FOUR_RING_THRESHOLD = 150;
     final int ONE_RING_THRESHOLD = 135;
-
+/*
     Point region1_pointA = new Point(
             REGION1_TOPLEFT_ANCHOR_POINT.x,
             REGION1_TOPLEFT_ANCHOR_POINT.y);
     Point region1_pointB = new Point(
             REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
             REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+*/
+    Point region1_pointA = new Point(
+            10,10);
+    Point region1_pointB = new Point(
+            20,20);
 
     /*
      * Working variables
