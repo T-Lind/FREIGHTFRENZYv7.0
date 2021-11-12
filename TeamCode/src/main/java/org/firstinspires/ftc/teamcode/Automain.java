@@ -56,7 +56,7 @@ public class Automain extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private UltiamteGoalDeterminationPipeline pipeline;
+    private SkystoneDeterminationPipeline pipeline;
 
     public void initialize(){
 
@@ -106,7 +106,7 @@ public class Automain extends LinearOpMode //creates class
         telemetry.addData("camera initialized", 3.5);
         telemetry.update();
 
-        pipeline = new UltiamteGoalDeterminationPipeline();
+        pipeline = new SkystoneDeterminationPipeline();
         camera.setPipeline(pipeline);
 
         telemetry.addData("Camera and pipeline initialized", 4);
@@ -119,7 +119,7 @@ public class Automain extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(160, 120, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
