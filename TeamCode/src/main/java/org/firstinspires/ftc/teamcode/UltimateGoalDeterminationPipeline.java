@@ -31,8 +31,8 @@ class UltiamteGoalDeterminationPipeline extends OpenCvPipeline
     private int avg, scenario;
     private Point pointA;
     private Point pointB;
-    private Mat YCrCb;
-    private Mat Cb;
+    private Mat YCrCb = new Mat();
+    private Mat Cb = new Mat();
     private Mat regional;
     public volatile Rings position;
 
@@ -52,8 +52,7 @@ class UltiamteGoalDeterminationPipeline extends OpenCvPipeline
         //pointB = new Point(box.x + width, box.y + height);
         pointA = new Point(10, 10);
         pointB = new Point(20, 20);
-        YCrCb = new Mat();
-        Cb = new Mat();
+
         regional = Cb.submat(new Rect(pointA, pointB));
     }
 
