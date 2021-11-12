@@ -15,10 +15,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous
 public class Automain extends LinearOpMode //creates class
@@ -68,26 +70,54 @@ public class Automain extends LinearOpMode //creates class
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         imu.initialize(parameters);
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
 
         initialAngle = angles.firstAngle;
 
         runtime = new ElapsedTime();
 
-       weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        telemetry.addData("Others initialized", 1);
+        telemetry.update();
+/*
+        weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        telemetry.addData("Cam initialized", 2);
+        telemetry.update();
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        telemetry.addData("Cam monitor value initialized", 3);
+        telemetry.update();
+
+
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
+        telemetry.addData("camera initialized", 3.5);
+        telemetry.update();
+
         pipeline = new UltiamteGoalDeterminationPipeline();
         camera.setPipeline(pipeline);
+
+        telemetry.addData("Camera and pipeline initialized", 4);
+        telemetry.update();
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             // @Override
             public void onOpened() {
+                telemetry.addData("Stream started", 5);
+                telemetry.update();
+
+
                 camera.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
             }
         });
 
+        telemetry.addData("Initialization done", 6);
 
+        telemetry.update();
+*/
 
     }
 
@@ -146,6 +176,102 @@ public class Automain extends LinearOpMode //creates class
         }
         //intake.setPower(0);
         // transfer.setPower(0);
+    }
+
+    public void turn(double turnAmount) throws InterruptedException {//right is negative sdlijhfkjdhfjklashdflkasdhjklfahsdjklfhasjkldfhlasjdkhfjkasfdhlk
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        resetEncoders();
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        turnAmount=-turnAmount;
+        double startAngle = angles.firstAngle;
+        double desiredAngle = startAngle+turnAmount;
+        if(desiredAngle>=180) desiredAngle=-180+desiredAngle%180;
+        else if(desiredAngle<=-180) desiredAngle=180-(-desiredAngle%180);
+        int turnFactor = (int) (turnAmount/Math.abs(turnAmount));// (turnAmount/Math.abs(turnAmount) determines if right or left. if left this value will be -1 and swap power values
+        double initialPower;
+        double minSpeed;
+        if(Math.abs(turnAmount)<=85&&Math.abs(angles.firstAngle)>45){
+            initialPower=.5;
+            minSpeed=.15;
+        }
+        else if(Math.abs(turnAmount)<=45){
+            initialPower=.4;
+            minSpeed=.1;
+        }
+        else{
+            initialPower=1;
+            minSpeed=.4;
+        }
+
+//        telemetry.addData("RF",rightFront.getPower());
+//        telemetry.addData("LB",leftBack.getPower());
+//        telemetry.addData("RB",rightBack.getPower());
+        telemetry.addData("desired angle change", turnAmount);
+        telemetry.addData("current angle", angles.firstAngle);
+        telemetry.addData("start angle", startAngle);
+        telemetry.addData("degrees turned", Math.abs(angles.firstAngle-startAngle));
+        telemetry.addData("desired angle", desiredAngle);
+        telemetry.addData("distance to desired", Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle)));
+        telemetry.addData("initial power", initialPower);
+        telemetry.addData("current power", leftFront.getPower());
+        telemetry.update();
+
+        leftFront.setPower(-initialPower*turnFactor);
+        rightFront.setPower(initialPower*turnFactor);
+        leftBack.setPower(-initialPower*turnFactor);
+        rightBack.setPower(initialPower*turnFactor);
+
+        while((int)Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))>5){ // (angles.firstAngle-startAngle-Math.abs(turnAmount)) is the difference between current angle and desired. Closer to desired angle = lower value.
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+            leftFront.setPower(-Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
+            rightFront.setPower(Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
+            leftBack.setPower(-Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
+            rightBack.setPower(Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
+
+
+//            telemetry.addData("LF",leftFront.getPower());
+//            telemetry.addData("RF",rightFront.getPower());
+//            telemetry.addData("LB",leftBack.getPower());
+//            telemetry.addData("RB",rightBack.getPower());
+            telemetry.addData("desired angle change", turnAmount);
+            telemetry.addData("current angle", angles.firstAngle);
+            telemetry.addData("start angle", startAngle);
+            telemetry.addData("degrees turned", Math.abs(angles.firstAngle-startAngle));
+            telemetry.addData("desired angle", desiredAngle);
+            telemetry.addData("distance to desired", Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle)));
+            telemetry.addData("initial power", initialPower);
+            telemetry.addData("current power", leftFront.getPower());
+            telemetry.update();
+            heartbeat();
+        }
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+//        ElapsedTime wait = new ElapsedTime();
+//        while(wait.milliseconds()<5000){
+//            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//            telemetry.addData("desired angle change", turnAmount);
+//            telemetry.addData("current angle", angles.firstAngle);
+//            telemetry.addData("start angle", startAngle);
+//            telemetry.addData("degrees turned", Math.abs(angles.firstAngle-startAngle));
+//            telemetry.addData("desired angle", desiredAngle);
+//            telemetry.addData("distance to desired", Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle)));
+//            telemetry.addData("initial power", initialPower);
+//            telemetry.addData("current power", leftFront.getPower());
+//            telemetry.update();
+//            heartbeat();
+//        }
     }
 
     public void initializeMotors(){
@@ -243,7 +369,7 @@ public class Automain extends LinearOpMode //creates class
         return error;
     }
     public double currentAngle() {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
         return angles.firstAngle;
     }
     public void correction(double power, double targetHeading, String movementType, boolean inverted, double max) throws InterruptedException {
@@ -301,14 +427,42 @@ public class Automain extends LinearOpMode //creates class
         }
     }
 
+    public void snapBot() throws InterruptedException {//sdkfhgskhgdfsgklhsdfgljsfgjhfjgjhfgjhfgjhfgjhfgjkhfgjhfgjhfgjhfgjhfgjhfgjhfgjhfgjh
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        turn(Math.abs(initialAngle - angles.firstAngle) * (angles.firstAngle / Math.abs(angles.firstAngle)));
+    }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry.addData("method called", 0);
+        telemetry.update();
         initialize();
         initializeMotors();
-        //moveByWheelEncoders(0, 100, 0.5, "straight");
 
-        moveBot(new int[]{1, 1, 1, 1}, 50, 0.5, false);
+       /* moveBot(new int[]{1, 1, 1, 1}, 5, 0.5, false);
+       snapBot();
+        moveBot(new int[]{1, 2, 2, 1}, 32, 0.5, false);
+       snapBot();
+        moveBot(new int[]{1, 1, 1, 1}, 25, 0.5, false);
+        sleep(5000);
+        moveBot(new int[]{2, 2, 2, 2}, 30, 0.5, false);
+
+        turn(90);
+       //
+        snapBot();
+        moveBot(new int[]{1, 1, 1, 1}, 70, 0.75, false);
+*/
+        turn(90);
+        sleep(1000);
+        snapBot();
+        sleep(1000);
+        turn(-90);
+        sleep(1000);
+        snapBot();
+
+
+
     }
 
 }
