@@ -61,7 +61,7 @@ public class Automain extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 950;
-    private final int med = 235;
+    private final int med = 476;
 
     private final double TPI = TICKS_PER_REVOLUTION / (2 * Math.PI * GEAR_RATIO * WHEEL_RADIUS);
     private PID forwardPID = new PID(.005, 0, 0.003);
@@ -504,7 +504,9 @@ public class Automain extends LinearOpMode //creates class
 
         liftError = liftTargetPos - lift.getCurrentPosition();
 
-        while(Math.abs(liftError) > 50){
+        boolean depositRun = true;
+
+        while(depositRun){
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
@@ -514,30 +516,38 @@ public class Automain extends LinearOpMode //creates class
             telemetry.addData("Target Position", liftTargetPos);
             telemetry.addData("Current position", lift.getCurrentPosition());
             telemetry.update();
+
+            if(Math.abs(liftError) < 50){
+
+                sleep(1000);
+
+                //Moves the virtual bars forward
+                v4b1.setPosition(.19);
+                v4b2.setPosition(.19);
+                sleep(1000);
+                //Opens the deposit
+                dep.setPosition(.5);
+                sleep(1000);
+
+                //Closes the deposit
+                dep.setPosition(.4);
+                sleep(1000);
+
+                //Moves the virtual bars backward
+                v4b1.setPosition(.79);
+                v4b2.setPosition(.79);
+                sleep(1000);
+
+                //Gravity pulls the lift down
+                lift.setPower(0);
+                liftB.setPower(lift.getPower());
+
+                depositRun = false;
+
+            }
         }
 
-        sleep(1000);
 
-        //Moves the virtual bars forward
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
-        sleep(1000);
-        //Opens the deposit
-        dep.setPosition(.5);
-        sleep(1000);
-
-        //Closes the deposit
-        dep.setPosition(.4);
-        sleep(1000);
-
-        //Moves the virtual bars backward
-        v4b1.setPosition(.79);
-        v4b2.setPosition(.79);
-        sleep(1000);
-
-        //Gravity pulls the lift down
-        lift.setPower(0);
-        liftB.setPower(lift.getPower());
     }
 
 
@@ -548,7 +558,7 @@ public class Automain extends LinearOpMode //creates class
         initialize();
         initializeMotors();
 
-      redLeft();
+       redLeft();
     }
 
 
@@ -570,22 +580,38 @@ public class Automain extends LinearOpMode //creates class
         moveBot(new int[]{1, 2, 2, 1}, 50, 0.5, false);
         moveBot(new int[]{1, 1, 1, 1}, 34, 0.5, false);
         sleep(5000);
-       // liftAndDeposit();
+       liftAndDeposit();
         moveBot(new int[]{2, 2, 2, 2}, 22, 0.3, false);
         turn(90);
         moveBot(new int[]{2, 1, 1, 2}, 8, 0.3, false);
         moveBot(new int[]{1, 1, 1, 1}, 45, 0.5, false);
 
 
-        moveBot(new int[]{1, 1, 1, 1}, 50, 0.5, false);
+        moveBot(new int[]{1, 1, 1, 1}, 49, 0.5, false);
 
         sleep(500);
+        turn(5);
+
         spinDuck();
 
-        moveBot(new int[]{1, 2, 2, 1}, 49, 0.5, false);
-        moveBot(new int[]{1, 1, 1, 1}, 6, 0.3, false);
+
+        moveBot(new int[]{2, 2, 2, 2}, 10, 0.3, false);
+        turn(90);
+        moveBot(new int[]{1, 1, 1, 1}, 30, 0.3, false);
 
 
+
+    }
+
+    public void backZero() throws InterruptedException {
+        ElapsedTime test = new ElapsedTime();
+        //The robot tries to turn back to the original angle in 2.5 seconds
+        while (!(((int) currentAngle() > -1) && ((int) currentAngle() < 1)) && test.milliseconds() <= 2250) {
+            turn(currentAngle());
+
+            if (((int) currentAngle() > -1) && ((int) currentAngle() < 1))
+                break;
+        }
 
     }
 
