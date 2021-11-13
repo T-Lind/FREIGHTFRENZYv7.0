@@ -29,8 +29,8 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
     /*
      * The core values which define the location and size of the sample regions
      */
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(140,490);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(340,490);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(10,555);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(380,555);
     static final int REGION_WIDTH = 50;
     static final int REGION_HEIGHT = 50;
 
@@ -194,13 +194,13 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
         /*
          * Find the max of the 3 averages
          */
-        int max = Math.max(avg1, avg3);
+        int min = Math.min(avg1, avg3);
 
         /*
          * Now that we found the max, we actually need to go and
          * figure out which sample region that value was from
          */
-        if(max == avg1) // Was it from region 1?
+        if(min == avg1 && min < 85) // Was it from region 1?
         {
             position = SkystonePosition.LEFT; // Record our analysis
 
@@ -216,7 +216,7 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
                     -1); // Negative thickness means solid fill
         }
 
-        else if(max == avg3) // Was it from region 3?
+        else if(min == avg3 && min < 85) // Was it from region 3?
         {
             position = SkystonePosition.CENTER; // Record our analysis
 
@@ -255,4 +255,9 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
     public boolean getAverage(){
         return avg1 > avg3;
     }
+
+    public int returnAverage1(){return avg1;}
+
+    public  int returnAverage3(){return avg3;}
+
 }

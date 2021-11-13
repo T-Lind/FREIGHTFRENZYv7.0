@@ -174,6 +174,9 @@ public class Automain extends LinearOpMode //creates class
             }
 
             telemetry.addData("Lift Target Position", liftTargetPos);
+            telemetry.addData("Average 1", pipeline.returnAverage1());
+            telemetry.addData("Average 3", pipeline.returnAverage3());
+
             telemetry.update();
         }
 
@@ -575,11 +578,6 @@ public class Automain extends LinearOpMode //creates class
 
 
         moveBot(new int[]{1, 1, 1, 1}, 50, 0.5, false);
-
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        if(-angles.firstAngle + 90 > 0)
-            turn(-angles.firstAngle + 90);
 
         sleep(500);
         spinDuck();
