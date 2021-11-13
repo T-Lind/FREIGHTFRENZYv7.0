@@ -160,13 +160,23 @@ public class Automain extends LinearOpMode //creates class
         });
 
         while(!opModeIsActive()){
-            telemetry.addData("Analysis", pipeline.getAverage());
-            telemetry.update();
+            if (pipeline.getAnalysis() == SkystoneDeterminationPipeline.SkystonePosition.LEFT) //zone A
+            {
+                liftTargetPos = 0;
+            }
+            if (pipeline.getAnalysis() == SkystoneDeterminationPipeline.SkystonePosition.CENTER) //zone A
+            {
+                liftTargetPos = med;
+            }
+            if (pipeline.getAnalysis() == SkystoneDeterminationPipeline.SkystonePosition.RIGHT) //zone A
+            {
+                liftTargetPos = top;
+            }
         }
 
 
 
-        liftTargetPos = top; //We might need to change this
+        //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
 
 

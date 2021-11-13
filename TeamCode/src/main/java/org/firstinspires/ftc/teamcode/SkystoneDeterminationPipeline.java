@@ -30,7 +30,6 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
      * The core values which define the location and size of the sample regions
      */
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(140,490);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(240,490);
     static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(340,490);
     static final int REGION_WIDTH = 50;
     static final int REGION_HEIGHT = 50;
@@ -58,12 +57,7 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
     Point region1_pointB = new Point(
             REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
             REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-    Point region2_pointA = new Point(
-            REGION2_TOPLEFT_ANCHOR_POINT.x,
-            REGION2_TOPLEFT_ANCHOR_POINT.y);
-    Point region2_pointB = new Point(
-            REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-            REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
     Point region3_pointA = new Point(
             REGION3_TOPLEFT_ANCHOR_POINT.x,
             REGION3_TOPLEFT_ANCHOR_POINT.y);
@@ -77,7 +71,7 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
     Mat region1_Cb, region2_Cb, region3_Cb;
     Mat YCrCb = new Mat();
     Mat Cb = new Mat();
-    int avg1, avg2, avg3;
+    int avg1, avg3;
 
     // Volatile since accessed by OpMode thread w/o synchronization
     private volatile SkystonePosition position = SkystonePosition.LEFT;
@@ -113,7 +107,6 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
          * reverse also holds true.
          */
         region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-        region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
         region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
     }
 
@@ -168,7 +161,6 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
          * at index 2 here.
          */
         avg1 = (int) Core.mean(region1_Cb).val[0];
-        avg2 = (int) Core.mean(region2_Cb).val[0];
         avg3 = (int) Core.mean(region3_Cb).val[0];
 
         /*
@@ -186,12 +178,6 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
          * Draw a rectangle showing sample region 2 on the screen.
          * Simply a visual aid. Serves no functional purpose.
          */
-        Imgproc.rectangle(
-                input, // Buffer to draw on
-                region2_pointA, // First point which defines the rectangle
-                region2_pointB, // Second point which defines the rectangle
-                BLUE, // The color the rectangle is drawn in
-                2); // Thickness of the rectangle lines
 
         /*
          * Draw a rectangle showing sample region 3 on the screen.
@@ -208,8 +194,7 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
         /*
          * Find the max of the 3 averages
          */
-        int maxOneTwo = Math.max(avg1, avg2);
-        int max = Math.max(maxOneTwo, avg3);
+        int max = Math.max(avg1, avg3);
 
         /*
          * Now that we found the max, we actually need to go and
@@ -230,24 +215,10 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
                     GREEN, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
         }
-        else if(max == avg2) // Was it from region 2?
-        {
-            position = SkystonePosition.CENTER; // Record our analysis
 
-            /*
-             * Draw a solid rectangle on top of the chosen region.
-             * Simply a visual aid. Serves no functional purpose.
-             */
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region2_pointA, // First point which defines the rectangle
-                    region2_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-        }
         else if(max == avg3) // Was it from region 3?
         {
-            position = SkystonePosition.RIGHT; // Record our analysis
+            position = SkystonePosition.CENTER; // Record our analysis
 
             /*
              * Draw a solid rectangle on top of the chosen region.
@@ -260,7 +231,9 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
                     GREEN, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
         }
-
+        else {
+                position = SkystonePosition.RIGHT;
+         }
 
 
         /*
