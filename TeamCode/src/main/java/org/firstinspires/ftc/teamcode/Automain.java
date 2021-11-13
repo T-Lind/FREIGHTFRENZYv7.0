@@ -505,6 +505,9 @@ public class Automain extends LinearOpMode //creates class
         liftError = liftTargetPos - lift.getCurrentPosition();
 
         boolean depositRun = true;
+         ElapsedTime extend = new ElapsedTime();
+         ElapsedTime deposit = new ElapsedTime();
+         ElapsedTime help = new ElapsedTime();
 
         while(depositRun){
             liftError = liftTargetPos - lift.getCurrentPosition();
