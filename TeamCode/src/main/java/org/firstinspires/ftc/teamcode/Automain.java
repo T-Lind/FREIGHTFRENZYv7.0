@@ -172,6 +172,9 @@ public class Automain extends LinearOpMode //creates class
             {
                 liftTargetPos = top;
             }
+
+            telemetry.addData("Lift Target Position", liftTargetPos);
+            telemetry.update();
         }
 
 
