@@ -29,11 +29,11 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
     /*
      * The core values which define the location and size of the sample regions
      */
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253,98);
-    static final int REGION_WIDTH = 20;
-    static final int REGION_HEIGHT = 20;
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(140,490);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(240,490);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(340,490);
+    static final int REGION_WIDTH = 50;
+    static final int REGION_HEIGHT = 50;
 
     /*
      * Points which actually define the sample region rectangles, derived from above values
@@ -277,5 +277,9 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
     public SkystonePosition getAnalysis()
     {
         return position;
+    }
+
+    public boolean getAverage(){
+        return avg1 > avg3;
     }
 }

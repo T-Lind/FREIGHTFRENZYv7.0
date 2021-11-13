@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,6 +12,11 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //not paying attention in CS2 pog
 
 // this is a test teleop class for testing. Do not use in competition. - Seb on may 7th, 2021.
@@ -21,10 +27,14 @@ public class TestOp extends OpMode {
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean direction, togglePrecision;
+    Orientation angles;
+
     private double factor;
     //test
     boolean reverse;
     private Rev2mDistanceSensor Distance;
+    BNO055IMU imu;
+
     EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
 
 
@@ -80,6 +90,15 @@ public class TestOp extends OpMode {
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "spit");
 
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        imu.initialize(parameters);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
     }
@@ -127,10 +146,11 @@ public class TestOp extends OpMode {
         succ();
         duccSpin();
         deposit();
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
         telemetry.addData("lift", lift.getCurrentPosition());
-
+        telemetry.addData("Angle", angles.firstAngle);
         telemetry.update();
         toggleA.updateEnd();
 

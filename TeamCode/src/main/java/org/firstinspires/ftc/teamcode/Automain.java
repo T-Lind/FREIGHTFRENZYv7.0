@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -40,7 +43,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class Automain extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
-    private DcMotorEx leftFront, rightFront, leftBack, rightBack;
+    private DcMotorEx leftFront, rightFront, leftBack, rightBack, lift, liftB;
+    private Servo v4b1, v4b2, dep;
+    private CRServo duccL, duccR;
     //private HardwareMap hardwareMap;
     private final double WHEEL_RADIUS = 3.77953;
     private final double GEAR_RATIO = (double) 1;
@@ -50,9 +55,17 @@ public class Automain extends LinearOpMode //creates class
     private double initialAngle;
     private ElapsedTime runtime;
 
+    final int liftGrav = (int)(9.8 * 3);
+    private LiftPID liftPID = new LiftPID(-.03, 0, 0);
+    private int liftError = 0;
+    private int liftTargetPos = 0;
+
+    private final int top = 950;
+    private final int med = 235;
+
     private final double TPI = TICKS_PER_REVOLUTION / (2 * Math.PI * GEAR_RATIO * WHEEL_RADIUS);
-    private PID forwardPID = new PID(.022, 0, 0.0033);
-    private PID strafePID = new PID(.024, 0, 0.0033);
+    private PID forwardPID = new PID(.005, 0, 0.003);
+    private PID strafePID = new PID(.005, 0, 0.003);
 
     private WebcamName weCam;
     private OpenCvCamera camera;
@@ -84,38 +97,56 @@ public class Automain extends LinearOpMode //creates class
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         imu.initialize(parameters);
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         initialAngle = angles.firstAngle;
 
+      //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
+        //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        lift.setDirection(DcMotor.Direction.REVERSE);
+
+        liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
+        liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        liftB.setDirection(DcMotor.Direction.REVERSE);
+
+        v4b1 = hardwareMap.servo.get("v4b1");
+        v4b2 = hardwareMap.servo.get("v4b2");
+        dep = hardwareMap.servo.get("dep");
+        duccL = hardwareMap.crservo.get("DL");
+        duccR = hardwareMap.crservo.get("DR");
+
+        duccL.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        v4b1.setDirection(Servo.Direction.REVERSE);
+
         runtime = new ElapsedTime();
 
-        telemetry.addData("Others initialized", 1);
-        telemetry.update();
-
         weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
-        telemetry.addData("Cam initialized", 2);
-        telemetry.update();
+
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        telemetry.addData("Cam monitor value initialized", 3);
-        telemetry.update();
+
 
 
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
-        telemetry.addData("camera initialized", 3.5);
-        telemetry.update();
+
 
         pipeline = new SkystoneDeterminationPipeline();
         camera.setPipeline(pipeline);
 
-        telemetry.addData("Camera and pipeline initialized", 4);
-        telemetry.update();
-
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
             // @Override
             public void onOpened() {
-                telemetry.addData("Stream started", 5);
                 telemetry.update();
 
 
@@ -128,8 +159,16 @@ public class Automain extends LinearOpMode //creates class
             }
         });
 
-        telemetry.addData("Initialization done", 6);
-        telemetry.update();
+        while(!opModeIsActive()){
+            telemetry.addData("Analysis", pipeline.getAverage());
+            telemetry.update();
+        }
+
+
+
+        liftTargetPos = top; //We might need to change this
+        liftError = liftTargetPos - lift.getCurrentPosition();
+
 
 
     }
@@ -204,7 +243,7 @@ public class Automain extends LinearOpMode //creates class
 
         resetEncoders();
 
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         turnAmount=-turnAmount;
         double startAngle = angles.firstAngle;
         double desiredAngle = startAngle+turnAmount;
@@ -245,7 +284,7 @@ public class Automain extends LinearOpMode //creates class
         rightBack.setPower(initialPower*turnFactor);
 
         while((int)Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))>5){ // (angles.firstAngle-startAngle-Math.abs(turnAmount)) is the difference between current angle and desired. Closer to desired angle = lower value.
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             leftFront.setPower(-Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
             rightFront.setPower(Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
             leftBack.setPower(-Range.clip(Math.abs(Math.abs(angles.firstAngle)-Math.abs(desiredAngle))/Math.abs(turnAmount),minSpeed,initialPower)*turnFactor);
@@ -382,7 +421,7 @@ public class Automain extends LinearOpMode //creates class
         return error;
     }
     public double currentAngle() {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
     }
     public void correction(double power, double targetHeading, String movementType, boolean inverted, double max) throws InterruptedException {
@@ -441,8 +480,48 @@ public class Automain extends LinearOpMode //creates class
     }
 
     public void snapBot() throws InterruptedException {//sdkfhgskhgdfsgklhsdfgljsfgjhfjgjhfgjhfgjhfgjhfgjkhfgjhfgjhfgjhfgjhfgjhfgjhfgjhfgjh
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         turn(Math.abs(initialAngle - angles.firstAngle) * (angles.firstAngle / Math.abs(angles.firstAngle)));
+    }
+
+    public void liftAndDeposit() throws InterruptedException{
+
+        liftError = liftTargetPos - lift.getCurrentPosition();
+
+        while(Math.abs(liftError) > 50){
+            liftError = liftTargetPos - lift.getCurrentPosition();
+
+            //Takes the lift up
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
+            liftB.setPower(lift.getPower());
+
+            telemetry.addData("Target Position", liftTargetPos);
+            telemetry.addData("Current position", lift.getCurrentPosition());
+            telemetry.update();
+        }
+
+        sleep(1000);
+
+        //Moves the virtual bars forward
+        v4b1.setPosition(.19);
+        v4b2.setPosition(.19);
+        sleep(1000);
+        //Opens the deposit
+        dep.setPosition(.5);
+        sleep(1000);
+
+        //Closes the deposit
+        dep.setPosition(.4);
+        sleep(1000);
+
+        //Moves the virtual bars backward
+        v4b1.setPosition(.79);
+        v4b2.setPosition(.79);
+        sleep(1000);
+
+        //Gravity pulls the lift down
+        lift.setPower(0);
+        liftB.setPower(lift.getPower());
     }
 
 
@@ -453,30 +532,59 @@ public class Automain extends LinearOpMode //creates class
         initialize();
         initializeMotors();
 
-       /* moveBot(new int[]{1, 1, 1, 1}, 5, 0.5, false);
-       snapBot();
-        moveBot(new int[]{1, 2, 2, 1}, 32, 0.5, false);
-       snapBot();
-        moveBot(new int[]{1, 1, 1, 1}, 25, 0.5, false);
-        sleep(5000);
-        moveBot(new int[]{2, 2, 2, 2}, 30, 0.5, false);
+      redLeft();
+    }
 
-        turn(90);
-       //
-        snapBot();
-        moveBot(new int[]{1, 1, 1, 1}, 70, 0.75, false);
-*/
-        turn(90);
-        sleep(1000);
-        snapBot();
-        sleep(1000);
+
+    public void redRight() throws InterruptedException{
+        moveBot(new int[]{1, 1, 1, 1}, 3, 0.5, false);
+        moveBot(new int[]{2, 1, 1, 2}, 50, 0.5, false);
+        moveBot(new int[]{1, 1, 1, 1}, 34, 0.5, false);
+       // liftAndDeposit();
+        //  moveBot(new int[]{2, 2, 2, 2}, 30, 0.5, false);
         turn(-90);
-        sleep(1000);
-        snapBot();
+        // snapBot();
+        moveBot(new int[]{1, 1, 1, 1}, 20, 0.35, false);
+        moveBot(new int[]{2, 1, 1, 2}, 9, 0.35, false);
+        moveBot(new int[]{1, 1, 1, 1}, 89, 0.7, false);
+    }
+
+    public void redLeft() throws InterruptedException{
+        moveBot(new int[]{1, 1, 1, 1}, 3, 0.5, false);
+        moveBot(new int[]{1, 2, 2, 1}, 50, 0.5, false);
+        moveBot(new int[]{1, 1, 1, 1}, 34, 0.5, false);
+        sleep(5000);
+       // liftAndDeposit();
+        moveBot(new int[]{2, 2, 2, 2}, 22, 0.3, false);
+        turn(90);
+        moveBot(new int[]{2, 1, 1, 2}, 8, 0.3, false);
+        moveBot(new int[]{1, 1, 1, 1}, 45, 0.5, false);
+
+
+        moveBot(new int[]{1, 1, 1, 1}, 50, 0.5, false);
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        if(-angles.firstAngle + 90 > 0)
+            turn(-angles.firstAngle + 90);
+
+        sleep(500);
+        spinDuck();
+
+        moveBot(new int[]{1, 2, 2, 1}, 49, 0.5, false);
+        moveBot(new int[]{1, 1, 1, 1}, 6, 0.3, false);
 
 
 
     }
 
+    public void spinDuck() throws InterruptedException{
+        ElapsedTime spinTime = new ElapsedTime();
+        duccL.setPower(-1);
+        while (spinTime.milliseconds() <= 7000)
+            heartbeat();
+        duccL.setPower(0);
+
+    }
 }
 
