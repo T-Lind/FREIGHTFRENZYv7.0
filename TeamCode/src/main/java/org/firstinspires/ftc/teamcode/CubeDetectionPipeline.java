@@ -92,26 +92,47 @@ public class CubeDetectionPipeline extends OpenCvPipeline
             Imgproc.line(drawOn, points[i], points[(i+1)%4], RED, 2);
         
     }
+    public static List rectToInfo(RotatedRect rect){
+        Point center1 = rect.center;
+        Size size = rect.size;
+
+        String c = center1.toString();
+        String s1 = size.toString();
+        String s2;
+
+        c = c.substring(1, c.length()-1);
+        s2 = s1.substring(s1.indexOf("x"));
+        s1 = s1.substring(0, s1.indexOf("x"));
+
+        int index = c.indexOf(",");
+        int width = (int) Double.parseDouble(s1);
+        int height = (int) Double.parseDouble(s2);
+        int x = (int) Double.parseDouble(c.substring(0,index));
+        int y = (int) Double.parseDouble(c.substring(index+1));    
+        int[] nums = {width, height, x, y};
+        returm nums;
+    }
+    
     public ArrayList<Integer> getPositions(){
         //YES THIS BS IS NECESSARY TO CONVERT A POINT TO INTS
         ArrayList<Integer> int_pos = new ArrayList<Integer>();
         for(RotatedRect rect : pos){
-            Point center1 = rect.center;
-            Size size = rect.size;
-
-            String c = center1.toString();
-            String s = size.toString();
-
-            c = c.substring(1, c.length()-1);
-            s = s.substring(0, s.indexOf("x"));
-
-            int index = c.indexOf(",");
-            int width = (int) Double.parseDouble(s);
-            int x = (int) Double.parseDouble(c.substring(0,index));
-            int y = (int) Double.parseDouble(c.substring(index+1));
-            int_pos.add(x);
-            int_pos.add(y);
-            int_pos.add(width);
+            int[] info = rectToInfo(rect);
+            //INFO ABOUT RECT RETREIVED - WIDTH, HEIGHT, X, Y
+            if(info[0]/2 > info[1]){//MOST LIKELY 2 CUBES NEXT TO EACH OTHER
+                int_pos.add(info[2]);//LEFT CUBE
+                int_pos.add(info[3]);
+                int_pos.add(info[0]/2);
+                
+                int_pos.add(info[2]+info[0]/2);//RIGHT CUBE
+                int_pos.add(info[3]+info[1]/2);
+                int_pos.add(info[0]/2);
+                }
+            else{
+                int_pos.add(info[2]);
+                int_pos.add(info[3]);
+                int_pos.add(info[0]);
+            }
         }     
 
         //RETURNS THE CENTER POSITION OF EACH ELEMENT X FIRST, THEN Y, THEN THE WIDTH. NOTE (0,0) IS THE TOP LEFT OF THE FRAME, NOT THE BOTTOM LEFT.
