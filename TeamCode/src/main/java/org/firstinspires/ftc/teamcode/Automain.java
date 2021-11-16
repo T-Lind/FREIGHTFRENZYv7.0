@@ -64,12 +64,12 @@ public class Automain extends LinearOpMode //creates class
     private final int med = 476;
 
     private final double TPI = TICKS_PER_REVOLUTION / (2 * Math.PI * GEAR_RATIO * WHEEL_RADIUS);
-    private PID forwardPID = new PID(.005, 0, 0.003);
-    private PID strafePID = new PID(.005, 0, 0.003);
+    private PID forwardPID = new PID(.02, 0, 0.005);
+    private PID strafePID = new PID(.02, 0, 0.005);
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private SkystoneDeterminationPipeline pipeline;
+    private CubeDetectionPipeline pipeline;
 
     public void initialize(){
 
@@ -141,7 +141,7 @@ public class Automain extends LinearOpMode //creates class
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new SkystoneDeterminationPipeline();
+        pipeline = new CubeDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
@@ -158,7 +158,7 @@ public class Automain extends LinearOpMode //creates class
 
             }
         });
-
+/*
         while(!opModeIsActive()){
             if (pipeline.getAnalysis() == SkystoneDeterminationPipeline.SkystonePosition.LEFT) //zone A
             {
@@ -179,7 +179,7 @@ public class Automain extends LinearOpMode //creates class
 
             telemetry.update();
         }
-
+*/
 
 
         //liftTargetPos = top; //We might need to change this
@@ -560,8 +560,8 @@ public class Automain extends LinearOpMode //creates class
         telemetry.update();
         initialize();
         initializeMotors();
-
-       redLeft();
+        moveByWheelEncoders(180, 120, .4, "straight");
+       //redLeft();
     }
 
 
