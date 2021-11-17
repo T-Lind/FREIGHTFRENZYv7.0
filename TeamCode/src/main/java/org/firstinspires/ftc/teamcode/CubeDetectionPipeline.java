@@ -1,8 +1,14 @@
 /*
-    TIERNAN LINDAUER
-    11-15-21
+    TIERNAN X. LINDAUER
+    LAST UPDATED ON 11-15-21 AT 7:49 PM
+    LAST PUSHED TO GITHUB ON 11-15-21 AT __:__ PM
 
-    CUBE DETECTION PIPELINE FOR THE FTC FREIGHT FRENZY SEASON
+    CUBE, TEAM SCORING ELEMENT, AND DUCK DETECTION
+    PIPELINE FOR THE FTC FREIGHT FRENZY SEASON
+
+    UNAUTHORIZED REPRODUCTION OF THIS CODE IS ILLEGAL
+    USE OF CODE IS AUTHORIZED TO ALL MEMBERS OF FTC TEAM 9527
+    OR AFTER THE DATE 12/31/22
 
 */
 
@@ -13,7 +19,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -23,8 +28,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Disabled
 public class CubeDetectionPipeline extends OpenCvPipeline
@@ -92,46 +95,40 @@ public class CubeDetectionPipeline extends OpenCvPipeline
             Imgproc.line(drawOn, points[i], points[(i+1)%4], RED, 2);
         
     }
-    public static List rectToInfo(RotatedRect rect){
-        Point center1 = rect.center;
-        Size size = rect.size;
-
-        String c = center1.toString();
-        String s1 = size.toString();
-        String s2;
-
-        c = c.substring(1, c.length()-1);
-        s2 = s1.substring(s1.indexOf("x"));
-        s1 = s1.substring(0, s1.indexOf("x"));
-
-        int index = c.indexOf(",");
-        int width = (int) Double.parseDouble(s1);
-        int height = (int) Double.parseDouble(s2);
-        int x = (int) Double.parseDouble(c.substring(0,index));
-        int y = (int) Double.parseDouble(c.substring(index+1));    
-        int[] nums = {width, height, x, y};
-        returm nums;
-    }
-    
     public ArrayList<Integer> getPositions(){
         //YES THIS BS IS NECESSARY TO CONVERT A POINT TO INTS
         ArrayList<Integer> int_pos = new ArrayList<Integer>();
         for(RotatedRect rect : pos){
-            int[] info = rectToInfo(rect);
-            //INFO ABOUT RECT RETREIVED - WIDTH, HEIGHT, X, Y
-            if(info[0]/2 > info[1]){//MOST LIKELY 2 CUBES NEXT TO EACH OTHER
-                int_pos.add(info[2]);//LEFT CUBE
-                int_pos.add(info[3]);
-                int_pos.add(info[0]/2);
+            Point center1 = rect.center;
+            Size size = rect.size;
+
+            String c = center1.toString();
+            String s = size.toString();
+
+            c = c.substring(1, c.length()-1);
+            String s2 = s.substring(s.indexOf("x"));
+            s = s.substring(0, s.indexOf("x"));
+
+            int index = c.indexOf(",");
+            int width = (int) Double.parseDouble(s);
+            int height = (int) Double.parseDouble(s2);
+            int x = (int) Double.parseDouble(c.substring(0,index));
+            int y = (int) Double.parseDouble(c.substring(index+1));
+
+            if(width/2 > height){
+                int_pos.add(x);//LEFT CUBE
+                int_pos.add(y);
+                int_pos.add(width/2);
                 
-                int_pos.add(info[2]+info[0]/2);//RIGHT CUBE
-                int_pos.add(info[3]+info[1]/2);
-                int_pos.add(info[0]/2);
-                }
+                int_pos.add(x+width/2);//RIGHT CUBE
+                int_pos.add(y);
+                int_pos.add(width/2);
+                }                
+
             else{
-                int_pos.add(info[2]);
-                int_pos.add(info[3]);
-                int_pos.add(info[0]);
+            int_pos.add(x);
+            int_pos.add(y);
+            int_pos.add(width);
             }
         }     
 
