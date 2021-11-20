@@ -29,10 +29,10 @@ public class SkystoneDeterminationPipeline extends OpenCvPipeline {
     /*
      * The core values which define the location and size of the sample regions
      */
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(10,555);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(380,555);
-    static final int REGION_WIDTH = 50;
-    static final int REGION_HEIGHT = 50;
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,555);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(400,555);
+    static final int REGION_WIDTH = 60;
+    static final int REGION_HEIGHT = 60;
 
     /*
      * Points which actually define the sample region rectangles, derived from above values

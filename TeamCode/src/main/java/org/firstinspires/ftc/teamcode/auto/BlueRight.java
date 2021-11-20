@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,6 +18,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import org.firstinspires.ftc.teamcode.LiftPID;
+import org.firstinspires.ftc.teamcode.PID;
+import org.firstinspires.ftc.teamcode.SkystoneDeterminationPipeline;
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -39,8 +42,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 
 
-@Autonomous
-public class Automain extends LinearOpMode //creates class
+@Autonomous(name = "BlueRight")
+public class BlueRight extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
     private DcMotorEx leftFront, rightFront, leftBack, rightBack, lift, liftB;
@@ -54,6 +57,7 @@ public class Automain extends LinearOpMode //creates class
     private DcMotorEx[] motors;
     private double initialAngle;
     private ElapsedTime runtime;
+    private ElapsedTime extend = new ElapsedTime();
 
     final int liftGrav = (int)(9.8 * 3);
     private LiftPID liftPID = new LiftPID(-.03, 0, 0);
@@ -64,12 +68,12 @@ public class Automain extends LinearOpMode //creates class
     private final int med = 476;
 
     private final double TPI = TICKS_PER_REVOLUTION / (2 * Math.PI * GEAR_RATIO * WHEEL_RADIUS);
-    private PID forwardPID = new PID(.02, 0, 0.005);
-    private PID strafePID = new PID(.02, 0, 0.005);
+    private PID forwardPID = new PID(.005, 0, 0.003);
+    private PID strafePID = new PID(.005, 0, 0.003);
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private CubeDetectionPipeline pipeline;
+    private SkystoneDeterminationPipeline pipeline;
 
     public void initialize(){
 
@@ -101,7 +105,7 @@ public class Automain extends LinearOpMode //creates class
 
         initialAngle = angles.firstAngle;
 
-      //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
         //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -134,6 +138,7 @@ public class Automain extends LinearOpMode //creates class
         weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
 
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
 
@@ -141,7 +146,7 @@ public class Automain extends LinearOpMode //creates class
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new CubeDetectionPipeline();
+        pipeline = new SkystoneDeterminationPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
@@ -158,7 +163,7 @@ public class Automain extends LinearOpMode //creates class
 
             }
         });
-/*
+
         while(!opModeIsActive()){
             if (pipeline.getAnalysis() == SkystoneDeterminationPipeline.SkystonePosition.LEFT) //zone A
             {
@@ -179,7 +184,7 @@ public class Automain extends LinearOpMode //creates class
 
             telemetry.update();
         }
-*/
+
 
 
         //liftTargetPos = top; //We might need to change this
@@ -505,9 +510,8 @@ public class Automain extends LinearOpMode //creates class
         liftError = liftTargetPos - lift.getCurrentPosition();
 
         boolean depositRun = true;
-         ElapsedTime extend = new ElapsedTime();
-         ElapsedTime deposit = new ElapsedTime();
-         ElapsedTime help = new ElapsedTime();
+        ElapsedTime deposit = new ElapsedTime();
+        ElapsedTime help = new ElapsedTime();
 
         while(depositRun){
             liftError = liftTargetPos - lift.getCurrentPosition();
@@ -522,30 +526,37 @@ public class Automain extends LinearOpMode //creates class
 
             if(Math.abs(liftError) < 50){
 
-                sleep(1000);
 
-                //Moves the virtual bars forward
-                v4b1.setPosition(.19);
-                v4b2.setPosition(.19);
-                sleep(1000);
-                //Opens the deposit
-                dep.setPosition(.5);
-                sleep(1000);
+                if(extend.milliseconds() > 750 && extend.milliseconds() < 1500) {
 
-                //Closes the deposit
-                dep.setPosition(.4);
-                sleep(1000);
+                    //Moves the virtual bars forward
+                    v4b1.setPosition(.19);
+                    v4b2.setPosition(.19);
+                }
 
-                //Moves the virtual bars backward
-                v4b1.setPosition(.79);
-                v4b2.setPosition(.79);
-                sleep(1000);
+                if(extend.milliseconds() > 1500 && extend.milliseconds() < 2250 ) {
+                    //Opens the deposit
+                    dep.setPosition(.5);
+                }
+                if(extend.milliseconds() > 2250 && extend.milliseconds() < 3000 ) {
 
-                //Gravity pulls the lift down
-                lift.setPower(0);
-                liftB.setPower(lift.getPower());
+                    //Closes the deposit
+                    dep.setPosition(.4);
+                }
+                if(extend.milliseconds() > 3750 && extend.milliseconds() < 4500 ) {
 
-                depositRun = false;
+                    //Moves the virtual bars backward
+                    v4b1.setPosition(.79);
+                    v4b2.setPosition(.79);
+                }
+                if(extend.milliseconds() > 4500 && extend.milliseconds() < 5250 ) {
+
+                    //Gravity pulls the lift down
+                    lift.setPower(0);
+                    liftB.setPower(lift.getPower());
+
+                    depositRun = false;
+                }
 
             }
         }
@@ -556,74 +567,115 @@ public class Automain extends LinearOpMode //creates class
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+
         telemetry.addData("method called", 0);
         telemetry.update();
         initialize();
         initializeMotors();
-        moveByWheelEncoders(180, 120, .4, "straight");
-       //redLeft();
+
+        blueRight();
     }
 
 
     public void redRight() throws InterruptedException{
         moveBot(new int[]{1, 1, 1, 1}, 3, 0.5, false);
-        moveBot(new int[]{2, 1, 1, 2}, 50, 0.5, false);
-        moveBot(new int[]{1, 1, 1, 1}, 34, 0.5, false);
-       // liftAndDeposit();
-        //  moveBot(new int[]{2, 2, 2, 2}, 30, 0.5, false);
+        moveBot(new int[]{2, 1, 1, 2}, 55, 0.5, false); //LEFT
+        moveBot(new int[]{1, 1, 1, 1}, 40, 0.5, false);
+        sleep(1000);
+        extend.reset();
+        liftAndDeposit();
+        moveBot(new int[]{2, 2, 2, 2}, 23, 0.5, false);
         turn(-90);
         // snapBot();
-        moveBot(new int[]{1, 1, 1, 1}, 20, 0.35, false);
-        moveBot(new int[]{2, 1, 1, 2}, 9, 0.35, false);
-        moveBot(new int[]{1, 1, 1, 1}, 89, 0.7, false);
+        moveBot(new int[]{1, 1, 1, 1}, 44, 0.35, false);
+        moveBot(new int[]{2, 1, 1, 2}, 39, 0.35, false);
+        moveBot(new int[]{1, 1, 1, 1}, 74, 0.7, false);
     }
+
+    public void blueLeft() throws InterruptedException{
+        moveBot(new int[]{1, 1, 1, 1}, 3, 0.5, false);
+        moveBot(new int[]{2, 1, 1, 2}, -55, 0.5, false); //LEFT
+        moveBot(new int[]{1, 1, 1, 1}, 40, 0.5, false);
+        sleep(1000);
+        extend.reset();
+        liftAndDeposit();
+        moveBot(new int[]{2, 2, 2, 2}, 23, 0.5, false);
+        turn(90);
+        // snapBot();
+        moveBot(new int[]{1, 1, 1, 1}, 44, 0.35, false);
+        moveBot(new int[]{2, 1, 1, 2}, -39, 0.35, false); //RIGHT
+        moveBot(new int[]{1, 1, 1, 1}, 74, 0.7, false);
+    }
+
 
     public void redLeft() throws InterruptedException{
         moveBot(new int[]{1, 1, 1, 1}, 3, 0.5, false);
-        moveBot(new int[]{1, 2, 2, 1}, 50, 0.5, false);
-        moveBot(new int[]{1, 1, 1, 1}, 34, 0.5, false);
-        sleep(5000);
-       liftAndDeposit();
+        moveBot(new int[]{1, 2, 2, 1}, 50, 0.5, false); //RIGHT
+        moveBot(new int[]{1, 1, 1, 1}, 30, 0.5, false);
+        sleep(1000);
+        extend.reset();
+        liftAndDeposit();
         moveBot(new int[]{2, 2, 2, 2}, 22, 0.3, false);
         turn(90);
-        moveBot(new int[]{2, 1, 1, 2}, 8, 0.3, false);
-        moveBot(new int[]{1, 1, 1, 1}, 45, 0.5, false);
+        //moveBot(new int[]{2, 1, 1, 2}, 3, 0.3, false);
+        moveBot(new int[]{1, 1, 1, 1}, 66, 0.4, false);
 
 
-        moveBot(new int[]{1, 1, 1, 1}, 49, 0.5, false);
+        moveBot(new int[]{1, 1, 1, 1}, 22, 0.3, false);
 
         sleep(500);
-        turn(5);
 
         spinDuck();
 
 
-        moveBot(new int[]{2, 2, 2, 2}, 10, 0.3, false);
-        turn(90);
-        moveBot(new int[]{1, 1, 1, 1}, 30, 0.3, false);
+        moveBot(new int[]{2, 2, 2, 2}, 8, 0.3, false);
+        moveBot(new int[]{2, 1, 1, 2}, -51, 0.3, false);
+        moveBot(new int[]{1, 1, 1, 1}, 20, 0.3, false);
+
+
+
+
+    }
+
+    public void blueRight() throws InterruptedException{
+        moveBot(new int[]{1, 1, 1, 1}, 3, 0.5, false);
+        moveBot(new int[]{2, 1, 1, 2}, 50, 0.5, false); //LEFT
+        moveBot(new int[]{1, 1, 1, 1}, 30, 0.5, false);
+        sleep(1000);
+        extend.reset();
+        liftAndDeposit();
+        moveBot(new int[]{2, 2, 2, 2}, 22, 0.3, false);
+        turn(-90);
+        //moveBot(new int[]{2, 1, 1, 2}, -3, 0.3, false);
+        moveBot(new int[]{1, 1, 1, 1}, 66, 0.4, false);
+
+
+        moveBot(new int[]{1, 1, 1, 1}, 22, 0.3, false);
+
+        sleep(500);
+
+        spinDuck();
+
+
+        moveBot(new int[]{2, 2, 2, 2}, 8, 0.3, false);
+        moveBot(new int[]{2, 1, 1, 2}, 51, 0.3, false);
+        moveBot(new int[]{1, 1, 1, 1}, 20, 0.3, false);
+
 
 
 
     }
 
-    public void backZero() throws InterruptedException {
-        ElapsedTime test = new ElapsedTime();
-        //The robot tries to turn back to the original angle in 2.5 seconds
-        while (!(((int) currentAngle() > -1) && ((int) currentAngle() < 1)) && test.milliseconds() <= 2250) {
-            turn(currentAngle());
-
-            if (((int) currentAngle() > -1) && ((int) currentAngle() < 1))
-                break;
-        }
-
-    }
 
     public void spinDuck() throws InterruptedException{
         ElapsedTime spinTime = new ElapsedTime();
         duccL.setPower(-1);
+        duccR.setPower(-1);
         while (spinTime.milliseconds() <= 7000)
             heartbeat();
         duccL.setPower(0);
+        duccR.setPower(0);
 
     }
 }
