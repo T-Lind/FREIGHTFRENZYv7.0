@@ -576,7 +576,7 @@ public class RedRight extends LinearOpMode //creates class
 
         //redRight();
 
-        moveByWheelEncoders(0, 60, 0.4, "straight");
+       // moveByWheelEncoders(0, 60, 0.4, "straight");
 
         //moveByWheelEncoders(0, 30, 0.4, "straight");
 
