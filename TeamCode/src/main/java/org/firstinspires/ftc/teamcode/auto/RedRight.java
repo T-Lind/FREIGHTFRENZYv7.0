@@ -1,5 +1,17 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.vuforia.PositionalDeviceTracker;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,6 +33,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.PID;
 import org.firstinspires.ftc.teamcode.SkystoneDeterminationPipeline;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -75,9 +88,14 @@ public class RedRight extends LinearOpMode //creates class
     private OpenCvCamera camera;
     private SkystoneDeterminationPipeline pipeline;
 
+   private SampleMecanumDrive drive ;
+
     public void initialize(){
 
-        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
+        drive = new SampleMecanumDrive(hardwareMap);
+
+
+      /*  leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
         leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
         rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
         rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
@@ -128,6 +146,9 @@ public class RedRight extends LinearOpMode //creates class
         dep = hardwareMap.servo.get("dep");
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
+
+         drive = new SampleMecanumDrive(hardwareMap);
+
 
         duccL.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -190,7 +211,7 @@ public class RedRight extends LinearOpMode //creates class
         //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
 
-
+        */
 
     }
 
@@ -572,9 +593,9 @@ public class RedRight extends LinearOpMode //creates class
         telemetry.addData("method called", 0);
         telemetry.update();
         initialize();
-        initializeMotors();
+       // initializeMotors();
 
-        //redRight();
+        redRight();
 
        // moveByWheelEncoders(0, 60, 0.4, "straight");
 
@@ -584,7 +605,7 @@ public class RedRight extends LinearOpMode //creates class
 
 
     public void redRight() throws InterruptedException{
-        moveBot(new int[]{1, 1, 1, 1}, 3, 0.5, false);
+        /*moveBot(new int[]{1, 1, 1, 1}, 3, 0.5, false);
         moveBot(new int[]{2, 1, 1, 2}, 55, 0.5, false); //LEFT
         moveBot(new int[]{1, 1, 1, 1}, 40, 0.5, false);
         sleep(1000);
@@ -596,6 +617,20 @@ public class RedRight extends LinearOpMode //creates class
         moveBot(new int[]{1, 1, 1, 1}, 44, 0.35, false);
         moveBot(new int[]{2, 1, 1, 2}, 39, 0.35, false);
         moveBot(new int[]{1, 1, 1, 1}, 74, 0.7, false);
+
+        */
+
+        waitForStart();
+
+        if (isStopRequested()) return;
+
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d())
+                .splineTo(new Vector2d(20, 20), 0)
+                .build();
+
+        drive.followTrajectory(traj);
+
+
     }
 
     public void blueLeft() throws InterruptedException{
