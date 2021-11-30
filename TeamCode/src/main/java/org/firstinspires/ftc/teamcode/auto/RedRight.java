@@ -111,6 +111,8 @@ public class RedRight extends LinearOpMode //creates class
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         motors = new DcMotorEx[]{leftFront, leftBack, rightFront, rightBack};
+
+       */
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -207,11 +209,13 @@ public class RedRight extends LinearOpMode //creates class
         }
 
 
+        liftTargetPos = top;
+
 
         //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
 
-        */
+
 
     }
 
@@ -551,9 +555,11 @@ public class RedRight extends LinearOpMode //creates class
                 if(extend.milliseconds() > 750 && extend.milliseconds() < 1500) {
 
                     //Moves the virtual bars forward
-                    v4b1.setPosition(.19);
-                    v4b2.setPosition(.19);
+                    v4b1.setPosition(.79);
+                    v4b2.setPosition(.79);
                 }
+
+                sleep(2000);
 
                 if(extend.milliseconds() > 1500 && extend.milliseconds() < 2250 ) {
                     //Opens the deposit
@@ -567,8 +573,8 @@ public class RedRight extends LinearOpMode //creates class
                 if(extend.milliseconds() > 3750 && extend.milliseconds() < 4500 ) {
 
                     //Moves the virtual bars backward
-                    v4b1.setPosition(.79);
-                    v4b2.setPosition(.79);
+                    v4b1.setPosition(.19);
+                    v4b2.setPosition(.19);
                 }
                 if(extend.milliseconds() > 4500 && extend.milliseconds() < 5250 ) {
 
@@ -596,7 +602,7 @@ public class RedRight extends LinearOpMode //creates class
        // initializeMotors();
 
         redRight();
-
+       // liftAndDeposit();
        // moveByWheelEncoders(0, 60, 0.4, "straight");
 
         //moveByWheelEncoders(0, 30, 0.4, "straight");
@@ -624,12 +630,37 @@ public class RedRight extends LinearOpMode //creates class
 
         if (isStopRequested()) return;
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d())
-                .splineTo(new Vector2d(20, 20), 0)
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
+                .forward(3)
+                .build();
+
+        drive.followTrajectory(traj3);
+
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d(3,0))
+                .strafeLeft(20)
                 .build();
 
         drive.followTrajectory(traj);
 
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,20))
+                .forward(16)
+                .build();
+
+        drive.followTrajectory(traj2);
+
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(19,20))
+                .back(7)
+                .build();
+
+        drive.followTrajectory(traj4);
+
+       // liftAndDeposit();
+
+        drive.turn(Math.toRadians(-90));
+
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(12,20))
+                .forward(20)
+                .build();
 
     }
 
