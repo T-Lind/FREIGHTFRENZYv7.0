@@ -55,8 +55,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 
 
-@Autonomous(name = "BlueRight")
-public class BlueRight extends LinearOpMode //creates class
+@Autonomous(name = "RedLeft")
+public class RedLeft extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
     private DcMotorEx lift, liftB;
@@ -253,13 +253,11 @@ public class BlueRight extends LinearOpMode //creates class
     public void runOpMode() throws InterruptedException {
 
         initialize();
-        blueRight();
+        redLeft();
 
     }
 
-
-
-    public void blueRight() throws InterruptedException{
+    public void redLeft() throws InterruptedException{
         waitForStart();
 
         if (isStopRequested()) return;
@@ -271,39 +269,39 @@ public class BlueRight extends LinearOpMode //creates class
         drive.followTrajectory(traj3);
 
         Trajectory traj = drive.trajectoryBuilder(new Pose2d(3,0))
-                .strafeLeft(19)
+                .strafeRight(19)
                 .build();
 
         drive.followTrajectory(traj);
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,19))
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,-19))
                 .forward(15.5)
                 .build();
 
         drive.followTrajectory(traj2);
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(18.5,19))
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(18.5,-19))
                 .back(11)
                 .build();
 
         drive.followTrajectory(traj4);
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(7.5,19))
-                .strafeRight(44.5)
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(7.5,-19))
+                .strafeLeft(44.5)
                 .build();
 
         drive.followTrajectory(traj5);
 
         spinDuck();
 
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(7.5,-27.5))
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(7.5,27.5))
                 .forward(21)
                 .build();
 
         drive.followTrajectory(traj6);
 
         Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(28.5,27))
-                .strafeRight(2)
+                .strafeLeft(2)
                 .build();
 
         drive.followTrajectory(traj7);
