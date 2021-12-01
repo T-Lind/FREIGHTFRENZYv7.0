@@ -270,12 +270,12 @@ public class BlueLeft extends LinearOpMode //creates class
         drive.followTrajectory(traj3);
 
         Trajectory traj = drive.trajectoryBuilder(new Pose2d(3,0))
-                .strafeRight(20)
+                .strafeRight(19)
                 .build();
 
         drive.followTrajectory(traj);
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,-20))
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,-19))
                 .forward(15.5)
                 .build();
 
@@ -283,7 +283,7 @@ public class BlueLeft extends LinearOpMode //creates class
 
         drive.turn(Math.toRadians(90));
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(18.5,-20, Math.toRadians(90)))
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(18.5,-19, Math.toRadians(90)))
                 .forward(62)
                 .build();
 
