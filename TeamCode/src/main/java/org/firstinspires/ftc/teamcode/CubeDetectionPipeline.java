@@ -1,7 +1,7 @@
 /*
     TIERNAN X. LINDAUER
-    LAST UPDATED ON 11-15-21 AT 7:49 PM
-    LAST PUSHED TO GITHUB ON 11-15-21 AT __:__ PM
+    LAST UPDATED ON 12-2-21 AT 4:39 PM
+    LAST PUSHED TO GITHUB ON 12-2-21 at 4:40 PM
 
     CUBE, TEAM SCORING ELEMENT, AND DUCK DETECTION
     PIPELINE FOR THE FTC FREIGHT FRENZY SEASON
@@ -90,30 +90,52 @@ public class CubeDetectionPipeline extends OpenCvPipeline
     {
         Point[] points = new Point[4];
         rect.points(points);
+
         pos.add(rect);
-        for(int i = 0; i < 4; ++i)
-            Imgproc.line(drawOn, points[i], points[(i+1)%4], RED, 2);
-        
+
+        for (int i = 0; i < 4; ++i)
+                Imgproc.line(drawOn, points[i], points[(i + 1) % 4], RED, 2);
+
     }
-    public ArrayList<Integer> getPositions(){
-        //YES THIS BS IS NECESSARY TO CONVERT A POINT TO INTS
+
+    public int getCubeNum() {
+        return pos.size();
+    }
+
+    public int getY(int index) {
+        RotatedRect rect = pos.get(index);
+        Point center = rect.center;
+        return (int) center.y;
+    }
+    public int getX(int index) {
+        RotatedRect rect = pos.get(index);
+        Point center = rect.center;
+        return (int) center.x;
+    }
+    public int getWidth(int index) {
+        RotatedRect rect = pos.get(index);
+        Size size = rect.size;
+        return (int) size.width;
+    }
+    public int getHeight(int index) {
+        RotatedRect rect = pos.get(index);
+        Size size = rect.size;
+        return (int) size.height;
+    }
+
+    public ArrayList<RotatedRect> getArrayList(){
+        return pos;
+    }
+    /*public ArrayList<Integer> getPositions(){
         ArrayList<Integer> int_pos = new ArrayList<Integer>();
         for(RotatedRect rect : pos){
             Point center1 = rect.center;
             Size size = rect.size;
 
-            String c = center1.toString();
-            String s = size.toString();
-
-            c = c.substring(1, c.length()-1);
-            String s2 = s.substring(s.indexOf("x"));
-            s = s.substring(0, s.indexOf("x"));
-
-            int index = c.indexOf(",");
-            int width = (int) Double.parseDouble(s);
-            int height = (int) Double.parseDouble(s2);
-            int x = (int) Double.parseDouble(c.substring(0,index));
-            int y = (int) Double.parseDouble(c.substring(index+1));
+            int width = (int) size.width;
+            int height = (int) size.height;
+            int x = (int) center1.x;
+            int y = (int) center1.y;
 
             if(width/2 > height){
                 int_pos.add(x);//LEFT CUBE
@@ -130,9 +152,8 @@ public class CubeDetectionPipeline extends OpenCvPipeline
             int_pos.add(y);
             int_pos.add(width);
             }
-        }     
+        }    */
 
         //RETURNS THE CENTER POSITION OF EACH ELEMENT X FIRST, THEN Y, THEN THE WIDTH. NOTE (0,0) IS THE TOP LEFT OF THE FRAME, NOT THE BOTTOM LEFT.
-        return int_pos;
+       // return int_pos;
     }
-}
