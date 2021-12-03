@@ -105,8 +105,8 @@ public class TestOp extends OpMode {
 
     @Override
     public void start() {
-        v4b1.setPosition(.79);
-        v4b2.setPosition(.79);
+        v4b1.setPosition(.81);
+        v4b2.setPosition(.81);
         dep.setPosition(.43);
     }
 
@@ -205,8 +205,8 @@ public class TestOp extends OpMode {
             v4b2.setPosition(.19);
             //intake position
         } else if (gamepad1.y) {
-            v4b1.setPosition(.79);
-            v4b2.setPosition(.79);
+            v4b1.setPosition(.81);
+            v4b2.setPosition(.81);
             //deposit position
         } else if (gamepad1.b) {
             v4b1.setPosition(.5);

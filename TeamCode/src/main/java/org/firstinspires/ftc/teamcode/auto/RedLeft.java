@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.PositionalDeviceTracker;
 
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
+import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -59,13 +61,16 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class RedLeft extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
+
+    private int level = 0;
+
     private DcMotorEx lift, liftB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
     private ElapsedTime extend = new ElapsedTime();
 
-    final int liftGrav = (int)(9.8 * 3);
+    final int liftGrav = (int) (9.8 * 3);
     private LiftPID liftPID = new LiftPID(-.03, 0, 0);
     private int liftError = 0;
     private int liftTargetPos = 0;
@@ -76,16 +81,13 @@ public class RedLeft extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private SkystoneDeterminationPipeline pipeline;
+    private CubeDetectionPipeline pipeline;
 
-    private SampleMecanumDrive drive ;
+    private SampleMecanumDrive drive;
 
-    public void initialize(){
+    public void initialize() {
 
         drive = new SampleMecanumDrive(hardwareMap);
-
-
-
 
 
         //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
@@ -123,18 +125,16 @@ public class RedLeft extends LinearOpMode //creates class
         weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
 
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
 
 
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new SkystoneDeterminationPipeline();
+        pipeline = new CubeDetectionPipeline();
         camera.setPipeline(pipeline);
 
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             // @Override
             public void onOpened() {
                 telemetry.update();
@@ -148,23 +148,29 @@ public class RedLeft extends LinearOpMode //creates class
 
             }
         });
+        int ones = 0;
+        int twos = 0;
+        int threes = 0;
 
-        while(!opModeIsActive()){
-            if (pipeline.getAnalysis() == SkystoneDeterminationPipeline.SkystonePosition.LEFT) //zone A
-            {
-                liftTargetPos = 0;
-            }
-            if (pipeline.getAnalysis() == SkystoneDeterminationPipeline.SkystonePosition.CENTER) //zone A
-            {
-                liftTargetPos = med;
-            }
-            if (pipeline.getAnalysis() == SkystoneDeterminationPipeline.SkystonePosition.RIGHT) //zone A
-            {
-                liftTargetPos = top;
-            }
-
+        while (!opModeIsActive()) {
+            int bLevel = getLevel();
+            if(bLevel == 1)
+                ones++;
+            else if(bLevel == 2)
+                twos++;
+            else
+                threes++;
         }
 
+        if(ones != 0)
+            level = 1;
+        else if(twos != 0)
+            level = 2;
+        else
+            level = 3;
+
+        telemetry.addData("DETECTED LEVEL: ",level);
+        telemetry.update();
 
         liftTargetPos = top;
 
@@ -173,9 +179,30 @@ public class RedLeft extends LinearOpMode //creates class
         liftError = liftTargetPos - lift.getCurrentPosition();
 
 
-
     }
 
+    public int getLevel() {
+        int ones = 0;
+        int twos = 0;
+        int threes = 0;
+        int num = pipeline.getCubeNum();
+        telemetry.addData("num of cubes",num);
+        telemetry.update();
+        for (int i = 0; i < num; i++) {
+            try {
+                if (pipeline.getHeight(i) > 150)
+                    if (pipeline.getX(i) > 150)
+                        return 2;
+                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
+                        return 1;
+            }
+            catch(Exception e){
+                telemetry.addData("exception",0);
+                telemetry.update();
+            }
+        }
+        return 3;
+    }
 
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone

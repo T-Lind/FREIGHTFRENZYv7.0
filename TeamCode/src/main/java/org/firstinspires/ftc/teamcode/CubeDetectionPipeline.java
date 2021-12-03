@@ -15,7 +15,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -26,12 +25,12 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
 @Disabled
-public class CubeDetectionPipeline extends OpenCvPipeline
-{
+public class CubeDetectionPipeline extends OpenCvPipeline {
     Mat cbMat = new Mat();
     Mat thresholdMat = new Mat();
     Mat morphedThreshold = new Mat();
@@ -47,18 +46,17 @@ public class CubeDetectionPipeline extends OpenCvPipeline
 
     ArrayList<RotatedRect> pos = new ArrayList<RotatedRect>();
 
-    
+
     @Override
-    public Mat processFrame(Mat input)
-    {
-        for(MatOfPoint contour : findContours(input))
+    public Mat processFrame(Mat input) {
+        pos.clear();
+        for (MatOfPoint contour : findContours(input))
             analyzeContour(contour, input);
         return input;
     }
 
 
-    ArrayList<MatOfPoint> findContours(Mat input)
-    {
+    ArrayList<MatOfPoint> findContours(Mat input) {
         ArrayList<MatOfPoint> contoursList = new ArrayList<>();
         Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(cbMat, cbMat, CB_CHAN_IDX);
@@ -71,89 +69,78 @@ public class CubeDetectionPipeline extends OpenCvPipeline
         return contoursList;
     }
 
-    void morphMask(Mat input, Mat output)
-    {
+    void morphMask(Mat input, Mat output) {
         Imgproc.erode(input, output, erodeElement);
         Imgproc.erode(output, output, erodeElement);
         Imgproc.dilate(output, output, dilateElement);
         Imgproc.dilate(output, output, dilateElement);
     }
 
-    void analyzeContour(MatOfPoint contour, Mat input)
-    {
+    void analyzeContour(MatOfPoint contour, Mat input) {
         MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
         RotatedRect rotatedRectFitToContour = Imgproc.minAreaRect(contour2f);
         drawRotatedRect(rotatedRectFitToContour, input);
 
     }
-    void drawRotatedRect(RotatedRect rect, Mat drawOn)
-    {
+
+    void drawRotatedRect(RotatedRect rect, Mat drawOn) {
         Point[] points = new Point[4];
         rect.points(points);
 
         pos.add(rect);
 
         for (int i = 0; i < 4; ++i)
-                Imgproc.line(drawOn, points[i], points[(i + 1) % 4], RED, 2);
+            Imgproc.line(drawOn, points[i], points[(i + 1) % 4], RED, 2);
 
     }
 
     public int getCubeNum() {
-        return pos.size();
+        if ((pos.size() > 0))
+            return pos.size();
+        return 0;
     }
 
     public int getY(int index) {
-        RotatedRect rect = pos.get(index);
-        Point center = rect.center;
-        return (int) center.y;
-    }
-    public int getX(int index) {
-        RotatedRect rect = pos.get(index);
-        Point center = rect.center;
-        return (int) center.x;
-    }
-    public int getWidth(int index) {
-        RotatedRect rect = pos.get(index);
-        Size size = rect.size;
-        return (int) size.width;
-    }
-    public int getHeight(int index) {
-        RotatedRect rect = pos.get(index);
-        Size size = rect.size;
-        return (int) size.height;
-    }
-
-    public ArrayList<RotatedRect> getArrayList(){
-        return pos;
-    }
-    /*public ArrayList<Integer> getPositions(){
-        ArrayList<Integer> int_pos = new ArrayList<Integer>();
-        for(RotatedRect rect : pos){
-            Point center1 = rect.center;
-            Size size = rect.size;
-
-            int width = (int) size.width;
-            int height = (int) size.height;
-            int x = (int) center1.x;
-            int y = (int) center1.y;
-
-            if(width/2 > height){
-                int_pos.add(x);//LEFT CUBE
-                int_pos.add(y);
-                int_pos.add(width/2);
-                
-                int_pos.add(x+width/2);//RIGHT CUBE
-                int_pos.add(y);
-                int_pos.add(width/2);
-                }                
-
-            else{
-            int_pos.add(x);
-            int_pos.add(y);
-            int_pos.add(width);
+        if ((pos.size() > 0)) {
+            if (pos.get(index) != null) {
+                RotatedRect rect = pos.get(index);
+                Point center = rect.center;
+                return (int) center.y;
             }
-        }    */
-
-        //RETURNS THE CENTER POSITION OF EACH ELEMENT X FIRST, THEN Y, THEN THE WIDTH. NOTE (0,0) IS THE TOP LEFT OF THE FRAME, NOT THE BOTTOM LEFT.
-       // return int_pos;
+        }
+        return -1;
     }
+
+    public int getX(int index) {
+        if ((pos.size() > 0)) {
+            if (pos.get(index) != null) {
+                RotatedRect rect = pos.get(index);
+                Point center = rect.center;
+                return (int) center.x;
+            }
+        }
+        return -1;
+    }
+
+    public int getWidth(int index) {
+        if (pos.size() > 0) {
+            if (pos.get(index) != null) {
+                RotatedRect rect = pos.get(index);
+                Size size = rect.size;
+                return (int) size.width;
+            }
+        }
+        return -1;
+    }
+
+    public int getHeight(int index) {
+        if (pos.size() > 0) {
+            if (pos.get(index) != null) {
+                RotatedRect rect = pos.get(index);
+                Size size = rect.size;
+                return (int) size.height;
+            }
+        }
+        return -1;
+    }
+}

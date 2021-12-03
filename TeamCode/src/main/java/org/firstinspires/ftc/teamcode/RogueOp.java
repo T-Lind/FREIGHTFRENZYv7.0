@@ -96,8 +96,8 @@ public class RogueOp extends OpMode{
 
     @Override
     public void start() {
-        v4b1.setPosition(.79);
-        v4b2.setPosition(.79);
+        v4b1.setPosition(.81);
+        v4b2.setPosition(.81);
         dep.setPosition(.43);
     }
 
@@ -229,8 +229,8 @@ public class RogueOp extends OpMode{
             v4b2.setPosition(.19);
             //dep position
         } else if (gamepad2.x) {
-            v4b1.setPosition(.79);
-            v4b2.setPosition(.79);
+            v4b1.setPosition(.81);
+            v4b2.setPosition(.81);
             //in position
         } else if (gamepad2.b && !succing) {
             v4b1.setPosition(.5);
