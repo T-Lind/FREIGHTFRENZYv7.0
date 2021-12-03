@@ -1,5 +1,6 @@
 //replace this with the normal !opModeIsActive() loop
 //Tiernan Lindauer
+/*
 int ones = 0;
 int twos = 0;
 int threes = 0;
@@ -23,3 +24,4 @@ else
 
 telemetry.addData("DETECTED LEVEL: ",level);
 telemetry.update();
+*/
