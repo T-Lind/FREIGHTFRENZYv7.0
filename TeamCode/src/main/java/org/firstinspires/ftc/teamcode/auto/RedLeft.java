@@ -162,9 +162,9 @@ public class RedLeft extends LinearOpMode //creates class
                 threes++;
         }
 
-        if(ones != 0)
+        if(ones > 1)
             level = 1;
-        else if(twos != 0)
+        else if(twos > 1)
             level = 2;
         else
             level = 3;
