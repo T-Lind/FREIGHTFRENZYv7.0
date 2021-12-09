@@ -27,7 +27,7 @@ public class RogueOp extends OpMode{
     private Rev2mDistanceSensor Distance;
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
-    final int top = 950;
+    final int top = 925;
     final int liftGrav = (int)(9.8 * 3);
     private LiftPID liftPID = new LiftPID(-.03, 0, 0);
     int liftError = 0;
@@ -215,8 +215,8 @@ public class RogueOp extends OpMode{
 
     public void duccSpin() {
         if (gamepad2.a) {
-            duccL.setPower(1);
-            duccR.setPower(1);
+            duccL.setPower(-1);
+            duccR.setPower(-1);
         } else {
             duccL.setPower(0);
             duccR.setPower(0);

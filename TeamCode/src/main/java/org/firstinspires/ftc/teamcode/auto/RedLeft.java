@@ -21,6 +21,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.ArrayList;
 
 
 @Autonomous(name = "RedLeft")
@@ -33,6 +34,8 @@ public class RedLeft extends LinearOpMode //creates class
     private DcMotorEx lift, liftB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
+    private boolean delay = false;
+
 
     private ElapsedTime extend = new ElapsedTime();
 
@@ -41,8 +44,8 @@ public class RedLeft extends LinearOpMode //creates class
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 950;
-    private final int med = 476;
+    private final int top = 800;
+    private final int med = 365;
 
 
     private WebcamName weCam;
@@ -114,32 +117,43 @@ public class RedLeft extends LinearOpMode //creates class
 
             }
         });
-        int ones = 0;
-        int twos = 0;
-        int threes = 0;
 
+        ArrayList<Integer> levels = new ArrayList<Integer>();
         while (!opModeIsActive()) {
+
             int bLevel = getLevel();
-            if(bLevel == 1)
-                ones++;
-            else if(bLevel == 2)
-                twos++;
-            else
-                threes++;
+
+            levels.add(bLevel);
+
+            telemetry.addData("DETECTED LEVEL: ",bLevel);
+
+            if(gamepad1.a)
+                delay = true;
+
+
+            telemetry.addData("Is delay turned on?", delay);
+            telemetry.update();
         }
 
-        if(ones > 1)
+        level = 0;
+
+        if(levels.contains(1)) {
+            liftTargetPos = 0;
             level = 1;
-        else if(twos > 1)
-            level = 2;
-        else
+        } else{
+            for(int i = levels.size() - 30; i < levels.size(); i++) {
+                if (levels.get(i) == 2) {
+                    level = 2;
+                    liftTargetPos = med;
+                }
+            }
+        }
+
+        if(level == 0) {
             level = 3;
-
-        telemetry.addData("DETECTED LEVEL: ",level);
-        telemetry.update();
-
-        liftTargetPos = top;
-
+            liftTargetPos =  top;
+        }
+       // liftTargetPos = top;
 
         //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
@@ -148,19 +162,22 @@ public class RedLeft extends LinearOpMode //creates class
     }
 
     public int getLevel() {
-        int ones = 0;
-        int twos = 0;
-        int threes = 0;
+
         int num = pipeline.getCubeNum();
-        telemetry.addData("num of cubes",num);
-        telemetry.update();
+
         for (int i = 0; i < num; i++) {
             try {
-                if ((pipeline.getHeight(i) > 150) && (pipeline.getY(i) > 400)) {
+                telemetry.addData("Height", pipeline.getHeight(i));
+
+                if ((pipeline.getHeight(i) > 100) && (pipeline.getY(i) > 400)) {
+                    telemetry.addData("X Pos", pipeline.getX(i));
+                    telemetry.addData("Y Pos", pipeline.getY(i));
+
                     if (pipeline.getX(i) > 150)
                         return 2;
                     else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
                         return 1;
+
                 }
             }
             catch(Exception e){
@@ -168,6 +185,7 @@ public class RedLeft extends LinearOpMode //creates class
                 telemetry.update();
             }
         }
+        telemetry.update();
         return 3;
     }
 
@@ -179,76 +197,110 @@ public class RedLeft extends LinearOpMode //creates class
         telemetry.update();
     }
 
+    public void keepLiftAlive(){
+        if(level != 1) {
+            liftError = liftTargetPos - lift.getCurrentPosition();
+
+            //Takes the lift up
+
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
+            liftB.setPower(lift.getPower());
+            telemetry.addData("Target Position", liftTargetPos);
+            telemetry.addData("Current position", lift.getCurrentPosition());
+            telemetry.update();
+        }
+    }
 
 
     public void liftAndDeposit() throws InterruptedException{
+        double targetV4B = 0;
+        if(level == 1 || level == 2)
+            targetV4B = .4;
+        else
+            targetV4B = .19;
 
         liftError = liftTargetPos - lift.getCurrentPosition();
 
         boolean depositRun = true;
-        ElapsedTime deposit = new ElapsedTime();
-        ElapsedTime help = new ElapsedTime();
 
-        while(depositRun){
+        while(liftError > 50 && level != 1){
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
-            liftB.setPower(lift.getPower());
+                lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
+                liftB.setPower(lift.getPower());
 
-            telemetry.addData("Target Position", liftTargetPos);
-            telemetry.addData("Current position", lift.getCurrentPosition());
-            telemetry.update();
-
-            if(Math.abs(liftError) < 50){
-
-
-                if(extend.milliseconds() > 750 && extend.milliseconds() < 1500) {
-
-                    //Moves the virtual bars forward
-                    v4b1.setPosition(.79);
-                    v4b2.setPosition(.79);
-                }
-
-                sleep(2000);
-
-                if(extend.milliseconds() > 1500 && extend.milliseconds() < 2250 ) {
-                    //Opens the deposit
-                    dep.setPosition(.5);
-                }
-                if(extend.milliseconds() > 2250 && extend.milliseconds() < 3000 ) {
-
-                    //Closes the deposit
-                    dep.setPosition(.4);
-                }
-                if(extend.milliseconds() > 3750 && extend.milliseconds() < 4500 ) {
-
-                    //Moves the virtual bars backward
-                    v4b1.setPosition(.19);
-                    v4b2.setPosition(.19);
-                }
-                if(extend.milliseconds() > 4500 && extend.milliseconds() < 5250 ) {
-
-                    //Gravity pulls the lift down
-                    lift.setPower(0);
-                    liftB.setPower(lift.getPower());
-
-                    depositRun = false;
-                }
-
-            }
         }
+
+        extend.reset();
+
+        while(depositRun){
+
+            keepLiftAlive();
+                //while(!die) {
+                    if (extend.milliseconds() < 2000) {
+                        keepLiftAlive();
+
+                        //Moves the virtual bars forward
+                        v4b1.setPosition(targetV4B);
+                        v4b2.setPosition(targetV4B);
+                    }
+
+                    if (extend.milliseconds() > 2000 && extend.milliseconds() < 3000) {
+                        keepLiftAlive();
+
+                        //Opens the deposit
+                        dep.setPosition(.55);
+                    }
+                    if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
+
+                        //Closes the deposit
+                       // keepLiftAlive();
+
+                        dep.setPosition(.4);
+                    }
+                    if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
+                       // keepLiftAlive();
+
+                        //Moves the virtual bars backward
+                        v4b1.setPosition(.79);
+                        v4b2.setPosition(.79);
+                    }
+                    if (extend.milliseconds() > 5000) {
+
+                        //Gravity pulls the lift down
+                        lift.setPower(0);
+                        liftB.setPower(lift.getPower());
+                        depositRun = false;
+
+
+                    }
+
+                //    depositRun = false;
+                }
+           // }
+
 
 
     }
 
 
+    public void starts(){
+        v4b1.setPosition(.79);
+        v4b2.setPosition(.79);
+        dep.setPosition(.4);
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         initialize();
+        if(delay){
+            sleep(5000);
+        }
+        starts();
         redLeft();
-
+        //liftAndDeposit();
     }
 
     public void redLeft() throws InterruptedException{
@@ -263,38 +315,43 @@ public class RedLeft extends LinearOpMode //creates class
         drive.followTrajectory(traj3);
 
         Trajectory traj = drive.trajectoryBuilder(new Pose2d(3,0))
-                .strafeRight(19)
+                .strafeRight(21)
                 .build();
 
         drive.followTrajectory(traj);
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,-19))
-                .forward(15.5)
+
+
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,-21))
+                .forward(16)
                 .build();
 
         drive.followTrajectory(traj2);
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(18.5,-19))
+        liftAndDeposit();
+
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(18.5,-21))
                 .back(11)
                 .build();
 
+        //DO NOT MESS WITH ANYTHING HERE AFTER
         drive.followTrajectory(traj4);
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(7.5,-19))
-                .strafeLeft(44.5)
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(7,-21))
+                .strafeLeft(46.5)
                 .build();
 
         drive.followTrajectory(traj5);
 
         spinDuck();
 
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(7.5,27.5))
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(7,27.5))
                 .forward(21)
                 .build();
 
         drive.followTrajectory(traj6);
 
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(28.5,27))
+        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(28,27))
                 .strafeLeft(2)
                 .build();
 
