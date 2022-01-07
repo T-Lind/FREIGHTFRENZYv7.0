@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //not paying attention in CS2 pog
 
@@ -156,6 +157,7 @@ public class TestOp extends OpMode {
 
         telemetry.addData("lift", lift.getCurrentPosition());
         telemetry.addData("Angle", angles.firstAngle);
+        telemetry.addData("distance", Distance.getDistance(DistanceUnit.MM));
         telemetry.update();
         toggleA.updateEnd();
 
@@ -192,8 +194,7 @@ public class TestOp extends OpMode {
             liftB.setPower(.01);
         } else {
             lift.setPower(0);
-            liftB
-                    .setPower(0);
+            liftB.setPower(0);
         }
     }
 
