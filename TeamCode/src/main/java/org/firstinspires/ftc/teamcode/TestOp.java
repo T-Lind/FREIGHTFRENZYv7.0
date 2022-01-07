@@ -23,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @TeleOp(name="TestOp")
 public class TestOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, liftB;
+    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, intakeB, lift, liftB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean direction, togglePrecision;
@@ -78,6 +78,11 @@ public class TestOp extends OpMode {
 
         liftB.setDirection(DcMotor.Direction.REVERSE);
 
+        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
+        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         v4b1 = hardwareMap.servo.get("v4b1");
         v4b2 = hardwareMap.servo.get("v4b2");
         dep = hardwareMap.servo.get("dep");
@@ -88,7 +93,7 @@ public class TestOp extends OpMode {
 
         v4b1.setDirection(Servo.Direction.REVERSE);
 
-        Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "spit");
+        Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -107,7 +112,7 @@ public class TestOp extends OpMode {
     public void start() {
         v4b1.setPosition(.81);
         v4b2.setPosition(.81);
-        dep.setPosition(.43);
+        dep.setPosition(.13);
     }
 
     @Override
@@ -160,11 +165,14 @@ public class TestOp extends OpMode {
 
     public void succ() {
         if (gamepad1.left_trigger > .5) {
-            intake.setPower(-1);
+            intake.setPower(-.95);
+            intakeB.setPower(.95);
         } else if (gamepad1.left_bumper) {
-            intake.setPower(1);
+            intake.setPower(.95);
+            intakeB.setPower(-.95);
         } else {
             intake.setPower(0);
+            intakeB.setPower(0);
         }
 
     }
@@ -215,9 +223,9 @@ public class TestOp extends OpMode {
         }
 
         if (gamepad1.right_trigger > .5) {
-            dep.setPosition(.5);
+            dep.setPosition(0);
         } else {
-            dep.setPosition(.43);
+            dep.setPosition(.13);
         }
     }
 

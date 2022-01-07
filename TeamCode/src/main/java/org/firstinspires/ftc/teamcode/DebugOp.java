@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name="DebugOp")
 public class DebugOp extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, liftB;
+    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, intakeB, lift, liftB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean direction, togglePrecision;
@@ -53,7 +53,7 @@ public class DebugOp extends OpMode{
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
@@ -65,6 +65,12 @@ public class DebugOp extends OpMode{
 
         liftB.setDirection(DcMotor.Direction.REVERSE);
 
+        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
+        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+
         v4b1 = hardwareMap.servo.get("v4b1");
         v4b2 = hardwareMap.servo.get("v4b2");
         dep = hardwareMap.servo.get("dep");
@@ -75,7 +81,7 @@ public class DebugOp extends OpMode{
 
         v4b1.setDirection(Servo.Direction.REVERSE);
 
-        Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "spit");
+        Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
 
 
