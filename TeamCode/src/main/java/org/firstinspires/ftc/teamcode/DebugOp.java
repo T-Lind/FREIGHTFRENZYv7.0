@@ -47,7 +47,7 @@ public class DebugOp extends OpMode{
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+     /*   intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -79,7 +79,7 @@ public class DebugOp extends OpMode{
 
         duccL.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        v4b1.setDirection(Servo.Direction.REVERSE);
+        v4b1.setDirection(Servo.Direction.REVERSE);*/
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
@@ -93,22 +93,22 @@ public class DebugOp extends OpMode{
     @Override
     public void loop() {
         if(gamepad1.a) {
-            leftBack.setPower(.2);
+            leftBack.setPower(.4);
         } else {
             leftBack.setPower(0);
         }
         if(gamepad1.b) {
-            rightBack.setPower(.2);
+            rightBack.setPower(.4);
         }else {
             rightBack.setPower(0);
         }
         if(gamepad1.x) {
-            leftFront.setPower(.2);
+            leftFront.setPower(.4);
         }else {
             leftFront.setPower(0);
         }
         if(gamepad1.y) {
-            rightFront.setPower(.2);
+            rightFront.setPower(.4);
         }else {
             rightFront.setPower(0);
         }
