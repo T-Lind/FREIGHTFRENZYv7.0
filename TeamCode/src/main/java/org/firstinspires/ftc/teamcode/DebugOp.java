@@ -113,7 +113,10 @@ public class DebugOp extends OpMode{
             rightFront.setPower(0);
         }
 
-        telemetry.addData("BRUH", rightFront.getCurrentPosition());
+        telemetry.addData("RF", rightFront.getCurrentPosition());
+        telemetry.addData("RB", rightBack.getCurrentPosition());
+        telemetry.addData("LF", leftFront.getCurrentPosition());
+        telemetry.addData("LB", leftBack.getCurrentPosition());
 
         telemetry.update();
 
