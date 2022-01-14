@@ -169,14 +169,14 @@ public class RogueOp extends OpMode{
                 succing = true;
                 if (reading > full) {
                     intake.setPower(1);
-                    intakeB.setPower(-1);
+                    intakeB.setPower(1);
                 } else {
                     intake.setPower(-1);
-                    intakeB.setPower(1);
+                    intakeB.setPower(-1);
                 }
             } else if (gamepad1.left_bumper) {
                 intake.setPower(1);
-                intake.setPower(-1);
+                intake.setPower(1);
                 succing = true;
             } else {
                 intake.setPower(0);

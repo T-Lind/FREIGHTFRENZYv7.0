@@ -168,10 +168,10 @@ public class TestOp extends OpMode {
     public void succ() {
         if (gamepad1.left_trigger > .5) {
             intake.setPower(-.95);
-            intakeB.setPower(.95);
+            intakeB.setPower(-.95);
         } else if (gamepad1.left_bumper) {
             intake.setPower(.95);
-            intakeB.setPower(-.95);
+            intakeB.setPower(.95);
         } else {
             intake.setPower(0);
             intakeB.setPower(0);
