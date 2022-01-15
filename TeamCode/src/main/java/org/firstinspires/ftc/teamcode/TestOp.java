@@ -192,8 +192,8 @@ public class TestOp extends OpMode {
 
     public void lift() {
         if (gamepad1.dpad_up) {
-            lift.setPower(-.8);
-            liftB.setPower(-.8);
+            lift.setPower(.9);
+            liftB.setPower(.9);
         } else if (gamepad1.dpad_down) {
             lift.setPower(.01);
             liftB.setPower(.01);
