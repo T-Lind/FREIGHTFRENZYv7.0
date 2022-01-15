@@ -58,8 +58,8 @@ public class TestOp extends OpMode {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
@@ -111,8 +111,8 @@ public class TestOp extends OpMode {
 
     @Override
     public void start() {
-        v4b1.setPosition(.81);
-        v4b2.setPosition(.81);
+        v4b1.setPosition(.19);
+        v4b2.setPosition(.19);
         dep.setPosition(.13);
     }
 
@@ -187,8 +187,8 @@ public class TestOp extends OpMode {
 
     public void lift() {
         if (gamepad1.dpad_up) {
-            lift.setPower(-.6);
-            liftB.setPower(-.6);
+            lift.setPower(-.8);
+            liftB.setPower(-.8);
         } else if (gamepad1.dpad_down) {
             lift.setPower(.01);
             liftB.setPower(.01);
