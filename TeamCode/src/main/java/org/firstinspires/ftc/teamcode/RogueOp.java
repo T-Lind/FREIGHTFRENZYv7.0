@@ -216,11 +216,14 @@ public class RogueOp extends OpMode{
             v4b2.setPosition(.19);
             liftTargetPos = 0;
             find = false;
-            lift.setPower(0);
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
         }
         if(find) {
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
+            liftB.setPower(lift.getPower());
+        } else {
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
         }
         if(extend) {
