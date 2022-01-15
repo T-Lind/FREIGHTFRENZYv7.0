@@ -41,10 +41,14 @@ public class TestOp extends OpMode {
 
     @Override
     public void init() {
-        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
-        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
-        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
-        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
+        //leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
+        //leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
+        //rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
+        //rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
+        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
+        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
+        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
+        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -58,8 +62,8 @@ public class TestOp extends OpMode {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
@@ -105,15 +109,16 @@ public class TestOp extends OpMode {
         parameters.loggingTag = "IMU";
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        v4b1.setPosition(.19);
+        v4b2.setPosition(.19);
+        dep.setPosition(.5);
 
 
     }
 
     @Override
     public void start() {
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
-        dep.setPosition(.13);
+
     }
 
     @Override
@@ -224,9 +229,9 @@ public class TestOp extends OpMode {
         }
 
         if (gamepad1.right_trigger > .5) {
-            dep.setPosition(0);
+            dep.setPosition(.3);
         } else {
-            dep.setPosition(.13);
+            dep.setPosition(.5);
         }
     }
 

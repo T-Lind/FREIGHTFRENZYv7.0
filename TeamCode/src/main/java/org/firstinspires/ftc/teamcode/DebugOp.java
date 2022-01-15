@@ -93,22 +93,22 @@ public class DebugOp extends OpMode{
     @Override
     public void loop() {
         if(gamepad1.a) {
-            leftBack.setPower(.4);
+            leftBack.setPower(.1);
         } else {
             leftBack.setPower(0);
         }
         if(gamepad1.b) {
-            rightBack.setPower(.4);
+            rightBack.setPower(.1);
         }else {
             rightBack.setPower(0);
         }
         if(gamepad1.x) {
-            leftFront.setPower(.4);
+            leftFront.setPower(.1);
         }else {
             leftFront.setPower(0);
         }
         if(gamepad1.y) {
-            rightFront.setPower(.4);
+            rightFront.setPower(.1);
         }else {
             rightFront.setPower(0);
         }

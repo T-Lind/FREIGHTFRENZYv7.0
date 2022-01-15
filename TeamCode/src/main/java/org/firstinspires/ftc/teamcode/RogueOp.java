@@ -31,7 +31,7 @@ public class RogueOp extends OpMode{
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
     final int top = 650;
     final int liftGrav = (int)(9.8 * 3);
-    private LiftPID liftPID = new LiftPID(-.04, 0, 0);
+    private LiftPID liftPID = new LiftPID(-.05, 0, 0);
     int liftError = 0;
     int liftTargetPos = 0;
     boolean find = false;
@@ -42,10 +42,10 @@ public class RogueOp extends OpMode{
 
     @Override
     public void init() {
-        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
-        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
-        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
-        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
+        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
+        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
+        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
+        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -59,8 +59,8 @@ public class RogueOp extends OpMode{
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
@@ -97,6 +97,9 @@ public class RogueOp extends OpMode{
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
+        v4b1.setPosition(.19);
+        v4b2.setPosition(.19);
+        dep.setPosition(.5);
 
 
 
@@ -105,9 +108,6 @@ public class RogueOp extends OpMode{
 
     @Override
     public void start() {
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
-        dep.setPosition(.13);
         reading = Distance.getDistance(DistanceUnit.MM);
     }
 
@@ -176,7 +176,7 @@ public class RogueOp extends OpMode{
                 }
             } else if (gamepad1.left_bumper) {
                 intake.setPower(1);
-                intake.setPower(1);
+                intakeB.setPower(1);
                 succing = true;
             } else {
                 intake.setPower(0);
@@ -259,9 +259,9 @@ public class RogueOp extends OpMode{
         }
 
         if (gamepad2.right_trigger > .5) {
-            dep.setPosition(0);
+            dep.setPosition(.3);
         } else {
-            dep.setPosition(.13);
+            dep.setPosition(.5);
         }
     }
 
