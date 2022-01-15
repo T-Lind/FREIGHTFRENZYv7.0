@@ -111,7 +111,7 @@ public class TestOp extends OpMode {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
-        dep.setPosition(.5);
+        dep.setPosition(.52);
 
 
     }
@@ -231,7 +231,7 @@ public class TestOp extends OpMode {
         if (gamepad1.right_trigger > .5) {
             dep.setPosition(.3);
         } else {
-            dep.setPosition(.5);
+            dep.setPosition(.52);
         }
     }
 
