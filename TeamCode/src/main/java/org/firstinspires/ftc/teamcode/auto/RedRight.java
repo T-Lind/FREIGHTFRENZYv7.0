@@ -35,6 +35,8 @@ public class RedRight extends LinearOpMode //creates class
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
+    private boolean aman = true;
+
     private boolean runAutoCall = true;
 
     private ElapsedTime extend = new ElapsedTime();
@@ -214,13 +216,17 @@ public class RedRight extends LinearOpMode //creates class
                 v4b2.setPosition(.81);
             }
 
-            if(!drive.isBusy()){
+            if((!drive.isBusy()) && (aman)){
                 dep.setPosition(.3);
                 sleep(500);
                 starts();
                 liftTargetPos = 0;
-                lift.setPower(Range.clip(liftPID.getCorrection(0), 0, 1));
+                liftError = liftTargetPos - lift.getCurrentPosition();
+
+                lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
                 liftB.setPower(lift.getPower());
+
+                aman = false;
 
             }
 
@@ -264,7 +270,7 @@ public class RedRight extends LinearOpMode //creates class
 
             drive.followTrajectoryAsync(traj3);
 
-            Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-35, 0, Math.toRadians(77.5)))
+            Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-35, 0, Math.toRadians(88)))
                     .back(7)
                     .build();
 
