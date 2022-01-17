@@ -208,102 +208,37 @@ public class RedRight extends LinearOpMode //creates class
 
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
-            telemetry.addData("Target Position", liftTargetPos);
-            telemetry.addData("Current position", lift.getCurrentPosition());
-            telemetry.update();
 
-    }
-
-
-    public void liftAndDeposit() throws InterruptedException{
-        double targetV4B = 0;
-        if(level == 1 )
-            targetV4B = .405;
-        else if(level == 2)
-            targetV4B = .335;
-        else
-             targetV4B = .19;
-
-        liftError = liftTargetPos - lift.getCurrentPosition();
-
-        boolean depositRun = true;
-
-        while(liftError > 50 && level != 1){
-            liftError = liftTargetPos - lift.getCurrentPosition();
-
-            //Takes the lift up
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
-            liftB.setPower(lift.getPower());
-
-        }
-
-        extend.reset();
-
-        while(depositRun){
-
-            keepLiftAlive();
-            //while(!die) {
-            if (extend.milliseconds() < 2000) {
-                keepLiftAlive();
-
-                //Moves the virtual bars forward
-                v4b1.setPosition(targetV4B);
-                v4b2.setPosition(targetV4B);
+            if(liftTargetPos != 0) {
+                v4b1.setPosition(.81);
+                v4b2.setPosition(.81);
             }
 
-            if (extend.milliseconds() > 2000 && extend.milliseconds() < 3000) {
-                keepLiftAlive();
-
-                //Opens the deposit
-                dep.setPosition(.55);
-            }
-            if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
-
-                //Closes the deposit
-                // keepLiftAlive();
-
-                dep.setPosition(.4);
-            }
-            if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
-                // keepLiftAlive();
-
-                //Moves the virtual bars backward
-                v4b1.setPosition(.79);
-                v4b2.setPosition(.79);
-            }
-            if (extend.milliseconds() > 5000) {
-
-                //Gravity pulls the lift down
-                lift.setPower(0);
+            if(!drive.isBusy()){
+                dep.setPosition(.3);
+                sleep(500);
+                starts();
+                liftTargetPos = 0;
+                lift.setPower(Range.clip(liftPID.getCorrection(0), 0, 1));
                 liftB.setPower(lift.getPower());
-                depositRun = false;
-
 
             }
 
-            //    depositRun = false;
-        }
-        // }
-
-
 
     }
+
 
 
     public void starts(){
-        v4b1.setPosition(.79);
-        v4b2.setPosition(.79);
-        dep.setPosition(.4);
+        v4b1.setPosition(.19);
+        v4b2.setPosition(.19);
+        dep.setPosition(.52);
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         initialize();
-
-        if(delay){
-            sleep(5000);
-        }
         starts();
 
         while(opModeIsActive()){
@@ -311,21 +246,33 @@ public class RedRight extends LinearOpMode //creates class
             drive.update();
             keepLiftAlive();
         }
+
+
+
         //liftAndDeposit();
     }
+
 
     public void redRight() throws InterruptedException{
 
         if(runAutoCall) {
-            waitForStart();
 
-            if (isStopRequested()) return;
-
+            //.back means FORWARD (in direction of jerry)
             Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                    .forward(14)
+                    .back(35)
                     .build();
 
             drive.followTrajectoryAsync(traj3);
+
+            Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-35, 0, Math.toRadians(77.5)))
+                    .back(7)
+                    .build();
+
+            drive.followTrajectoryAsync(traj4);
+
+
+
+            runAutoCall = false;
         }
 
     }
