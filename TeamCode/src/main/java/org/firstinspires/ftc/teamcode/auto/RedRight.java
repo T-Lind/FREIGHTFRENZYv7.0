@@ -35,14 +35,16 @@ public class RedRight extends LinearOpMode //creates class
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
+    private boolean runAutoCall = true;
+
     private ElapsedTime extend = new ElapsedTime();
 
     final int liftGrav = (int) (9.8 * 3);
-    private LiftPID liftPID = new LiftPID(-.03, 0, 0);
+    private LiftPID liftPID = new LiftPID(.05, 0, 0);
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 800;
+    private final int top = 650;
     private final int med = 365;
 
 
@@ -88,7 +90,7 @@ public class RedRight extends LinearOpMode //creates class
 
         v4b1.setDirection(Servo.Direction.REVERSE);
 
-
+        /*
         weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
 
@@ -157,7 +159,9 @@ public class RedRight extends LinearOpMode //creates class
         //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
 
+    */
 
+        liftTargetPos = top;
     }
 
     public int getLevel() {
@@ -197,17 +201,17 @@ public class RedRight extends LinearOpMode //creates class
     }
 
     public void keepLiftAlive(){
-        if(level != 1) {
+
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
 
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
             telemetry.addData("Target Position", liftTargetPos);
             telemetry.addData("Current position", lift.getCurrentPosition());
             telemetry.update();
-        }
+
     }
 
 
@@ -301,52 +305,28 @@ public class RedRight extends LinearOpMode //creates class
             sleep(5000);
         }
         starts();
-        redRight();
+
+        while(opModeIsActive()){
+            redRight();
+            drive.update();
+            keepLiftAlive();
+        }
         //liftAndDeposit();
     }
 
     public void redRight() throws InterruptedException{
-        waitForStart();
 
-        if (isStopRequested()) return;
+        if(runAutoCall) {
+            waitForStart();
 
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                .forward(3)
-                .build();
+            if (isStopRequested()) return;
 
-        drive.followTrajectory(traj3);
+            Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
+                    .forward(14)
+                    .build();
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(3,0))
-                .strafeLeft(21)
-                .build();
-
-        drive.followTrajectory(traj);
-
-
-
-
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,21))
-                .forward(16)
-                .build();
-
-        drive.followTrajectory(traj2);
-
-        liftAndDeposit();
-
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(19,21))
-                .back(1.5)
-                .build();
-
-        //DO NOT MESS WITH ANYTHING HERE AFTER
-        drive.followTrajectory(traj4);
-
-        drive.turn(Math.toRadians(-90));
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(16,21, Math.toRadians(-90)))
-                .forward(60)
-                .build();
-
-        drive.followTrajectory(traj5);
-
+            drive.followTrajectoryAsync(traj3);
+        }
 
     }
 
