@@ -3,17 +3,20 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -31,9 +34,15 @@ public class RedRight extends LinearOpMode //creates class
 
     private int level = 0;
     private boolean delay = false;
-    private DcMotorEx lift, liftB;
+    private DcMotorEx lift, liftB , intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
+
+    private Rev2mDistanceSensor Distance;
+
+    private double full = 0.0; //distance sensor reading for filled deposit
+   private double reading;
+
 
     private boolean aman = true;
 
@@ -46,7 +55,7 @@ public class RedRight extends LinearOpMode //creates class
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 650;
+    private final int top = 620;
     private final int med = 365;
 
 
@@ -60,14 +69,13 @@ public class RedRight extends LinearOpMode //creates class
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-
-        //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
-        //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
@@ -85,6 +93,10 @@ public class RedRight extends LinearOpMode //creates class
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
 
+        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
+        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         drive = new SampleMecanumDrive(hardwareMap);
 
 
@@ -161,9 +173,23 @@ public class RedRight extends LinearOpMode //creates class
         //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
 
+
     */
 
+        starts();
+
+        Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
+
+        while(!opModeIsActive()){
+            telemetry.addData("Reading: ", Distance.getDistance(DistanceUnit.MM));
+            telemetry.update();
+        }
         liftTargetPos = top;
+
+        full = Distance.getDistance(DistanceUnit.MM);
+
+
+
     }
 
     public int getLevel() {
@@ -217,8 +243,8 @@ public class RedRight extends LinearOpMode //creates class
             }
 
             if((!drive.isBusy()) && (aman)){
-                dep.setPosition(.3);
-                sleep(500);
+                 dep.setPosition(.355);
+                sleep(750);
                 starts();
                 liftTargetPos = 0;
                 liftError = liftTargetPos - lift.getCurrentPosition();
@@ -227,6 +253,8 @@ public class RedRight extends LinearOpMode //creates class
                 liftB.setPower(lift.getPower());
 
                 aman = false;
+                reading = Distance.getDistance(DistanceUnit.MM);
+
 
             }
 
@@ -239,6 +267,8 @@ public class RedRight extends LinearOpMode //creates class
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
         dep.setPosition(.52);
+        intake.setPower(0);
+        intakeB.setPower(0);
     }
 
     @Override
@@ -251,11 +281,44 @@ public class RedRight extends LinearOpMode //creates class
             redRight();
             drive.update();
             keepLiftAlive();
+            fetchFreight();
         }
 
 
 
         //liftAndDeposit();
+    }
+
+    public void fetchFreight(){
+        if(!aman) {
+            Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-42, 0, Math.toRadians(88)))
+                    .forward(40)
+                    .build();
+            drive.followTrajectory(traj3);
+
+            int x = 0;
+
+            intake.setPower(1);
+            intakeB.setPower(1);
+
+            reading = Distance.getDistance(DistanceUnit.MM);
+
+            while (reading < full) {
+                Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-2 + x, 0, Math.toRadians(89)))
+                        .forward(2)
+                        .build();
+                drive.followTrajectory(traj4);
+                x+=2;
+                reading = Distance.getDistance(DistanceUnit.MM);
+
+            }
+
+            intake.setPower(0);
+            intakeB.setPower(0);
+        }
+
+
+
     }
 
 
@@ -264,20 +327,19 @@ public class RedRight extends LinearOpMode //creates class
         if(runAutoCall) {
 
             //.back means FORWARD (in direction of jerry)
+
             Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
+
                     .back(35)
                     .build();
 
             drive.followTrajectoryAsync(traj3);
 
-            Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-35, 0, Math.toRadians(88)))
+            Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-35, 0, Math.toRadians(89)))
                     .back(7)
                     .build();
 
             drive.followTrajectoryAsync(traj4);
-
-
-
             runAutoCall = false;
         }
 
