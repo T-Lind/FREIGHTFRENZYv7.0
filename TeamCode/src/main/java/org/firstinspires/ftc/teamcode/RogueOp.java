@@ -163,21 +163,22 @@ public class RogueOp extends OpMode{
     }
 
     public void succ() {
-        if(lift.getPower() == 0) {
+        if(liftTargetPos == 0) {
             if (gamepad1.left_trigger > .5) {
                 reading = Distance.getDistance(DistanceUnit.MM);
-                succing = true;
                 if (reading < full) {
                     intake.setPower(1);
                     intakeB.setPower(1);
+                    succing = false;
                 } else {
                     intake.setPower(-1);
                     intakeB.setPower(-1);
+                    succing = true;
                 }
             } else if (gamepad1.left_bumper) {
                 intake.setPower(1);
                 intakeB.setPower(1);
-                succing = true;
+                succing = false;
             } else {
                 intake.setPower(0);
                 intakeB.setPower(0);
