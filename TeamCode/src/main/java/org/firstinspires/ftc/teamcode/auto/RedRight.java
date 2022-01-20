@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -38,15 +40,19 @@ public class RedRight extends LinearOpMode //creates class
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
+    private int x = 0;
+
     private Rev2mDistanceSensor Distance;
 
     private double full = 0.0; //distance sensor reading for filled deposit
    private double reading;
 
 
+   //IMPORTANT BOOLEANS FOR STATE MACHINES
     private boolean aman = true;
-
-    private boolean runAutoCall = true;
+    private boolean runAutoCycling = false;
+    private boolean runAutoCall = false;
+    private boolean runDepositFreight = false;
 
     private ElapsedTime extend = new ElapsedTime();
 
@@ -254,7 +260,7 @@ public class RedRight extends LinearOpMode //creates class
 
                 aman = false;
                 reading = Distance.getDistance(DistanceUnit.MM);
-
+                runAutoCycling = true;
 
             }
 
@@ -276,7 +282,7 @@ public class RedRight extends LinearOpMode //creates class
 
         initialize();
         starts();
-
+        /*
         while(opModeIsActive()){
             redRight();
             drive.update();
@@ -285,61 +291,77 @@ public class RedRight extends LinearOpMode //creates class
         }
 
 
+         */
+        testPathing();
+    }
 
-        //liftAndDeposit();
+    public void testPathing() throws InterruptedException{
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+                .back(13)
+                .waitSeconds(.25)
+                .back(22.5)
+                .turn(Math.toRadians(90))
+                .back(5)
+                .build();
+
+        drive.followTrajectorySequence(trajSeq);
+
     }
 
     public void fetchFreight(){
-        if(!aman) {
-            Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-42, 0, Math.toRadians(88)))
-                    .forward(40)
-                    .build();
-            drive.followTrajectory(traj3);
+        if(runAutoCycling) {
+            Trajectory[] trajectories = new Trajectory[100];
+            int i = 0;
+            intake.setPower(-1);
+            intakeB.setPower(-1);
 
-            int x = 0;
-
-            intake.setPower(1);
-            intakeB.setPower(1);
-
-            reading = Distance.getDistance(DistanceUnit.MM);
-
-            while (reading < full) {
-                Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-2 + x, 0, Math.toRadians(89)))
+            while(Distance.getDistance(DistanceUnit.MM) > 100){
+                trajectories[i] = drive.trajectoryBuilder(new Pose2d(x, 0))
                         .forward(2)
                         .build();
-                drive.followTrajectory(traj4);
-                x+=2;
-                reading = Distance.getDistance(DistanceUnit.MM);
+                drive.followTrajectory(trajectories[i]);
+
+                x += 2;
+                i++;
+
+                if(Distance.getDistance(DistanceUnit.MM) < 100) {
+                    intake.setPower(0);
+                    intakeB.setPower(0);
+                    break;
+                }
 
             }
-
             intake.setPower(0);
-            intakeB.setPower(0);
+            intake.setPower(0);
         }
+        runAutoCycling = false;
+   }
 
+    public void depositCycledFreight() throws InterruptedException{
+        if(runDepositFreight){
+            aman = true;
 
-
+            //TrajectorySequence trajSeq = new TrajectorySequence(new Pose2d())
+        }
     }
-
 
     public void redRight() throws InterruptedException{
 
         if(runAutoCall) {
 
+            waitForStart();
+
             //.back means FORWARD (in direction of jerry)
 
-            Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-
-                    .back(35)
+            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+                    .back(57)
+                    .waitSeconds(.5)
+                    .forward(32)
+                    .turn(Math.toRadians(70))
+                    .back(2)
                     .build();
 
-            drive.followTrajectoryAsync(traj3);
-
-            Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-35, 0, Math.toRadians(89)))
-                    .back(7)
-                    .build();
-
-            drive.followTrajectoryAsync(traj4);
+            drive.followTrajectorySequenceAsync(trajSeq);
             runAutoCall = false;
         }
 
