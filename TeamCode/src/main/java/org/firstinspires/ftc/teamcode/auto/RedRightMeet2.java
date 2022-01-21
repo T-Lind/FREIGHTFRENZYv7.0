@@ -40,12 +40,12 @@ public class RedRightMeet2 extends LinearOpMode //creates class
     private ElapsedTime extend = new ElapsedTime();
 
     final int liftGrav = (int) (9.8 * 3);
-    private LiftPID liftPID = new LiftPID(-.03, 0, 0);
+    private LiftPID liftPID = new LiftPID(.05, 0, 0);
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 800;
-    private final int med = 365;
+    private final int top = 650;
+    private final int med = 350;
 
 
     private WebcamName weCam;
@@ -199,12 +199,12 @@ public class RedRightMeet2 extends LinearOpMode //creates class
     }
 
     public void keepLiftAlive(){
-        if(level != 1) {
+        if(true) {
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
 
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
             telemetry.addData("Target Position", liftTargetPos);
             telemetry.addData("Current position", lift.getCurrentPosition());
@@ -215,18 +215,18 @@ public class RedRightMeet2 extends LinearOpMode //creates class
 
     public void liftAndDeposit() throws InterruptedException{
         double targetV4B = 0;
-        if(level == 1 )
-            targetV4B = .405;
-        else if(level == 2)
-            targetV4B = .335;
+        telemetry.addLine("enteredLift");
+        telemetry.update();
+        if(level == 1 || level == 2)
+            targetV4B = .4;
         else
-            targetV4B = .19;
+            targetV4B = .81;
 
         liftError = liftTargetPos - lift.getCurrentPosition();
 
         boolean depositRun = true;
 
-        while(liftError > 50 && level != 1){
+        while(liftError > 50){
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
@@ -238,7 +238,8 @@ public class RedRightMeet2 extends LinearOpMode //creates class
         extend.reset();
 
         while(depositRun){
-
+            telemetry.addData("time", extend.milliseconds());
+            telemetry.update();
             keepLiftAlive();
             //while(!die) {
             if (extend.milliseconds() < 2000) {
@@ -253,30 +254,34 @@ public class RedRightMeet2 extends LinearOpMode //creates class
                 keepLiftAlive();
 
                 //Opens the deposit
-                dep.setPosition(.55);
+                dep.setPosition(.3);
             }
             if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
+                keepLiftAlive();
 
                 //Closes the deposit
                 // keepLiftAlive();
 
-                dep.setPosition(.4);
+                dep.setPosition(.52);
             }
             if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
-                // keepLiftAlive();
+                keepLiftAlive();
 
                 //Moves the virtual bars backward
-                v4b1.setPosition(.79);
-                v4b2.setPosition(.79);
+                v4b1.setPosition(.19);
+                v4b2.setPosition(.19);
             }
-            if (extend.milliseconds() > 5000) {
+            if (extend.milliseconds() > 5000 && extend.milliseconds() < 6500) {
 
                 //Gravity pulls the lift down
-                lift.setPower(0);
-                liftB.setPower(lift.getPower());
+                liftTargetPos = 0;
+                keepLiftAlive();
+
+
+
+            }
+            if(extend.milliseconds() > 6500){
                 depositRun = false;
-
-
             }
 
             //    depositRun = false;
@@ -289,9 +294,9 @@ public class RedRightMeet2 extends LinearOpMode //creates class
 
 
     public void starts(){
-        v4b1.setPosition(.79);
-        v4b2.setPosition(.79);
-        dep.setPosition(.4);
+        v4b1.setPosition(.19);
+        v4b2.setPosition(.19);
+        dep.setPosition(.52);
     }
 
     @Override

@@ -268,7 +268,7 @@ public class RogueOp extends OpMode{
             //vertical position for asserting dominance
         }
 
-        if (gamepad2.right_trigger > .5) {
+        if (gamepad2.right_trigger > .5 && v4b1.getPosition() > .4) {
             dep.setPosition(.3);
         } else {
             dep.setPosition(.52);
