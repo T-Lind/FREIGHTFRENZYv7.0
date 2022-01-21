@@ -24,8 +24,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "RedLeft")
-public class RedLeft extends LinearOpMode //creates class
+@Autonomous(name = "RedRightMeet2")
+public class RedRightMeet2 extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
 
@@ -40,11 +40,11 @@ public class RedLeft extends LinearOpMode //creates class
     private ElapsedTime extend = new ElapsedTime();
 
     final int liftGrav = (int) (9.8 * 3);
-    private LiftPID liftPID = new LiftPID(.05, 0, 0);
+    private LiftPID liftPID = new LiftPID(-.03, 0, 0);
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 650;
+    private final int top = 800;
     private final int med = 365;
 
 
@@ -133,6 +133,7 @@ public class RedLeft extends LinearOpMode //creates class
 
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
+
         }
 
         level = 0;
@@ -153,7 +154,7 @@ public class RedLeft extends LinearOpMode //creates class
             level = 3;
             liftTargetPos =  top;
         }
-       // liftTargetPos = top;
+        // liftTargetPos = top;
 
         //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
@@ -198,12 +199,12 @@ public class RedLeft extends LinearOpMode //creates class
     }
 
     public void keepLiftAlive(){
-        if(true) {
+        if(level != 1) {
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
 
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
             liftB.setPower(lift.getPower());
             telemetry.addData("Target Position", liftTargetPos);
             telemetry.addData("Current position", lift.getCurrentPosition());
@@ -214,78 +215,73 @@ public class RedLeft extends LinearOpMode //creates class
 
     public void liftAndDeposit() throws InterruptedException{
         double targetV4B = 0;
-        telemetry.addLine("enteredLift");
-        telemetry.update();
-        if(level == 1 || level == 2)
-            targetV4B = .4;
+        if(level == 1 )
+            targetV4B = .405;
+        else if(level == 2)
+            targetV4B = .335;
         else
-            targetV4B = .81;
+            targetV4B = .19;
 
         liftError = liftTargetPos - lift.getCurrentPosition();
 
         boolean depositRun = true;
 
-        while(liftError > 50){
+        while(liftError > 50 && level != 1){
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
-                lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
-                liftB.setPower(lift.getPower());
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
+            liftB.setPower(lift.getPower());
 
         }
 
         extend.reset();
 
         while(depositRun){
-            telemetry.addData("time", extend.milliseconds());
-            telemetry.update();
+
             keepLiftAlive();
-                //while(!die) {
-                    if (extend.milliseconds() < 2000) {
-                        keepLiftAlive();
+            //while(!die) {
+            if (extend.milliseconds() < 2000) {
+                keepLiftAlive();
 
-                        //Moves the virtual bars forward
-                        v4b1.setPosition(targetV4B);
-                        v4b2.setPosition(targetV4B);
-                    }
+                //Moves the virtual bars forward
+                v4b1.setPosition(targetV4B);
+                v4b2.setPosition(targetV4B);
+            }
 
-                    if (extend.milliseconds() > 2000 && extend.milliseconds() < 3000) {
-                        keepLiftAlive();
+            if (extend.milliseconds() > 2000 && extend.milliseconds() < 3000) {
+                keepLiftAlive();
 
-                        //Opens the deposit
-                        dep.setPosition(.3);
-                    }
-                    if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
-                        keepLiftAlive();
+                //Opens the deposit
+                dep.setPosition(.55);
+            }
+            if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
 
-                        //Closes the deposit
-                       // keepLiftAlive();
+                //Closes the deposit
+                // keepLiftAlive();
 
-                        dep.setPosition(.52);
-                    }
-                    if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
-                        keepLiftAlive();
+                dep.setPosition(.4);
+            }
+            if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
+                // keepLiftAlive();
 
-                        //Moves the virtual bars backward
-                        v4b1.setPosition(.19);
-                        v4b2.setPosition(.19);
-                    }
-                    if (extend.milliseconds() > 5000 && extend.milliseconds() < 6500) {
+                //Moves the virtual bars backward
+                v4b1.setPosition(.79);
+                v4b2.setPosition(.79);
+            }
+            if (extend.milliseconds() > 5000) {
 
-                        //Gravity pulls the lift down
-                        liftTargetPos = 0;
-                        keepLiftAlive();
+                //Gravity pulls the lift down
+                lift.setPower(0);
+                liftB.setPower(lift.getPower());
+                depositRun = false;
 
 
+            }
 
-                    }
-                    if(extend.milliseconds() > 6500){
-                        depositRun = false;
-                    }
-
-                //    depositRun = false;
-                }
-           // }
+            //    depositRun = false;
+        }
+        // }
 
 
 
@@ -293,9 +289,9 @@ public class RedLeft extends LinearOpMode //creates class
 
 
     public void starts(){
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
-        dep.setPosition(.52);
+        v4b1.setPosition(.79);
+        v4b2.setPosition(.79);
+        dep.setPosition(.4);
     }
 
     @Override
@@ -306,11 +302,11 @@ public class RedLeft extends LinearOpMode //creates class
             sleep(5000);
         }
         starts();
-        redLeft();
+        RedRightMeet2();
         //liftAndDeposit();
     }
 
-    public void redLeft() throws InterruptedException{
+    public void RedRightMeet2() throws InterruptedException{
         waitForStart();
 
         if (isStopRequested()) return;
@@ -322,62 +318,49 @@ public class RedLeft extends LinearOpMode //creates class
         drive.followTrajectory(traj3);
 
         Trajectory traj = drive.trajectoryBuilder(new Pose2d(-3,0))
-                .strafeRight(21.75)
+                .strafeLeft(21)
                 .build();
 
         drive.followTrajectory(traj);
 
 
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-3,-21.75))
+
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-3,21))
                 .back(11.5)
                 .build();
 
         drive.followTrajectory(traj2);
 
+      //  liftAndDeposit();
 
-        liftAndDeposit();
-
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-14.5,-21.75))
-                .forward(9.5)
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-15.5,21))
+                .forward(1.5)
                 .build();
 
         //DO NOT MESS WITH ANYTHING HERE AFTER
         drive.followTrajectory(traj4);
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4.5,-21.75))
-                .strafeLeft(46.5)
+        drive.turn(Math.toRadians(90));
+
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-14,21, Math.toRadians(90)))
+                .forward(60)
                 .build();
 
         drive.followTrajectory(traj5);
 
-        spinDuck();
-
-     /*   Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(3.5,27.75))
-                .back(29.5)
-                .build();
-
-        drive.followTrajectory(traj6);
-        */
-/*
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-14,-27))
-                .strafeLeft(2)
-                .build();
-
-        drive.followTrajectory(traj7);*/
 
     }
 
 
     public void spinDuck() throws InterruptedException{
         ElapsedTime spinTime = new ElapsedTime();
-        duccL.setPower(-.7);
-        duccR.setPower(-.7);
-        while (spinTime.milliseconds() <= 3500)
+        duccL.setPower(-0.2);
+        duccR.setPower(-0.2);
+        while (spinTime.milliseconds() <= 6000)
             heartbeat();
         duccL.setPower(0);
         duccR.setPower(0);
-
 
     }
 }

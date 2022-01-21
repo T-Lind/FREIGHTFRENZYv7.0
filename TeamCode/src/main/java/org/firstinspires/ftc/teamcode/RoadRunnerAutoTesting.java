@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.PositionalDeviceTracker;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+
 @Autonomous(group = "drive")
 public class RoadRunnerAutoTesting extends LinearOpMode {
     @Override
@@ -24,20 +26,33 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d())
-                .splineTo(new Vector2d(50, 25), 0)
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+                .back(43) //"forward"
+                .waitSeconds(1)
+                .forward(16) //"back"
+                .turn(Math.toRadians(70))
+                .turn(Math.toRadians(-70))
+
+                .splineTo(new Vector2d(6, 47), Math.toRadians(90))
+                .waitSeconds(1)
+                //.back(50)
+                //.turn(Math.toRadians(-90))
+                //.back(49)
+                //.turn(Math.toRadians(-90))
+                //.back(21)
+                .setReversed(true)
+                .splineTo(new Vector2d(-20, -14), Math.toRadians(180)) //reverse spline
+                .turn(Math.toRadians(70))
+                .turn(Math.toRadians(-70))
+                .setReversed(false)
+                .splineTo(new Vector2d(6, 51), Math.toRadians(90))
                 .build();
 
-        drive.followTrajectory(traj);
+        waitForStart();
 
-        sleep(2000);
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d())
-                .splineTo(new Vector2d(0, 45), 0)
+        drive.followTrajectorySequence(trajSeq);
 
-                .build();
-        drive.followTrajectory(traj2);
-        drive.turn(Math.toRadians(-85));
         /*Trajectory traj3 = test.trajectoryBuilder(new Pose2d())
                 .strafeRight(15)
                 .build();*/

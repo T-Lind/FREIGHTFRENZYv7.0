@@ -2,26 +2,21 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -36,23 +31,13 @@ public class RedRight extends LinearOpMode //creates class
 
     private int level = 0;
     private boolean delay = false;
-    private DcMotorEx lift, liftB , intake, intakeB;
+    private DcMotorEx lift, liftB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
-    private int x = 0;
-
-    private Rev2mDistanceSensor Distance;
-
-    private double full = 0.0; //distance sensor reading for filled deposit
-   private double reading;
-
-
-   //IMPORTANT BOOLEANS FOR STATE MACHINES
     private boolean aman = true;
-    private boolean runAutoCycling = false;
-    private boolean runAutoCall = false;
-    private boolean runDepositFreight = false;
+
+    private boolean runAutoCall = true;
 
     private ElapsedTime extend = new ElapsedTime();
 
@@ -75,13 +60,14 @@ public class RedRight extends LinearOpMode //creates class
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+
+        //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
@@ -99,10 +85,6 @@ public class RedRight extends LinearOpMode //creates class
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
 
-        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
-        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         drive = new SampleMecanumDrive(hardwareMap);
 
 
@@ -110,7 +92,7 @@ public class RedRight extends LinearOpMode //creates class
 
         v4b1.setDirection(Servo.Direction.REVERSE);
 
-        /*
+
         weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
 
@@ -180,22 +162,8 @@ public class RedRight extends LinearOpMode //creates class
         liftError = liftTargetPos - lift.getCurrentPosition();
 
 
-    */
 
-        starts();
-
-        Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
-
-        while(!opModeIsActive()){
-            telemetry.addData("Reading: ", Distance.getDistance(DistanceUnit.MM));
-            telemetry.update();
-        }
-        liftTargetPos = top;
-
-        full = Distance.getDistance(DistanceUnit.MM);
-
-
-
+      //  liftTargetPos = top;
     }
 
     public int getLevel() {
@@ -249,8 +217,8 @@ public class RedRight extends LinearOpMode //creates class
             }
 
             if((!drive.isBusy()) && (aman)){
-                 dep.setPosition(.355);
-                sleep(750);
+                dep.setPosition(.3);
+                sleep(500);
                 starts();
                 liftTargetPos = 0;
                 liftError = liftTargetPos - lift.getCurrentPosition();
@@ -259,8 +227,6 @@ public class RedRight extends LinearOpMode //creates class
                 liftB.setPower(lift.getPower());
 
                 aman = false;
-                reading = Distance.getDistance(DistanceUnit.MM);
-                runAutoCycling = true;
 
             }
 
@@ -273,8 +239,6 @@ public class RedRight extends LinearOpMode //creates class
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
         dep.setPosition(.52);
-        intake.setPower(0);
-        intakeB.setPower(0);
     }
 
     @Override
@@ -282,88 +246,42 @@ public class RedRight extends LinearOpMode //creates class
 
         initialize();
         starts();
-        /*
+
         while(opModeIsActive()){
             redRight();
-            drive.update();
-            keepLiftAlive();
-            fetchFreight();
+           // drive.update();
+           // keepLiftAlive();
         }
 
 
-         */
-        testPathing();
+
+        //liftAndDeposit();
     }
 
-    public void testPathing() throws InterruptedException{
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .back(13)
-                .waitSeconds(.25)
-                .back(22.5)
-                .turn(Math.toRadians(90))
-                .back(5)
-                .build();
-
-        drive.followTrajectorySequence(trajSeq);
-
-    }
-
-    public void fetchFreight(){
-        if(runAutoCycling) {
-            Trajectory[] trajectories = new Trajectory[100];
-            int i = 0;
-            intake.setPower(-1);
-            intakeB.setPower(-1);
-
-            while(Distance.getDistance(DistanceUnit.MM) > 100){
-                trajectories[i] = drive.trajectoryBuilder(new Pose2d(x, 0))
-                        .forward(2)
-                        .build();
-                drive.followTrajectory(trajectories[i]);
-
-                x += 2;
-                i++;
-
-                if(Distance.getDistance(DistanceUnit.MM) < 100) {
-                    intake.setPower(0);
-                    intakeB.setPower(0);
-                    break;
-                }
-
-            }
-            intake.setPower(0);
-            intake.setPower(0);
-        }
-        runAutoCycling = false;
-   }
-
-    public void depositCycledFreight() throws InterruptedException{
-        if(runDepositFreight){
-            aman = true;
-
-            //TrajectorySequence trajSeq = new TrajectorySequence(new Pose2d())
-        }
-    }
 
     public void redRight() throws InterruptedException{
-
+ /*
         if(runAutoCall) {
 
-            waitForStart();
-
             //.back means FORWARD (in direction of jerry)
-
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                    .back(57)
-                    .waitSeconds(.5)
-                    .forward(32)
-                    .turn(Math.toRadians(70))
-                    .back(2)
+            Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
+                    .back(35)
                     .build();
 
-            drive.followTrajectorySequenceAsync(trajSeq);
+            drive.followTrajectoryAsync(traj3);
+
+            Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-35, 0, Math.toRadians(88)))
+                    .back(7)
+                    .build();
+
+            drive.followTrajectoryAsync(traj4);
+
+
+
             runAutoCall = false;
         }
+ */
+
 
     }
 
