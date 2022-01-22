@@ -379,7 +379,7 @@ public class RedLeft extends LinearOpMode //creates class
         drive.followTrajectory(traj);*/
 
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-1.5, 23.5))
-                .strafeRight(48.5)
+                .strafeRight(49.25)
                 .build();
         drive.followTrajectory(traj6);
         Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-1.5, -25))
