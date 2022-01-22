@@ -70,7 +70,7 @@ public class RedRight extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 620;
-    private final int med = 365;
+    private final int med = 275;
 
 
     private WebcamName weCam;
