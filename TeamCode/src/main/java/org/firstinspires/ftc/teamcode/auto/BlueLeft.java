@@ -2,26 +2,33 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Autonomous(name = "BlueLeft")
@@ -30,22 +37,40 @@ public class BlueLeft extends LinearOpMode //creates class
     BNO055IMU imu;
 
     private int level = 0;
-
-    private DcMotorEx lift, liftB;
+    private boolean delay = false;
+    private DcMotorEx lift, liftB , intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
-    private boolean delay = false;
 
+    private int x = 0;
+    private int y = 0;
+    private int z = 0;
+
+    private int cycles = 0;
+
+    private Rev2mDistanceSensor Distance;
+
+    private double full = 0.0; //distance sensor reading for filled deposit
+    private double reading;
+
+
+    //IMPORTANT BOOLEANS FOR STATE MACHINES
+    private boolean aman = true;
+    private boolean runAutoCycling = false;
+    private boolean runAutoCall = true;
+    private boolean runDepositFreight = false;
 
     private ElapsedTime extend = new ElapsedTime();
+    private ElapsedTime succ = new ElapsedTime();
+
 
     final int liftGrav = (int) (9.8 * 3);
     private LiftPID liftPID = new LiftPID(.05, 0, 0);
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 650;
-    private final int med = 350;
+    private final int top = 620;
+    private final int med = 276;
 
 
     private WebcamName weCam;
@@ -56,16 +81,13 @@ public class BlueLeft extends LinearOpMode //creates class
 
     public void initialize() {
 
-        drive = new SampleMecanumDrive(hardwareMap);
-
-
-        //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
-        //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
@@ -83,6 +105,10 @@ public class BlueLeft extends LinearOpMode //creates class
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
 
+        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
+        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         drive = new SampleMecanumDrive(hardwareMap);
 
 
@@ -118,12 +144,13 @@ public class BlueLeft extends LinearOpMode //creates class
             }
         });
 
-        ArrayList<Integer> levels = new ArrayList<Integer>();
+        Map<Integer,Double > levels = new HashMap();
+        ElapsedTime eet = new ElapsedTime();
         while (!opModeIsActive()) {
 
             int bLevel = getLevel();
 
-            levels.add(bLevel);
+            levels.put(bLevel,eet.milliseconds());
 
             telemetry.addData("DETECTED LEVEL: ",bLevel);
 
@@ -133,31 +160,32 @@ public class BlueLeft extends LinearOpMode //creates class
 
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
-
         }
 
-        level = 0;
+        double finalTime = eet.milliseconds();
 
-        if(levels.contains(1)) {
-            liftTargetPos = 0;
+        level = 3;
+        liftTargetPos = top;
+
+        if(levels.containsKey(1)){
             level = 1;
-        } else{
-            for(int i = levels.size() - 30; i < levels.size(); i++) {
-                if (levels.get(i) == 2) {
+            liftTargetPos = 0;
+        } else {
+            for(double i : levels.keySet()){
+                if(levels.get(i) >= finalTime - 2000 && i == 1) {
                     level = 2;
                     liftTargetPos = med;
                 }
             }
+
         }
 
-        if(level == 0) {
-            level = 3;
-            liftTargetPos =  top;
-        }
-        // liftTargetPos = top;
 
-        //liftTargetPos = top; //We might need to change this
-        liftError = liftTargetPos - lift.getCurrentPosition();
+
+        Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
+
+
+
 
 
     }
@@ -198,174 +226,208 @@ public class BlueLeft extends LinearOpMode //creates class
         telemetry.update();
     }
 
-    public void keepLiftAlive(){
+    public void keepLiftAlive() throws InterruptedException{
+
         if(true) {
+
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
 
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
-            telemetry.addData("Target Position", liftTargetPos);
-            telemetry.addData("Current position", lift.getCurrentPosition());
-            telemetry.update();
-        }
-    }
 
-
-    public void liftAndDeposit() throws InterruptedException{
-        double targetV4B = 0;
-        telemetry.addLine("enteredLift");
-        telemetry.update();
-        if(level == 1 || level == 2)
-            targetV4B = .4;
-        else
-            targetV4B = .81;
-
-        liftError = liftTargetPos - lift.getCurrentPosition();
-
-        boolean depositRun = true;
-
-        while(liftError > 50){
-            liftError = liftTargetPos - lift.getCurrentPosition();
-
-            //Takes the lift up
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
-            liftB.setPower(lift.getPower());
-
-        }
-
-        extend.reset();
-
-        while(depositRun){
-            telemetry.addData("time", extend.milliseconds());
-            telemetry.update();
-            keepLiftAlive();
-            //while(!die) {
-            if (extend.milliseconds() < 2000) {
-                keepLiftAlive();
-
-                //Moves the virtual bars forward
-                v4b1.setPosition(targetV4B);
-                v4b2.setPosition(targetV4B);
+            if (liftTargetPos == 0 || level == 3) {
+                v4b1.setPosition(.81);
+                v4b2.setPosition(.81);
+            } else{
+                v4b1.setPosition(.5);
+                v4b2.setPosition(.5);
             }
 
-            if (extend.milliseconds() > 2000 && extend.milliseconds() < 3000) {
-                keepLiftAlive();
 
-                //Opens the deposit
-                dep.setPosition(.3);
-            }
-            if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
-                keepLiftAlive();
-
-                //Closes the deposit
-                // keepLiftAlive();
-
-                dep.setPosition(.52);
-            }
-            if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
-                keepLiftAlive();
-
-                //Moves the virtual bars backward
-                v4b1.setPosition(.19);
-                v4b2.setPosition(.19);
-            }
-            if (extend.milliseconds() > 5000 && extend.milliseconds() < 6500) {
-
-                //Gravity pulls the lift down
+            if (aman && (!drive.isBusy())) {
+                dep.setPosition(.355);
+                sleep(450);
+                starts();
                 liftTargetPos = 0;
-                keepLiftAlive();
+                liftError = liftTargetPos - lift.getCurrentPosition();
 
+                lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+                liftB.setPower(lift.getPower());
 
+                aman = false;
+                reading = Distance.getDistance(DistanceUnit.MM);
+                runAutoCycling = true;
+                runDepositFreight = false;
+
+                cycles++;
 
             }
-            if(extend.milliseconds() > 6500){
-                depositRun = false;
-            }
-
-            //    depositRun = false;
         }
-        // }
-
 
 
     }
+
 
 
     public void starts(){
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
         dep.setPosition(.52);
+        intake.setPower(0);
+        intakeB.setPower(0);
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         initialize();
-        if(delay){
-            sleep(5000);
-        }
-        starts();
-        blueLeft();
-        //liftAndDeposit();
-    }
 
-    public void blueLeft() throws InterruptedException{
+
         waitForStart();
 
         if (isStopRequested()) return;
 
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                .forward(3)
+        starts();
+
+
+        while(aman && opModeIsActive()){
+            redRight();
+            drive.update();
+            keepLiftAlive();
+        }
+
+
+        while(opModeIsActive()){
+            fetchFreight();
+            depositCycledFreight();
+
+            if(!runDepositFreight)
+                keepLiftAlive();
+
+            drive.update();
+            if(cycles == 2)
+                break;
+        }
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-35.5, 3, Math.toRadians(90)))
+                .strafeRight(25)
+                .forward(40)
                 .build();
 
-        drive.followTrajectory(traj3);
+        drive.followTrajectorySequence(trajSeq);
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(3,0))
-                .strafeRight(21)
-                .build();
-
-        drive.followTrajectory(traj);
-
-
-
-
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3,-21))
-                .forward(16)
-                .build();
-
-        drive.followTrajectory(traj2);
-
-        liftAndDeposit();
-
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(19,-21))
-                .back(1.5)
-                .build();
-
-        //DO NOT MESS WITH ANYTHING HERE AFTER
-        drive.followTrajectory(traj4);
-
-        drive.turn(Math.toRadians(90));
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(16,-21, Math.toRadians(90)))
-                .forward(60)
-                .build();
-
-        drive.followTrajectory(traj5);
 
 
     }
 
 
-    public void spinDuck() throws InterruptedException{
-        ElapsedTime spinTime = new ElapsedTime();
-        duccL.setPower(-0.2);
-        duccR.setPower(-0.2);
-        while (spinTime.milliseconds() <= 6000)
-            heartbeat();
-        duccL.setPower(0);
-        duccR.setPower(0);
+    public void fetchFreight() throws InterruptedException {
+        if (runAutoCycling) {
+            //START: -35.5, 4
+            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-35.5, -3, Math.toRadians(-90)))
+                    .strafeRight(36 + y)
+                    .forward(25 + x)
+                    .forward(12)
+                    .build();
+            //END: -9, 4
+            drive.followTrajectorySequence(trajSeq);
+
+
+            int i = 0;
+
+
+
+            //sleep(300);
+            succ.reset();
+            while(succ.milliseconds() < 600){
+                if (reading < full) {
+                    intake.setPower(1);
+                    intakeB.setPower(1);
+
+                } else {
+                    intake.setPower(-1);
+                    intakeB.setPower(-1);
+
+                }
+            }
+
+            intake.setPower(0);
+            intakeB.setPower(0);
+
+
+
+            runAutoCycling = false;
+            runDepositFreight = true;
+            x += 1.5;
+
+        }
+    }
+
+
+
+    public void depositCycledFreight() throws InterruptedException{
+        if(runDepositFreight){
+            aman = true;
+
+            liftTargetPos = top;
+
+            if(z == 0) {
+                TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-71.5 - y, -33.5, Math.toRadians(-90)))
+                        .back(9)
+                        .back(23.5)
+                        .strafeLeft(29.5 + y)
+                        .back(1.5)
+                        .build();
+                drive.followTrajectorySequenceAsync(trajSeq);
+
+            } else{
+                TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-71.5 - y, -33.5, Math.toRadians(-90)))
+                        .back(9)
+                        .back(22.5 - z)
+                        .strafeLeft(29.5 + y)
+                        .build();
+                drive.followTrajectorySequenceAsync(trajSeq);
+
+            }
+
+            intake.setPower(0);
+            intakeB.setPower(0);
+
+            y++;
+            z += 1.5;
+
+            keepLiftAlive();
+
+        }
+
+        runDepositFreight = false;
+    }
+
+    public void redRight() throws InterruptedException{
+
+        if(runAutoCall) {
+
+            //.back means FORWARD (in direction of jerry)
+
+            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(0,0,0))
+                    .back(13)
+                    .back(22.5)
+                    .turn(Math.toRadians(-90))
+                    .back(3)
+                    .build();
+
+
+            //-35.5, 4
+
+            drive.followTrajectorySequenceAsync(trajSeq);
+            runAutoCall = false;
+            level = 0;
+
+
+        }
 
     }
+
 }
 

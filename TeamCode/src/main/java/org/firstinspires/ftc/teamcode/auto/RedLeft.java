@@ -23,6 +23,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Autonomous(name = "RedLeft")
@@ -124,12 +126,13 @@ public class RedLeft extends LinearOpMode //creates class
             }
         });
 
-        ArrayList<Integer> levels = new ArrayList<Integer>();
+        Map<Integer,Double > levels = new HashMap();
+        ElapsedTime eet = new ElapsedTime();
         while (!opModeIsActive()) {
 
             int bLevel = getLevel();
 
-            levels.add(bLevel);
+            levels.put(bLevel,eet.milliseconds());
 
             telemetry.addData("DETECTED LEVEL: ",bLevel);
 
@@ -141,24 +144,25 @@ public class RedLeft extends LinearOpMode //creates class
             telemetry.update();
         }
 
-        level = 0;
+        double finalTime = eet.milliseconds();
 
-        if(levels.contains(1)) {
-            liftTargetPos = 0;
-            level = 1;
-        } else{
-            for(int i = levels.size() - 30; i < levels.size(); i++) {
-                if (levels.get(i) == 2) {
-                    level = 2;
-                    liftTargetPos = med;
-                }
-            }
-        }
+        level = 3;
+        liftTargetPos = top;
 
-        if(level == 0) {
-            level = 3;
-            liftTargetPos =  top;
-        }
+       if(levels.containsKey(1)){
+           level = 1;
+           liftTargetPos = 0;
+       } else {
+           for(double i : levels.keySet()){
+               if(levels.get(i) >= finalTime - 2000 && i == 1) {
+                   level = 2;
+                   liftTargetPos = med;
+               }
+           }
+
+       }
+
+
        // liftTargetPos = top;
 
         //liftTargetPos = top; //We might need to change this
