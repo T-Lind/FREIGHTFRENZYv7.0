@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ public class RedLeft extends LinearOpMode //creates class
 
     private int level = 0;
 
-    private DcMotorEx lift, liftB;
+    private DcMotorEx lift, liftB, intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean delay = false;
@@ -45,7 +46,7 @@ public class RedLeft extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 650;
-    private final int med = 350;
+    private final int med = 275;
 
 
     private WebcamName weCam;
@@ -59,16 +60,21 @@ public class RedLeft extends LinearOpMode //creates class
         drive = new SampleMecanumDrive(hardwareMap);
 
 
-        //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+          intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
-        //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
+
+        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
+        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
         liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -161,22 +167,23 @@ public class RedLeft extends LinearOpMode //creates class
 
     }
 
+    // tiernan was here a lot
     public int getLevel() {
 
         int num = pipeline.getCubeNum();
 
         for (int i = 0; i < num; i++) {
             try {
-                telemetry.addData("Height", pipeline.getHeight(i));
-
-                if ((pipeline.getHeight(i) > 100) && (pipeline.getY(i) > 400)) {
+                telemetry.addData("y pos", pipeline.getY(i));
+                telemetry.addData("height", pipeline.getHeight(i));
+                if ((pipeline.getHeight(i) > 80) && (pipeline.getY(i) < 400)) {
                     telemetry.addData("X Pos", pipeline.getX(i));
                     telemetry.addData("Y Pos", pipeline.getY(i));
 
                     if (pipeline.getX(i) > 150)
-                        return 2;
-                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
                         return 1;
+                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
+                        return 2;
 
                 }
             }
@@ -216,8 +223,8 @@ public class RedLeft extends LinearOpMode //creates class
         double targetV4B = 0;
         telemetry.addLine("enteredLift");
         telemetry.update();
-        if(level == 1 || level == 2)
-            targetV4B = .4;
+        if(level == 1)
+            targetV4B = .5;
         else
             targetV4B = .81;
 
@@ -241,7 +248,7 @@ public class RedLeft extends LinearOpMode //creates class
             telemetry.update();
             keepLiftAlive();
                 //while(!die) {
-                    if (extend.milliseconds() < 2000) {
+                    if (extend.milliseconds() < 1000) {
                         keepLiftAlive();
 
                         //Moves the virtual bars forward
@@ -249,28 +256,21 @@ public class RedLeft extends LinearOpMode //creates class
                         v4b2.setPosition(targetV4B);
                     }
 
-                    if (extend.milliseconds() > 2000 && extend.milliseconds() < 3000) {
+                    if (extend.milliseconds() > 1000 && extend.milliseconds() < 2000) {
                         keepLiftAlive();
 
                         //Opens the deposit
                         dep.setPosition(.3);
                     }
-                    if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
+
+                    if (extend.milliseconds() > 2000 && extend.milliseconds() < 2500) {
                         keepLiftAlive();
-
-                        //Closes the deposit
-                       // keepLiftAlive();
-
                         dep.setPosition(.52);
-                    }
-                    if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
-                        keepLiftAlive();
-
                         //Moves the virtual bars backward
                         v4b1.setPosition(.19);
                         v4b2.setPosition(.19);
                     }
-                    if (extend.milliseconds() > 5000 && extend.milliseconds() < 6500) {
+                    if (extend.milliseconds() > 2500 && extend.milliseconds() < 3500) {
 
                         //Gravity pulls the lift down
                         liftTargetPos = 0;
@@ -279,7 +279,7 @@ public class RedLeft extends LinearOpMode //creates class
 
 
                     }
-                    if(extend.milliseconds() > 6500){
+                    if(extend.milliseconds() > 3500){
                         depositRun = false;
                     }
 
@@ -314,7 +314,11 @@ public class RedLeft extends LinearOpMode //creates class
         waitForStart();
 
         if (isStopRequested()) return;
-
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(),true)
+                .lineTo(new Vector2d(-17.85, -25.5))
+                .build();
+        drive.followTrajectory(traj3);
+/*
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
                 .back(3)
                 .build();
@@ -334,24 +338,58 @@ public class RedLeft extends LinearOpMode //creates class
                 .build();
 
         drive.followTrajectory(traj2);
-
+*/
 
         liftAndDeposit();
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-14.5,-21.75))
-                .forward(9.5)
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-16.5,-25.5))
+                .forward(11.5)
                 .build();
 
         //DO NOT MESS WITH ANYTHING HERE AFTER
         drive.followTrajectory(traj4);
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4.5,-21.75))
-                .strafeLeft(46.5)
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4.5,-24.5))
+                .strafeLeft(48)
                 .build();
 
         drive.followTrajectory(traj5);
 
         spinDuck();
+        Trajectory traj9 = drive.trajectoryBuilder(new Pose2d(-4.5, 24.5))
+                .back(2.5)
+                .build();
+        drive.followTrajectory(traj9);
+
+        intake.setPower(-.55);
+        intakeB.setPower(-.55);
+
+       /*  Trajectory traj10 = drive.trajectoryBuilder(new Pose2d(-6.5, 23.5))
+                .forward(6.5)
+                .build();
+        drive.followTrajectory(traj9);
+
+       Trajectory traj = drive.trajectoryBuilder(new Pose2d(-4.5, 23.5))
+                .forward(4.5)
+                .build();
+        drive.followTrajectory(traj);*/
+
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-1.5, 23.5))
+                .strafeRight(48.5)
+                .build();
+        drive.followTrajectory(traj6);
+        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-1.5, -25))
+                .back(12)
+                .build();
+        drive.followTrajectory(traj7);
+        intake.setPower(0);
+        intakeB.setPower(0);
+        liftTargetPos = top;
+        liftAndDeposit();
+        Trajectory traj8 = drive.trajectoryBuilder(new Pose2d(-13.5,-25),true)
+                .lineTo(new Vector2d(-22.5, 25.75))
+                .build();
+        drive.followTrajectory(traj8);
 
      /*   Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(3.5,27.75))
                 .back(29.5)
@@ -371,14 +409,39 @@ public class RedLeft extends LinearOpMode //creates class
 
     public void spinDuck() throws InterruptedException{
         ElapsedTime spinTime = new ElapsedTime();
-        duccL.setPower(-.7);
-        duccR.setPower(-.7);
-        while (spinTime.milliseconds() <= 3500)
+        duccL.setPower(-.4);
+        duccR.setPower(-.4);
+
+
+        while (spinTime.milliseconds() <= 2000)
             heartbeat();
+
+
+        duccL.setPower(-.2);
+        duccR.setPower(-.2);
+
+
+        while (spinTime.milliseconds() <= 4000)
+           heartbeat();
+
         duccL.setPower(0);
         duccR.setPower(0);
 
+     // duckIntake();
+
 
     }
+    public void duckIntake() throws InterruptedException{
+
+        ElapsedTime spinTime = new ElapsedTime();
+
+
+
+        while (spinTime.milliseconds() <= 2000)
+            heartbeat();
+        intake.setPower(0);
+        intakeB.setPower(0);
+    }
+
 }
 
