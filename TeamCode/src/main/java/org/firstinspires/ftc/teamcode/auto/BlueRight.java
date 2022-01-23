@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.DuckDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -51,7 +52,7 @@ public class BlueRight extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private NewDetectionPipeline pipeline;
+    private DuckDetectionPipeline pipeline;
 
     private SampleMecanumDrive drive;
 
@@ -101,7 +102,7 @@ public class BlueRight extends LinearOpMode //creates class
 
 
         //pipeline = new CubeDetectionPipeline();
-        pipeline = new NewDetectionPipeline();
+        pipeline = new DuckDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -123,7 +124,7 @@ public class BlueRight extends LinearOpMode //creates class
 
         while (!opModeIsActive()) {
             //get the level, either 0, 1, or 2 (0 if not detected)
-            level = pipeline.getLevel();
+            /*level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
 
             if(gamepad1.a)
@@ -131,7 +132,7 @@ public class BlueRight extends LinearOpMode //creates class
 
 
             telemetry.addData("Is delay turned on?", delay);
-            telemetry.update();
+            telemetry.update();*/
         }
 
         // if the latest level was 0 then it must be in the 3 position.
