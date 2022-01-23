@@ -22,8 +22,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+//import java.util.HashMap;
+//import java.util.Map;
 
 
 @Autonomous(name = "BlueRight")
@@ -122,13 +122,14 @@ public class BlueRight extends LinearOpMode //creates class
 
 
 
-        Map<Integer,Double > levels = new HashMap();
-        ElapsedTime eet = new ElapsedTime();
+        //Map<Integer,Double > levels = new HashMap();
+        ArrayList<Integer> levels = new ArrayList<Integer>();
+        //ElapsedTime eet = new ElapsedTime();
         while (!opModeIsActive()) {
 
             int bLevel = getLevel();
 
-            levels.put(bLevel,eet.milliseconds());
+            levels.add(bLevel);
 
             telemetry.addData("DETECTED LEVEL: ",bLevel);
 
@@ -139,7 +140,24 @@ public class BlueRight extends LinearOpMode //creates class
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
         }
-
+        level = 3;
+        liftTargetPos = top;
+        for(int i: levels) {
+            if(i==1) {
+                level = 1;
+                liftTargetPos = 0;
+            }
+        }
+        if(level == 3) {
+            for (int j = levels.size() - 20; j < levels.size(); j++) {
+                if (j == 2) {
+                    level = 2;
+                    liftTargetPos = med;
+                }
+            }
+        }
+        telemetry.addData("FINAL POS:", level);
+     /*
         double finalTime = eet.milliseconds();
 
         level = 3;
@@ -156,7 +174,7 @@ public class BlueRight extends LinearOpMode //creates class
                 }
             }
 
-        }
+        }*/
         // liftTargetPos = top;
 
         //liftTargetPos = top; //We might need to change this
@@ -171,16 +189,16 @@ public class BlueRight extends LinearOpMode //creates class
 
         for (int i = 0; i < num; i++) {
             try {
-                telemetry.addData("Height", pipeline.getHeight(i));
-
-                if ((pipeline.getHeight(i) > 100) && (pipeline.getY(i) > 400)) {
+                telemetry.addData("y pos", pipeline.getY(i));
+                telemetry.addData("height", pipeline.getHeight(i));
+                if ((pipeline.getHeight(i) > 80) && (pipeline.getY(i) < 400)) {
                     telemetry.addData("X Pos", pipeline.getX(i));
                     telemetry.addData("Y Pos", pipeline.getY(i));
 
                     if (pipeline.getX(i) > 150)
-                        return 2;
-                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
                         return 1;
+                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
+                        return 2;
 
                 }
             }
@@ -220,8 +238,8 @@ public class BlueRight extends LinearOpMode //creates class
         double targetV4B = 0;
         telemetry.addLine("enteredLift");
         telemetry.update();
-        if(level == 1 || level == 2)
-            targetV4B = .4;
+        if(level == 1)
+            targetV4B = .5;
         else
             targetV4B = .81;
 
@@ -320,12 +338,12 @@ public class BlueRight extends LinearOpMode //creates class
         if (isStopRequested()) return;
 
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                .forward(3)
+                .back(3)
                 .build();
 
         drive.followTrajectory(traj3);
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(3,0))
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-3,0))
                 .strafeLeft(21)
                 .build();
 
@@ -333,36 +351,36 @@ public class BlueRight extends LinearOpMode //creates class
 
 
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(3, 21))
-                .forward(16)
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-3, 21))
+                .back(16)
                 .build();
 
         drive.followTrajectory(traj2);
 
         liftAndDeposit();
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(18.5,21))
-                .back(11)
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-18.5,21))
+                .forward(14)
                 .build();
 
         //DO NOT MESS WITH ANYTHING HERE AFTER
         drive.followTrajectory(traj4);
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(7,21))
-                .strafeRight(46.5)
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4,21))
+                .strafeRight(48.5)
                 .build();
 
         drive.followTrajectory(traj5);
 
         spinDuck();
 
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(7,-27.5))
-                .forward(21)
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-7,-27.5))
+                .back(17)
                 .build();
 
         drive.followTrajectory(traj6);
 
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(28,-27))
+        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-24,-27))
                 .strafeRight(2)
                 .build();
 

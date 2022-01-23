@@ -298,7 +298,7 @@ public class RedRightMeet2 extends LinearOpMode //creates class
 
         initialize();
         if(delay){
-            sleep(5000);
+            sleep(6000);
         }
         starts();
         RedRightMeet2();

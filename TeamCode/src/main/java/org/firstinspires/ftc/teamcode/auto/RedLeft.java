@@ -126,13 +126,12 @@ public class RedLeft extends LinearOpMode //creates class
             }
         });
 
-        Map<Integer,Double > levels = new HashMap();
-        ElapsedTime eet = new ElapsedTime();
+        ArrayList<Integer> levels = new ArrayList<Integer>();
         while (!opModeIsActive()) {
 
             int bLevel = getLevel();
 
-            levels.put(bLevel,eet.milliseconds());
+            levels.add(bLevel);
 
             telemetry.addData("DETECTED LEVEL: ",bLevel);
 
@@ -144,28 +143,31 @@ public class RedLeft extends LinearOpMode //creates class
             telemetry.update();
         }
 
-        double finalTime = eet.milliseconds();
+        boolean def = true; //uWu
 
-        level = 3;
-        liftTargetPos = top;
+        for(int i: levels) {
+            if(i==1) {
+                level = 1;
+                liftTargetPos = 0;
+                def = false;
+            }
+        }
+        if(def) {
+            for (int j = levels.size()/2; j < levels.size(); j++) {
+                if (j == 2) {
+                    level = 2;
+                    liftTargetPos = med;
+                    def = false;
+                }
+            }
+        }
+        if(def){
+            level = 3;
+            liftTargetPos = top;
+        }
+        telemetry.addData("FINAL POS:", level);
+        telemetry.update();
 
-       if(levels.containsKey(1)){
-           level = 1;
-           liftTargetPos = 0;
-       } else {
-           for(double i : levels.keySet()){
-               if(levels.get(i) >= finalTime - 2000 && i == 1) {
-                   level = 2;
-                   liftTargetPos = med;
-               }
-           }
-
-       }
-
-
-       // liftTargetPos = top;
-
-        //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
 
 
