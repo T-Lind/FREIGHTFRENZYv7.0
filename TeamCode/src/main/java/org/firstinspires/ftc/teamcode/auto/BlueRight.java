@@ -16,14 +16,14 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
+import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.Map;
+
 
 
 @Autonomous(name = "BlueRight")
@@ -52,11 +52,11 @@ public class BlueRight extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private CubeDetectionPipeline pipeline;
+    private NewDetectionPipeline pipeline;
 
     private SampleMecanumDrive drive;
 
-    public void initialize() {
+    public void initialize() throws InterruptedException {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
@@ -93,8 +93,7 @@ public class BlueRight extends LinearOpMode //creates class
         v4b1.setDirection(Servo.Direction.REVERSE);
 
 
-        weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
-
+        weCam = hardwareMap.get(WebcamName.class, "Webcam 2");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
@@ -102,7 +101,8 @@ public class BlueRight extends LinearOpMode //creates class
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new CubeDetectionPipeline();
+        //pipeline = new CubeDetectionPipeline();
+        pipeline = new NewDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -111,7 +111,7 @@ public class BlueRight extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
 
             @Override
@@ -122,16 +122,10 @@ public class BlueRight extends LinearOpMode //creates class
 
 
 
-        //Map<Integer,Double > levels = new HashMap();
-        ArrayList<Integer> levels = new ArrayList<Integer>();
-        //ElapsedTime eet = new ElapsedTime();
         while (!opModeIsActive()) {
-
-            int bLevel = getLevel();
-
-            levels.add(bLevel);
-
-            telemetry.addData("DETECTED LEVEL: ",bLevel);
+            //get the level, either 0, 1, or 2 (0 if not detected)
+            level = pipeline.getLevel();
+            telemetry.addData("DETECTED LEVEL: ",level);
 
             if(gamepad1.a)
                 delay = true;
@@ -140,50 +134,26 @@ public class BlueRight extends LinearOpMode //creates class
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
         }
-        level = 3;
-        liftTargetPos = top;
-        for(int i: levels) {
-            if(i==1) {
-                level = 1;
-                liftTargetPos = 0;
-            }
-        }
-        if(level == 3) {
-            for (int j = levels.size() - 20; j < levels.size(); j++) {
-                if (j == 2) {
-                    level = 2;
-                    liftTargetPos = med;
-                }
-            }
-        }
-        telemetry.addData("FINAL POS:", level);
-     /*
-        double finalTime = eet.milliseconds();
 
-        level = 3;
-        liftTargetPos = top;
+        // if the latest level was 0 then it must be in the 3 position.
+        if(level == 0)
+            level = 3;
+        telemetry.addData("DETECTED LEVEL: ",level);
+        telemetry.update();
+        ElapsedTime spinTime = new ElapsedTime();
 
-        if(levels.containsKey(1)){
-            level = 1;
-            liftTargetPos = 0;
-        } else {
-            for(double i : levels.keySet()){
-                if(levels.get(i) >= finalTime - 2000 && i == 1) {
-                    level = 2;
-                    liftTargetPos = med;
-                }
-            }
+        // JUST FOR TESTING - REMOVE FOR AUTO TO WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        while (spinTime.milliseconds() <= 3000)
+            heartbeat();
+        stop();
 
-        }*/
-        // liftTargetPos = top;
 
-        //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
 
 
     }
 
-    public int getLevel() {
+    /*public int getLevel() {
 
         int num = pipeline.getCubeNum();
 
@@ -209,7 +179,7 @@ public class BlueRight extends LinearOpMode //creates class
         }
         telemetry.update();
         return 3;
-    }
+    }*/
 
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone
