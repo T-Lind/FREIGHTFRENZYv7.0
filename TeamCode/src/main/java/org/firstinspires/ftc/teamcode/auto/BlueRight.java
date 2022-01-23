@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -140,12 +139,12 @@ public class BlueRight extends LinearOpMode //creates class
             level = 3;
         telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
-        ElapsedTime spinTime = new ElapsedTime();
+        ElapsedTime delaytime = new ElapsedTime();
 
         // JUST FOR TESTING - REMOVE FOR AUTO TO WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        while (spinTime.milliseconds() <= 3000)
+        while (delaytime.milliseconds() <= 3000)
             heartbeat();
-        stop();
+        //stop();
 
 
         liftError = liftTargetPos - lift.getCurrentPosition();
@@ -153,33 +152,6 @@ public class BlueRight extends LinearOpMode //creates class
 
     }
 
-    /*public int getLevel() {
-
-        int num = pipeline.getCubeNum();
-
-        for (int i = 0; i < num; i++) {
-            try {
-                telemetry.addData("y pos", pipeline.getY(i));
-                telemetry.addData("height", pipeline.getHeight(i));
-                if ((pipeline.getHeight(i) > 80) && (pipeline.getY(i) < 400)) {
-                    telemetry.addData("X Pos", pipeline.getX(i));
-                    telemetry.addData("Y Pos", pipeline.getY(i));
-
-                    if (pipeline.getX(i) > 150)
-                        return 1;
-                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
-                        return 2;
-
-                }
-            }
-            catch(Exception e){
-                telemetry.addData("exception",0);
-                telemetry.update();
-            }
-        }
-        telemetry.update();
-        return 3;
-    }*/
 
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone

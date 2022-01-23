@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
+import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -53,7 +54,7 @@ public class RedLeft extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private CubeDetectionPipeline pipeline;
+    private NewDetectionPipeline pipeline;
 
     private SampleMecanumDrive drive; //d
 
@@ -108,7 +109,7 @@ public class RedLeft extends LinearOpMode //creates class
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new CubeDetectionPipeline();
+        pipeline = new NewDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -126,14 +127,10 @@ public class RedLeft extends LinearOpMode //creates class
             }
         });
 
-        ArrayList<Integer> levels = new ArrayList<Integer>();
         while (!opModeIsActive()) {
-
-            int bLevel = getLevel();
-
-            levels.add(bLevel);
-
-            telemetry.addData("DETECTED LEVEL: ",bLevel);
+            //get the level, either 0, 1, or 2 (0 if not detected)
+            level = pipeline.getLevel();
+            telemetry.addData("DETECTED LEVEL: ",level);
 
             if(gamepad1.a)
                 delay = true;
@@ -143,29 +140,10 @@ public class RedLeft extends LinearOpMode //creates class
             telemetry.update();
         }
 
-        boolean def = true; //uWu
-
-        for(int i: levels) {
-            if(i==1) {
-                level = 1;
-                liftTargetPos = 0;
-                def = false;
-            }
-        }
-        if(def) {
-            for (int j = levels.size()/2; j < levels.size(); j++) {
-                if (j == 2) {
-                    level = 2;
-                    liftTargetPos = med;
-                    def = false;
-                }
-            }
-        }
-        if(def){
+        // if the latest level was 0 then it must be in the 3 position.
+        if(level == 0)
             level = 3;
-            liftTargetPos = top;
-        }
-        telemetry.addData("FINAL POS:", level);
+        telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
 
         liftError = liftTargetPos - lift.getCurrentPosition();
@@ -173,34 +151,6 @@ public class RedLeft extends LinearOpMode //creates class
 
     }
 
-    // tiernan was here a lot
-    public int getLevel() {
-
-        int num = pipeline.getCubeNum();
-
-        for (int i = 0; i < num; i++) {
-            try {
-                telemetry.addData("y pos", pipeline.getY(i));
-                telemetry.addData("height", pipeline.getHeight(i));
-                if ((pipeline.getHeight(i) > 80) && (pipeline.getY(i) < 400)) {
-                    telemetry.addData("X Pos", pipeline.getX(i));
-                    telemetry.addData("Y Pos", pipeline.getY(i));
-
-                    if (pipeline.getX(i) > 150)
-                        return 1;
-                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
-                        return 2;
-
-                }
-            }
-            catch(Exception e){
-                telemetry.addData("exception",0);
-                telemetry.update();
-            }
-        }
-        telemetry.update();
-        return 3;
-    }
 
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone
