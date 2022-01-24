@@ -123,6 +123,16 @@ public class BlueRight extends LinearOpMode //creates class
 
 
         while (!opModeIsActive()) {
+            double ducc_x = pipeline.getDucc_x();
+            double ducc_y = pipeline.getDucc_y();
+            double angle = pipeline.getAngle();
+            double distance = pipeline.getDistance();
+
+            telemetry.addData("x: ",ducc_x);
+            telemetry.addData("y: ",ducc_y);
+            telemetry.addData("angle: ",angle);
+            telemetry.addData("distance(width in pixels rn): ",distance);
+
             //get the level, either 0, 1, or 2 (0 if not detected)
             /*level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
@@ -131,8 +141,8 @@ public class BlueRight extends LinearOpMode //creates class
                 delay = true;
 
 
-            telemetry.addData("Is delay turned on?", delay);
-            telemetry.update();*/
+            telemetry.addData("Is delay turned on?", delay);*/
+            telemetry.update();
         }
 
         // if the latest level was 0 then it must be in the 3 position.
