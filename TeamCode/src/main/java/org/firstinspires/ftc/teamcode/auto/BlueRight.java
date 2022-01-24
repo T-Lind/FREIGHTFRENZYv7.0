@@ -133,7 +133,7 @@ public class BlueRight extends LinearOpMode //creates class
             telemetry.addData("angle: ",angle);
             telemetry.addData("distance(width in pixels rn): ",distance);
 
-            //get the level, either 0, 1, or 2 (0 if not detected)
+            //get the level, either 0, 1, or 2 (0 if not detected) - TO USE CHANGE PIPELINE
             /*level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
 

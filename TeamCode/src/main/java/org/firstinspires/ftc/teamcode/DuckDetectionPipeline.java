@@ -84,7 +84,7 @@ public class DuckDetectionPipeline extends OpenCvPipeline{
         return drawing;
     }
 
-
+//pipeline noice
 
     public double getDucc_x(){
         return ducc_x;
