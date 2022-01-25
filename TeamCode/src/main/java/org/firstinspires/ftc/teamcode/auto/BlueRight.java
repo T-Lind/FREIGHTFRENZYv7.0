@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.DuckDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.imagePipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -111,7 +112,7 @@ public class BlueRight extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -123,15 +124,9 @@ public class BlueRight extends LinearOpMode //creates class
 
 
         while (!opModeIsActive()) {
-            double ducc_x = pipeline.getDucc_x();
-            double ducc_y = pipeline.getDucc_y();
             double angle = pipeline.getAngle();
-            double distance = pipeline.getDistance();
 
-            telemetry.addData("x: ",ducc_x);
-            telemetry.addData("y: ",ducc_y);
             telemetry.addData("angle: ",angle);
-            telemetry.addData("distance(width in pixels rn): ",distance);
 
             //get the level, either 0, 1, or 2 (0 if not detected) - TO USE CHANGE PIPELINE
             /*level = pipeline.getLevel();

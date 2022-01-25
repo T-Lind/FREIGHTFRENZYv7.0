@@ -22,15 +22,16 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 public class DuckDetectionPipeline extends OpenCvPipeline{
     double ducc_x = -1;
-    double ducc_y = -1;
     double distance = -1;
     double angle = -1;
 
     Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
 
-
+    double FRAME = 1;
     static final int CB_CHAN_IDX = 2;
-
+    static final int FOCAL_LENGTH = 470;
+    static final double ducc_y = 36;
+    static final double CAM_ANGLE = Math.atan(5.5/1.5);    // IN RADIANS
     @Override
     public Mat processFrame(Mat input) {
         return analyze(input);
@@ -69,19 +70,22 @@ public class DuckDetectionPipeline extends OpenCvPipeline{
             Imgproc.drawContours(drawing, contoursPolyList, i, color);
             Point p1 = boundRect[i].tl();
             Point p2 = boundRect[i].br();
-            if(p1.y > input.rows()/2 && p2.y > input.rows()/2)// check for location
-                if((p2.x-p1.x > 20 && p2.y-p1.y > 20) && Math.abs(p2.x-p1.x)/Math.abs(p2.y-p1.y) > 0.86){
-                    Imgproc.rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2);
-                    ducc_x = (p2.x-p1.x)/2;
-                    ducc_y = (p2.y-p1.y)/2;
-                    angle = ((ducc_x-drawing.cols()/2)/(drawing.cols()/2))*30;
-                    distance = (p2.x-p1.x);
-                }
+            if((p2.x-p1.x > 40 && p2.y-p1.y > 20) && Math.abs(p2.x-p1.x)/Math.abs(p2.y-p1.y) > 0.86){
+                Imgproc.rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2);
+
+                angle = ((p2.x-(input.cols()/2.0))/(input.cols()/2.0))*15;
+                ducc_x = Math.tan((angle)*3.14159/180)*ducc_y; // amount to strafe in inches
+
+            }
         }
 
-        Imgproc.line(drawing, new Point(0,input.rows()/2),new Point(input.cols(),input.rows()/2), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
+        Imgproc.line(drawing, new Point(0,input.rows()/2.0),new Point(input.cols(),input.rows()/2.0), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
 
         return drawing;
+    }
+    public double calcDistance(double width){
+        double dstnce = (2*FOCAL_LENGTH)/width; // IN INCHES
+        return Math.cos(CAM_ANGLE)*dstnce; //FLOOR DISTANCE
     }
 
 //pipeline noice
@@ -94,4 +98,5 @@ public class DuckDetectionPipeline extends OpenCvPipeline{
     }
     public double getAngle(){ return angle; }
     public double getDistance(){ return distance;}
+    public double getFRAME(){ return FRAME;}
 }
