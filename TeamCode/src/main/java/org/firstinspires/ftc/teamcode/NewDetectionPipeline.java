@@ -17,10 +17,13 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.core.Range;
 
 import java.util.ArrayList;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class NewDetectionPipeline extends OpenCvPipeline{
     int level = 0;
-    boolean inside = false;
+    private ElapsedTime monitor = new ElapsedTime();
+    double time = monitor.milliseconds();
+    int detect_in_time = 0;
 
     @Override
     public Mat processFrame(Mat input) {
@@ -75,6 +78,16 @@ public class NewDetectionPipeline extends OpenCvPipeline{
         Imgproc.line(output2, new Point(output1.cols()/2+130,output1.rows()/3),new Point(output1.cols(),output1.rows()/3), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
 
         level = local_level;
+
+        if(level != 0)
+            detect_in_time = level;
+
+        if(monitor.milliseconds()-time < 5000){
+            level = detect_in_time;
+        }else{
+            time = monitor.milliseconds();
+            detect_in_time = 0;
+        }
 
         return output2;
     }

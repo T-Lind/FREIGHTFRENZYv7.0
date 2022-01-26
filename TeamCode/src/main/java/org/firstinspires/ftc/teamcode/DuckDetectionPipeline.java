@@ -30,14 +30,14 @@ public class DuckDetectionPipeline extends OpenCvPipeline{
     double FRAME = 1;
     static final int CB_CHAN_IDX = 2;
     static final int FOCAL_LENGTH = 470;
-    static final double ducc_y = 36;
+    static final double ducc_y = 32;
     static final double CAM_ANGLE = Math.atan(5.5/1.5);    // IN RADIANS
     @Override
     public Mat processFrame(Mat input) {
         return analyze(input);
     }
     public Mat analyze(Mat input){
-
+        Mat saved = input;
         Core.extractChannel(input, input, CB_CHAN_IDX);
         Imgproc.threshold(input, input, 10, 255, Imgproc.THRESH_BINARY_INV);
 
@@ -71,17 +71,17 @@ public class DuckDetectionPipeline extends OpenCvPipeline{
             Point p1 = boundRect[i].tl();
             Point p2 = boundRect[i].br();
             if((p2.x-p1.x > 40 && p2.y-p1.y > 20) && Math.abs(p2.x-p1.x)/Math.abs(p2.y-p1.y) > 0.86){
-                Imgproc.rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2);
+                Imgproc.rectangle(saved, boundRect[i].tl(), boundRect[i].br(), color, 2);
 
-                angle = ((p2.x-(input.cols()/2.0))/(input.cols()/2.0))*15;
+                angle = ((p2.x-(input.cols()/2.0))/(input.cols()/2.0))*32;
                 ducc_x = Math.tan((angle)*3.14159/180)*ducc_y; // amount to strafe in inches
 
             }
         }
 
-        Imgproc.line(drawing, new Point(0,input.rows()/2.0),new Point(input.cols(),input.rows()/2.0), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
+        //Imgproc.line(drawing, new Point(0,input.rows()/2.0),new Point(input.cols(),input.rows()/2.0), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
 
-        return drawing;
+        return saved;
     }
     public double calcDistance(double width){
         double dstnce = (2*FOCAL_LENGTH)/width; // IN INCHES

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -34,7 +35,7 @@ public class BlueRight extends LinearOpMode //creates class
 
     private int level = 0;
 
-    private DcMotorEx lift, liftB;
+    private DcMotorEx lift, liftB, intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean delay = false;
@@ -62,16 +63,21 @@ public class BlueRight extends LinearOpMode //creates class
         drive = new SampleMecanumDrive(hardwareMap);
 
 
-        //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
-        //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
+
+        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
+        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
         liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -125,7 +131,9 @@ public class BlueRight extends LinearOpMode //creates class
 
         while (!opModeIsActive()) {
             double angle = pipeline.getAngle();
+            double distance = pipeline.getDistance();
 
+            telemetry.addData("distance",distance);
             telemetry.addData("angle: ",angle);
 
             //get the level, either 0, 1, or 2 (0 if not detected) - TO USE CHANGE PIPELINE
@@ -284,6 +292,29 @@ public class BlueRight extends LinearOpMode //creates class
         waitForStart();
 
         if (isStopRequested()) return;
+
+        double dx = pipeline.getDucc_x();
+        double dy = pipeline.getDucc_y();
+
+        intake.setPower(-.55);
+        intakeB.setPower(-.55);
+
+        Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
+                .lineTo(new Vector2d(32, dx))
+                .build();
+
+        drive.followTrajectory(duccTraj);
+
+        Trajectory duccTraj2 = drive.trajectoryBuilder(new Pose2d(),true)
+                .strafeLeft(3)
+                .build();
+
+        drive.followTrajectory(duccTraj2);
+
+        intake.setPower(0);
+        intakeB.setPower(0);
+        // REMOVE FOR FULL AUTO - DUCK TESTING
+        stop();
 
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
                 .back(3)
