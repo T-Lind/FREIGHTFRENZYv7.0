@@ -118,7 +118,7 @@ public class BlueRight extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -296,24 +296,49 @@ public class BlueRight extends LinearOpMode //creates class
         double dx = pipeline.getDucc_x();
         double dy = pipeline.getDucc_y();
 
-        intake.setPower(-.55);
-        intakeB.setPower(-.55);
+        intake.setPower(-.75);
+        intakeB.setPower(-.75);
 
         Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
-                .lineTo(new Vector2d(32, dx))
+                .lineTo(new Vector2d(dy, dx))
                 .build();
 
         drive.followTrajectory(duccTraj);
+/*
+        double dx2 = pipeline.getDucc_x();
+        double dy2 = pipeline.getDucc_y();
+        while(dx2 < -100){
+            dx2 = pipeline.getDucc_x();
+        }
 
-        Trajectory duccTraj2 = drive.trajectoryBuilder(new Pose2d(),true)
-                .strafeLeft(3)
+        Trajectory duccTraj2b = drive.trajectoryBuilder(new Pose2d(dy/2, dx/2),true)
+                .lineTo(new Vector2d(dy/2+dy2/2, dx+dx2))
+                .build();
+
+        drive.followTrajectory(duccTraj2b);*/
+/*
+        */intake.setPower(0);
+        intakeB.setPower(0);/*
+
+        Trajectory duccTraj2 = drive.trajectoryBuilder(new Pose2d(32.25,dx),true)
+                .strafeRight(5)
                 .build();
 
         drive.followTrajectory(duccTraj2);
 
+        intake.setPower(-.55);
+        intakeB.setPower(-.55);
+
+        Trajectory duccTraj3 = drive.trajectoryBuilder(new Pose2d(32.25,dx-5),true)
+                .strafeRight(3)
+                .build();
+
+        drive.followTrajectory(duccTraj3);
+
         intake.setPower(0);
         intakeB.setPower(0);
-        // REMOVE FOR FULL AUTO - DUCK TESTING
+
+        // REMOVE FOR FULL AUTO - DUCK TESTING*/
         stop();
 
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())

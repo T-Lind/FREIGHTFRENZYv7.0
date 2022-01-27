@@ -21,16 +21,16 @@ import java.util.List;
 import org.opencv.imgcodecs.Imgcodecs;
 
 public class DuckDetectionPipeline extends OpenCvPipeline{
-    double ducc_x = -1;
-    double distance = -1;
-    double angle = -1;
+    double ducc_x = Integer.MIN_VALUE;
+    double distance = Integer.MIN_VALUE;
+    double angle = Integer.MIN_VALUE;
 
     Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
 
     double FRAME = 1;
     static final int CB_CHAN_IDX = 2;
     static final int FOCAL_LENGTH = 470;
-    static final double ducc_y = 32;
+    static final double ducc_y = 15.5;//32.25;
     static final double CAM_ANGLE = Math.atan(5.5/1.5);    // IN RADIANS
     @Override
     public Mat processFrame(Mat input) {
@@ -73,9 +73,8 @@ public class DuckDetectionPipeline extends OpenCvPipeline{
             if((p2.x-p1.x > 40 && p2.y-p1.y > 20) && Math.abs(p2.x-p1.x)/Math.abs(p2.y-p1.y) > 0.86){
                 Imgproc.rectangle(saved, boundRect[i].tl(), boundRect[i].br(), color, 2);
 
-                angle = ((p2.x-(input.cols()/2.0))/(input.cols()/2.0))*32;
-                ducc_x = Math.tan((angle)*3.14159/180)*ducc_y; // amount to strafe in inches
-
+                angle = -((p2.x-(input.cols()/2.0))/(input.cols()/2.0))*30;
+                ducc_x = (Math.tan((angle)*3.14159/180)*ducc_y); // amount to strafe in inches
             }
         }
 
