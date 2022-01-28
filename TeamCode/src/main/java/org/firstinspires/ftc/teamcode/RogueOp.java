@@ -39,7 +39,7 @@ public class RogueOp extends OpMode{
     boolean succing = false;
     double full = 100; //distance sensor reading for filled deposit
     double reading = 0;
-
+//thing
     @Override
     public void init() {
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
