@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
+import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -75,7 +76,7 @@ public class BlueLeft extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private CubeDetectionPipeline pipeline;
+    private NewDetectionPipeline pipeline;
 
     private SampleMecanumDrive drive;
 
@@ -126,7 +127,7 @@ public class BlueLeft extends LinearOpMode //creates class
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new CubeDetectionPipeline();
+        pipeline = new NewDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -135,7 +136,7 @@ public class BlueLeft extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
 
             @Override
@@ -144,15 +145,10 @@ public class BlueLeft extends LinearOpMode //creates class
             }
         });
 
-        Map<Integer,Double > levels = new HashMap();
-        ElapsedTime eet = new ElapsedTime();
         while (!opModeIsActive()) {
-
-            int bLevel = getLevel();
-
-            levels.put(bLevel,eet.milliseconds());
-
-            telemetry.addData("DETECTED LEVEL: ",bLevel);
+            //get the level, either 0, 1, or 2 (0 if not detected)
+            level = pipeline.getLevel();
+            telemetry.addData("DETECTED LEVEL: ",level);
 
             if(gamepad1.a)
                 delay = true;
@@ -162,23 +158,11 @@ public class BlueLeft extends LinearOpMode //creates class
             telemetry.update();
         }
 
-        double finalTime = eet.milliseconds();
-
-        level = 3;
-        liftTargetPos = top;
-
-        if(levels.containsKey(1)){
-            level = 1;
-            liftTargetPos = 0;
-        } else {
-            for(double i : levels.keySet()){
-                if(levels.get(i) >= finalTime - 2000 && i == 1) {
-                    level = 2;
-                    liftTargetPos = med;
-                }
-            }
-
-        }
+        // if the latest level was 0 then it must be in the 3 position.
+        if(level == 0)
+            level = 3;
+        telemetry.addData("DETECTED LEVEL: ",level);
+        telemetry.update();
 
 
 
@@ -188,34 +172,6 @@ public class BlueLeft extends LinearOpMode //creates class
 
 
 
-    }
-
-    public int getLevel() {
-
-        int num = pipeline.getCubeNum();
-
-        for (int i = 0; i < num; i++) {
-            try {
-                telemetry.addData("Height", pipeline.getHeight(i));
-
-                if ((pipeline.getHeight(i) > 100) && (pipeline.getY(i) > 400)) {
-                    telemetry.addData("X Pos", pipeline.getX(i));
-                    telemetry.addData("Y Pos", pipeline.getY(i));
-
-                    if (pipeline.getX(i) > 150)
-                        return 2;
-                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
-                        return 1;
-
-                }
-            }
-            catch(Exception e){
-                telemetry.addData("exception",0);
-                telemetry.update();
-            }
-        }
-        telemetry.update();
-        return 3;
     }
 
     public void  heartbeat() throws InterruptedException {

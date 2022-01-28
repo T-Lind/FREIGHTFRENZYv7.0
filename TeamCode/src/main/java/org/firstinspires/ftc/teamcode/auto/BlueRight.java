@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,16 +15,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
+import org.firstinspires.ftc.teamcode.DuckDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
+import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.imagePipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.Map;
+
 
 
 @Autonomous(name = "BlueRight")
@@ -33,7 +35,7 @@ public class BlueRight extends LinearOpMode //creates class
 
     private int level = 0;
 
-    private DcMotorEx lift, liftB;
+    private DcMotorEx lift, liftB, intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean delay = false;
@@ -52,25 +54,30 @@ public class BlueRight extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private CubeDetectionPipeline pipeline;
+    private DuckDetectionPipeline pipeline;
 
     private SampleMecanumDrive drive;
 
-    public void initialize() {
+    public void initialize() throws InterruptedException {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
 
-        //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
-        //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
+
+        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
+        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
         liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,8 +100,7 @@ public class BlueRight extends LinearOpMode //creates class
         v4b1.setDirection(Servo.Direction.REVERSE);
 
 
-        weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
-
+        weCam = hardwareMap.get(WebcamName.class, "Webcam 2");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
@@ -102,7 +108,8 @@ public class BlueRight extends LinearOpMode //creates class
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new CubeDetectionPipeline();
+        //pipeline = new CubeDetectionPipeline();
+        pipeline = new DuckDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -111,7 +118,7 @@ public class BlueRight extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -122,94 +129,43 @@ public class BlueRight extends LinearOpMode //creates class
 
 
 
-        //Map<Integer,Double > levels = new HashMap();
-        ArrayList<Integer> levels = new ArrayList<Integer>();
-        //ElapsedTime eet = new ElapsedTime();
         while (!opModeIsActive()) {
+            double angle = pipeline.getAngle();
+            double distance = pipeline.getDistance();
 
-            int bLevel = getLevel();
+            telemetry.addData("distance",distance);
+            telemetry.addData("angle: ",angle);
 
-            levels.add(bLevel);
-
-            telemetry.addData("DETECTED LEVEL: ",bLevel);
+            //get the level, either 0, 1, or 2 (0 if not detected) - TO USE CHANGE PIPELINE
+            /*level = pipeline.getLevel();
+            telemetry.addData("DETECTED LEVEL: ",level);
 
             if(gamepad1.a)
                 delay = true;
 
 
-            telemetry.addData("Is delay turned on?", delay);
+            telemetry.addData("Is delay turned on?", delay);*/
             telemetry.update();
         }
-        level = 3;
-        liftTargetPos = top;
-        for(int i: levels) {
-            if(i==1) {
-                level = 1;
-                liftTargetPos = 0;
-            }
-        }
-        if(level == 3) {
-            for (int j = levels.size() - 20; j < levels.size(); j++) {
-                if (j == 2) {
-                    level = 2;
-                    liftTargetPos = med;
-                }
-            }
-        }
-        telemetry.addData("FINAL POS:", level);
-     /*
-        double finalTime = eet.milliseconds();
 
-        level = 3;
-        liftTargetPos = top;
+        // if the latest level was 0 then it must be in the 3 position.
+        if(level == 0)
+            level = 3;
+        telemetry.addData("DETECTED LEVEL: ",level);
+        telemetry.update();
+        ElapsedTime delaytime = new ElapsedTime();
 
-        if(levels.containsKey(1)){
-            level = 1;
-            liftTargetPos = 0;
-        } else {
-            for(double i : levels.keySet()){
-                if(levels.get(i) >= finalTime - 2000 && i == 1) {
-                    level = 2;
-                    liftTargetPos = med;
-                }
-            }
+        // JUST FOR TESTING - REMOVE FOR AUTO TO WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        while (delaytime.milliseconds() <= 3000)
+            heartbeat();
+        //stop();
 
-        }*/
-        // liftTargetPos = top;
 
-        //liftTargetPos = top; //We might need to change this
         liftError = liftTargetPos - lift.getCurrentPosition();
 
 
     }
 
-    public int getLevel() {
-
-        int num = pipeline.getCubeNum();
-
-        for (int i = 0; i < num; i++) {
-            try {
-                telemetry.addData("y pos", pipeline.getY(i));
-                telemetry.addData("height", pipeline.getHeight(i));
-                if ((pipeline.getHeight(i) > 80) && (pipeline.getY(i) < 400)) {
-                    telemetry.addData("X Pos", pipeline.getX(i));
-                    telemetry.addData("Y Pos", pipeline.getY(i));
-
-                    if (pipeline.getX(i) > 150)
-                        return 1;
-                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
-                        return 2;
-
-                }
-            }
-            catch(Exception e){
-                telemetry.addData("exception",0);
-                telemetry.update();
-            }
-        }
-        telemetry.update();
-        return 3;
-    }
 
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone
@@ -336,6 +292,54 @@ public class BlueRight extends LinearOpMode //creates class
         waitForStart();
 
         if (isStopRequested()) return;
+
+        double dx = pipeline.getDucc_x();
+        double dy = pipeline.getDucc_y();
+
+        intake.setPower(-.75);
+        intakeB.setPower(-.75);
+
+        Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
+                .lineTo(new Vector2d(dy, dx))
+                .build();
+
+        drive.followTrajectory(duccTraj);
+/*
+        double dx2 = pipeline.getDucc_x();
+        double dy2 = pipeline.getDucc_y();
+        while(dx2 < -100){
+            dx2 = pipeline.getDucc_x();
+        }
+
+        Trajectory duccTraj2b = drive.trajectoryBuilder(new Pose2d(dy/2, dx/2),true)
+                .lineTo(new Vector2d(dy/2+dy2/2, dx+dx2))
+                .build();
+
+        drive.followTrajectory(duccTraj2b);*/
+/*
+        */intake.setPower(0);
+        intakeB.setPower(0);/*
+
+        Trajectory duccTraj2 = drive.trajectoryBuilder(new Pose2d(32.25,dx),true)
+                .strafeRight(5)
+                .build();
+
+        drive.followTrajectory(duccTraj2);
+
+        intake.setPower(-.55);
+        intakeB.setPower(-.55);
+
+        Trajectory duccTraj3 = drive.trajectoryBuilder(new Pose2d(32.25,dx-5),true)
+                .strafeRight(3)
+                .build();
+
+        drive.followTrajectory(duccTraj3);
+
+        intake.setPower(0);
+        intakeB.setPower(0);
+
+        // REMOVE FOR FULL AUTO - DUCK TESTING*/
+        stop();
 
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
                 .back(3)
