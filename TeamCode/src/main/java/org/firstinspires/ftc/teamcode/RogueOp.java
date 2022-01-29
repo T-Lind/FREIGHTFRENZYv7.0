@@ -75,6 +75,7 @@ public class RogueOp extends OpMode{
 
         liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
         liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 

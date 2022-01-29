@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 // this is a test teleop class for testing. Do not use in competition. - Seb on may 7th, 2021.
 @TeleOp(name="DebugOp")
 public class DebugOp extends OpMode{
@@ -47,7 +49,7 @@ public class DebugOp extends OpMode{
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-     /*   intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+      intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -79,7 +81,7 @@ public class DebugOp extends OpMode{
 
         duccL.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        v4b1.setDirection(Servo.Direction.REVERSE);*/
+        v4b1.setDirection(Servo.Direction.REVERSE);
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
@@ -112,12 +114,23 @@ public class DebugOp extends OpMode{
         }else {
             rightFront.setPower(0);
         }
+        if(gamepad1.right_bumper){
+            intake.setPower(-1);
+            intakeB.setPower(-1);
+
+        }
+        else{
+            intake.setPower(0);
+            intakeB.setPower(0);
+        }
 
         telemetry.addData("RF", rightFront.getCurrentPosition());
         telemetry.addData("RB", rightBack.getCurrentPosition());
         telemetry.addData("LF", leftFront.getCurrentPosition());
         telemetry.addData("LB", leftBack.getCurrentPosition());
-
+        telemetry.addData("intake current", intake.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("intakeB current", intakeB.getCurrent(CurrentUnit.AMPS));
+        telemetry.speak("sussy sebby");
         telemetry.update();
 
     }
