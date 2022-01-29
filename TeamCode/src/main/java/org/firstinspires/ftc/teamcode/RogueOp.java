@@ -39,13 +39,14 @@ public class RogueOp extends OpMode{
     boolean succing = false;
     double full = 100; //distance sensor reading for filled deposit
     double reading = 0;
-
+//thing
     @Override
     public void init() {
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
         leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
         rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
         rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
+
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -59,8 +60,9 @@ public class RogueOp extends OpMode{
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
