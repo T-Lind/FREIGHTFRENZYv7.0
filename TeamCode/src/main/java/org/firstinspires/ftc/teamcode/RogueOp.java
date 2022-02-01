@@ -29,7 +29,7 @@ public class RogueOp extends OpMode{
     private Rev2mDistanceSensor Distance;
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
-    int top = 650;
+    int top = 605;
     final int liftGrav = (int)(9.8 * 3);
     private LiftPID liftPID = new LiftPID(.05, 0, 0);
     int liftError = 0;
