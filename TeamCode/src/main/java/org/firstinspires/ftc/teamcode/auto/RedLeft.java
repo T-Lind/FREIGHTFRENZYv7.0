@@ -18,6 +18,8 @@ import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -270,7 +272,7 @@ public class RedLeft extends LinearOpMode //creates class
     public void redLeft() throws InterruptedException{
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) return;/*
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(),true)
                 .lineTo(new Vector2d(-17.5, -29.5))
                 .build();
@@ -296,7 +298,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         drive.followTrajectory(traj2);
 */
-
+/*
         liftAndDeposit();
 
         Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-17.5,-29.5))
@@ -331,7 +333,7 @@ public class RedLeft extends LinearOpMode //creates class
                 .build();
         drive.followTrajectory(traj);*/
 
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-1.5, 25))
+      /*  Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-1.5, 25))
                 .strafeRight(52)
                 .build();
         drive.followTrajectory(traj6);
@@ -361,7 +363,55 @@ public class RedLeft extends LinearOpMode //creates class
 
         drive.followTrajectory(traj7);*/
 
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d())
+                .back(30)
+                .strafeRight(6.5)
+                .build();
+
+        drive.followTrajectorySequence(traj1);
+        drive.turn(Math.toRadians(-50));
+        liftAndDeposit();
+        drive.turn(Math.toRadians(50));
+        //TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30,-6.5))
+            //    .forward(25)
+              //  .strafeLeft(29)
+              //  .build();
+
+        //drive.followTrajectorySequence(traj2);
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30,-6.5))
+               // .lineTo(new Vector2d(-6,24.5))
+                .forward(24)
+                .strafeLeft(33)
+                        .build();
+        drive.followTrajectorySequence(traj2);
+       /* Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-6,25.5))
+                .lineTo(new Vector2d(-13, 11))
+                .build();
+
+        drive.followTrajectory(traj3);*/
+          //where tiernan's code comes in
+        //TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(-13,11)) //edit coordinates accordingly to tiernan's positioning
+          //    .back(17)
+            //   .strafeRight(17)
+              //  .build();
+        //drive.followTrajectorySequence(traj4);
+        //drive.turn(Math.toRadians(-70));
+       // liftTargetPos=top;
+        //liftAndDeposit();
+        //drive.turn(Math.toRadians(70));
+       // Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-30,-5))
+         //       .lineTo(new Vector2d(-27,25.5))
+          //      .build();
+        //drive.followTrajectory(traj5);
+        spinDuck();
+TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(-6,27.5))
+        .back(23)
+        .strafeLeft(2)
+        .build();
+drive.followTrajectorySequence(traj5);
     }
+
+
 
 
     public void spinDuck() throws InterruptedException{
