@@ -118,7 +118,7 @@ public class RedLeft extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
 
             @Override
@@ -129,6 +129,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         while (!opModeIsActive()) {
             //get the level, either 0, 1, or 2 (0 if not detected)
+
             level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
 
@@ -271,7 +272,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         if (isStopRequested()) return;
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(),true)
-                .lineTo(new Vector2d(-17.85, -25.5))
+                .lineTo(new Vector2d(-17.5, -29.5))
                 .build();
         drive.followTrajectory(traj3);
 /*
@@ -298,21 +299,21 @@ public class RedLeft extends LinearOpMode //creates class
 
         liftAndDeposit();
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-16.5,-25.5))
-                .forward(11.5)
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-17.5,-29.5))
+                .forward(12.5)
                 .build();
 
         //DO NOT MESS WITH ANYTHING HERE AFTER
         drive.followTrajectory(traj4);
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4.5,-24.5))
-                .strafeLeft(48)
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4.5,-29.5))
+                .strafeLeft(55)
                 .build();
 
         drive.followTrajectory(traj5);
 
         spinDuck();
-        Trajectory traj9 = drive.trajectoryBuilder(new Pose2d(-4.5, 24.5))
+        Trajectory traj9 = drive.trajectoryBuilder(new Pose2d(-4.5, 26))
                 .back(2.5)
                 .build();
         drive.followTrajectory(traj9);
@@ -330,11 +331,11 @@ public class RedLeft extends LinearOpMode //creates class
                 .build();
         drive.followTrajectory(traj);*/
 
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-1.5, 23.5))
-                .strafeRight(49.25)
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-1.5, 25))
+                .strafeRight(52)
                 .build();
         drive.followTrajectory(traj6);
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-1.5, -25))
+        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-1.5, -26.5))
                 .back(12)
                 .build();
         drive.followTrajectory(traj7);
@@ -342,8 +343,8 @@ public class RedLeft extends LinearOpMode //creates class
         intakeB.setPower(0);
         liftTargetPos = top;
         liftAndDeposit();
-        Trajectory traj8 = drive.trajectoryBuilder(new Pose2d(-13.5,-25),true)
-                .lineTo(new Vector2d(-22.5, 25.75))
+        Trajectory traj8 = drive.trajectoryBuilder(new Pose2d(-13.5,-26.5),true)
+                .lineTo(new Vector2d(-23.75, 33.75))
                 .build();
         drive.followTrajectory(traj8);
 
