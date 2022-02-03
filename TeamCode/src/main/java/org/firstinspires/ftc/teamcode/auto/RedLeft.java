@@ -370,6 +370,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         drive.followTrajectorySequence(traj1);
         drive.turn(Math.toRadians(-50));
+        level = 1;
         liftAndDeposit();
         drive.turn(Math.toRadians(50));
         //TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30,-6.5))
