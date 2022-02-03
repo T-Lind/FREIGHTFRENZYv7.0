@@ -26,11 +26,16 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+        Trajectory trajSeq = drive.trajectoryBuilder(new Pose2d())
+
+                //.splineToConstantHeading(new Vector2d(-30, 6), Math.toRadians(0))
+               .splineToLinearHeading(new Pose2d(-18.6, 18), Math.toRadians(0))
+
+                //.splineTo(new Vector2d(6, 47), Math.toRadians(90))
                 //.back(43) //"forward"
                 //.turn(90)
                 //.lineTo(new Vector2d(-17.85, -25.5))
-                .strafeLeft(20)
+                //.strafeLeft(20)
                 /*.waitSeconds(1)
                 .forward(16) //"back"
                 .turn(Math.toRadians(70))
@@ -51,10 +56,16 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
                 .splineTo(new Vector2d(6, 51), Math.toRadians(90))*/
                 .build();
 
-        waitForStart();
 
 
-        drive.followTrajectorySequence(trajSeq);
+
+        drive.followTrajectory(trajSeq);
+        Trajectory trajSeq1 = drive.trajectoryBuilder(new Pose2d(-18.6,18))
+
+
+                .splineTo(new Vector2d(35, 22), Math.toRadians(90))
+                .build();
+        drive.followTrajectory(trajSeq1);
 
         /*Trajectory traj3 = test.trajectoryBuilder(new Pose2d())
                 .strafeRight(15)
