@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -246,7 +247,27 @@ public class RedRight extends LinearOpMode //creates class
 
         starts();
 
+        redRight();
 
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+                .back(10)
+                .turn(Math.toRadians(-90))
+                .back(40)
+                .build();
+
+        //drive.followTrajectorySequence(trajSeq);
+
+        ElapsedTime sherwin = new ElapsedTime();
+
+        while(sherwin.milliseconds() < 10000){
+            telemetry.addData("X", drive.getPoseEstimate().getX());
+            telemetry.addData("Y", drive.getPoseEstimate().getY());
+            telemetry.update();
+
+        }
+
+
+        /*
         while(aman && opModeIsActive()){
             redRight();
             drive.update();
@@ -272,7 +293,7 @@ public class RedRight extends LinearOpMode //creates class
 
         drive.followTrajectorySequence(trajSeq);
 
-
+    */
 
     }
 
@@ -366,16 +387,29 @@ public class RedRight extends LinearOpMode //creates class
             //.back means FORWARD (in direction of jerry)
 
             TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(0,0,0))
-                    .back(13)
-                    .back(22.5)
-                    .turn(Math.toRadians(90))
-                    .back(3)
+                  //  .back(27.5)
+                    //.back(25)
+                    //.turn(Math.toRadians(67.5))
+                    //.back(6)
+                    //.forward(6)
+                    //.forward(54)
+                    //.waitSeconds(3)
+                    //.back(19)
+
+                    //.back(41)
+                    //.back(27.5)
+                    //.turn(Math.toRadians(67.5))
+                    //.back(6)
+
+                    .splineTo(new Vector2d(6, 47), Math.toRadians(0))
+                    //.setReversed(true)
+                    //.splineTo(new Vector2d(-20, -14), Math.toRadians(180))
                     .build();
 
 
             //-35.5, 4
 
-            drive.followTrajectorySequenceAsync(trajSeq);
+            drive.followTrajectorySequence(trajSeq);
             runAutoCall = false;
             level = 0;
 
