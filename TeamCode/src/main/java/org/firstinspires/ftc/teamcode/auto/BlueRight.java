@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -19,14 +20,11 @@ import org.firstinspires.ftc.teamcode.DuckDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.imagePipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-
-
 
 @Autonomous(name = "BlueRight")
 public class BlueRight extends LinearOpMode //creates class
@@ -41,6 +39,9 @@ public class BlueRight extends LinearOpMode //creates class
     private boolean delay = false;
 
 
+    RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver.BlinkinPattern pattern;
+
     private ElapsedTime extend = new ElapsedTime();
 
     final int liftGrav = (int) (9.8 * 3);
@@ -54,7 +55,8 @@ public class BlueRight extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private DuckDetectionPipeline pipeline;
+    private NewDetectionPipeline pipeline;
+    private DuckDetectionPipeline pipeline2 = new DuckDetectionPipeline();
 
     private SampleMecanumDrive drive;
 
@@ -89,6 +91,7 @@ public class BlueRight extends LinearOpMode //creates class
         v4b1 = hardwareMap.servo.get("v4b1");
         v4b2 = hardwareMap.servo.get("v4b2");
         dep = hardwareMap.servo.get("dep");
+
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
 
@@ -99,8 +102,9 @@ public class BlueRight extends LinearOpMode //creates class
 
         v4b1.setDirection(Servo.Direction.REVERSE);
 
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
 
-        weCam = hardwareMap.get(WebcamName.class, "Webcam 2");
+        weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
@@ -109,7 +113,7 @@ public class BlueRight extends LinearOpMode //creates class
 
 
         //pipeline = new CubeDetectionPipeline();
-        pipeline = new DuckDetectionPipeline();
+        pipeline = new NewDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -127,30 +131,23 @@ public class BlueRight extends LinearOpMode //creates class
             }
         });
 
-
-
         while (!opModeIsActive()) {
-            double angle = pipeline.getAngle();
-            double distance = pipeline.getDistance();
-
-            telemetry.addData("distance",distance);
-            telemetry.addData("angle: ",angle);
-
             //get the level, either 0, 1, or 2 (0 if not detected) - TO USE CHANGE PIPELINE
-            /*level = pipeline.getLevel();
+            level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
 
             if(gamepad1.a)
                 delay = true;
 
 
-            telemetry.addData("Is delay turned on?", delay);*/
+            telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
         }
 
         // if the latest level was 0 then it must be in the 3 position.
         if(level == 0)
             level = 3;
+
         telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
         ElapsedTime delaytime = new ElapsedTime();
@@ -158,8 +155,6 @@ public class BlueRight extends LinearOpMode //creates class
         // JUST FOR TESTING - REMOVE FOR AUTO TO WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         while (delaytime.milliseconds() <= 3000)
             heartbeat();
-        //stop();
-
 
         liftError = liftTargetPos - lift.getCurrentPosition();
 
@@ -260,13 +255,7 @@ public class BlueRight extends LinearOpMode //creates class
             if(extend.milliseconds() > 6500){
                 depositRun = false;
             }
-
-            //    depositRun = false;
         }
-        // }
-
-
-
     }
 
 
@@ -280,6 +269,7 @@ public class BlueRight extends LinearOpMode //creates class
     public void runOpMode() throws InterruptedException {
 
         initialize();
+
         if(delay){
             sleep(5000);
         }
@@ -292,54 +282,35 @@ public class BlueRight extends LinearOpMode //creates class
         waitForStart();
 
         if (isStopRequested()) return;
+        camera.setPipeline(pipeline2);
 
-        double dx = pipeline.getDucc_x();
-        double dy = pipeline.getDucc_y();
+        double dx = get_dist(pipeline2);
+        double dy = pipeline2.getDucc_y();
 
-        intake.setPower(-.75);
-        intakeB.setPower(-.75);
+        telemetry.addData("DX: ,",dx);
+        telemetry.update();
+        //intake.setPower(-.75);
+        //intakeB.setPower(-.75);
 
         Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
                 .lineTo(new Vector2d(dy, dx))
                 .build();
 
         drive.followTrajectory(duccTraj);
-/*
-        double dx2 = pipeline.getDucc_x();
-        double dy2 = pipeline.getDucc_y();
-        while(dx2 < -100){
-            dx2 = pipeline.getDucc_x();
-        }
 
-        Trajectory duccTraj2b = drive.trajectoryBuilder(new Pose2d(dy/2, dx/2),true)
-                .lineTo(new Vector2d(dy/2+dy2/2, dx+dx2))
-                .build();
 
-        drive.followTrajectory(duccTraj2b);*/
-/*
-        */intake.setPower(0);
-        intakeB.setPower(0);/*
-
-        Trajectory duccTraj2 = drive.trajectoryBuilder(new Pose2d(32.25,dx),true)
-                .strafeRight(5)
-                .build();
-
-        drive.followTrajectory(duccTraj2);
-
-        intake.setPower(-.55);
-        intakeB.setPower(-.55);
-
-        Trajectory duccTraj3 = drive.trajectoryBuilder(new Pose2d(32.25,dx-5),true)
-                .strafeRight(3)
-                .build();
-
-        drive.followTrajectory(duccTraj3);
-
-        intake.setPower(0);
-        intakeB.setPower(0);
-
+        telemetry.addLine("completed");
+        telemetry.update();
         // REMOVE FOR FULL AUTO - DUCK TESTING*/
+
         stop();
+
+
+
+
+
+
+
 
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
                 .back(3)
@@ -402,6 +373,42 @@ public class BlueRight extends LinearOpMode //creates class
         duccL.setPower(0);
         duccR.setPower(0);
 
+    }
+    public static double standard_dev (ArrayList<Double> table, double mean)
+    {
+        double temp = 0;
+        for (int i = 0; i < table.size(); i++)
+        {
+            double val = table.get(i);
+            double squrDiffToMean = Math.pow(val - mean, 2);
+            temp += squrDiffToMean;
+        }
+        return Math.sqrt( temp / (double) (table.size()));
+    }
+    public double get_dist(DuckDetectionPipeline pipeline){
+
+        ArrayList<Double> ducc_x = new ArrayList<Double>();
+        double mean = 0;
+        while(30 > ducc_x.size()){
+            double dist_x = pipeline.getDucc_x();
+            if(dist_x != Integer.MIN_VALUE) {
+                ducc_x.add(dist_x);
+                mean += dist_x;
+            }
+        }
+        mean /= ducc_x.size();
+
+        double dx = 0;
+        double sd = standard_dev(ducc_x, mean);
+
+        for(int i=ducc_x.size()-1;i>=0;i--)
+            if(Math.abs(ducc_x.get(i)) > mean+sd)
+                ducc_x.remove(i);
+            else
+                dx+=ducc_x.get(i);
+
+        dx/=ducc_x.size();
+        return dx;
     }
 }
 
