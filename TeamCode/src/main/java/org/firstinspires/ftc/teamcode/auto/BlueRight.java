@@ -16,9 +16,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.DuckDetectionPipeline;
-import org.firstinspires.ftc.teamcode.LiftPID;
-import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
+import org.firstinspires.ftc.teamcode.CameraPipelines.DuckDetectionPipeline;
+import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
+import org.firstinspires.ftc.teamcode.CameraPipelines.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;

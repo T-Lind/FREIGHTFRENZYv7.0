@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -14,20 +13,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
-import org.firstinspires.ftc.teamcode.LiftPID;
-import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
+import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
+import org.firstinspires.ftc.teamcode.CameraPipelines.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Autonomous(name = "RedLeft")
@@ -272,144 +264,27 @@ public class RedLeft extends LinearOpMode //creates class
     public void redLeft() throws InterruptedException{
         waitForStart();
 
-        if (isStopRequested()) return;/*
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(),true)
-                .lineTo(new Vector2d(-17.5, -29.5))
-                .build();
-        drive.followTrajectory(traj3);
-/*
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                .back(3)
-                .build();
-
-        drive.followTrajectory(traj3);
-
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-3,0))
-                .strafeRight(21.75)
-                .build();
-
-        drive.followTrajectory(traj);
-
-
-
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-3,-21.75))
-                .back(11.5)
-                .build();
-
-        drive.followTrajectory(traj2);
-*/
-/*
-        liftAndDeposit();
-
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-17.5,-29.5))
-                .forward(12.5)
-                .build();
-
-        //DO NOT MESS WITH ANYTHING HERE AFTER
-        drive.followTrajectory(traj4);
-
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4.5,-29.5))
-                .strafeLeft(55)
-                .build();
-
-        drive.followTrajectory(traj5);
-
-        spinDuck();
-        Trajectory traj9 = drive.trajectoryBuilder(new Pose2d(-4.5, 26))
-                .back(2.5)
-                .build();
-        drive.followTrajectory(traj9);
-
-        intake.setPower(-.55);
-        intakeB.setPower(-.55);
-
-       /*  Trajectory traj10 = drive.trajectoryBuilder(new Pose2d(-6.5, 23.5))
-                .forward(6.5)
-                .build();
-        drive.followTrajectory(traj9);
-
-       Trajectory traj = drive.trajectoryBuilder(new Pose2d(-4.5, 23.5))
-                .forward(4.5)
-                .build();
-        drive.followTrajectory(traj);*/
-
-      /*  Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-1.5, 25))
-                .strafeRight(52)
-                .build();
-        drive.followTrajectory(traj6);
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-1.5, -26.5))
-                .back(12)
-                .build();
-        drive.followTrajectory(traj7);
-        intake.setPower(0);
-        intakeB.setPower(0);
-        liftTargetPos = top;
-        liftAndDeposit();
-        Trajectory traj8 = drive.trajectoryBuilder(new Pose2d(-13.5,-26.5),true)
-                .lineTo(new Vector2d(-23.75, 33.75))
-                .build();
-        drive.followTrajectory(traj8);
-
-     /*   Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(3.5,27.75))
-                .back(29.5)
-                .build();
-
-        drive.followTrajectory(traj6);
-        */
-/*
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-14,-27))
-                .strafeLeft(2)
-                .build();
-
-        drive.followTrajectory(traj7);*/
-
+        if (isStopRequested()) return;
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d())
-                .back(30)
-                .strafeRight(6.5)
+                .forward(28)
+                .strafeLeft(7)
+
                 .build();
 
         drive.followTrajectorySequence(traj1);
-        drive.turn(Math.toRadians(-50));
-        level = 1;
+        drive.turnAsync(Math.toRadians(110));
         liftAndDeposit();
-        drive.turn(Math.toRadians(50));
-        //TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30,-6.5))
-            //    .forward(25)
-              //  .strafeLeft(29)
-              //  .build();
+        drive.turn(70);
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(28,-7,Math.toRadians(180)))
+                .back(26)
+                .strafeRight(28)
 
-        //drive.followTrajectorySequence(traj2);
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30,-6.5))
-               // .lineTo(new Vector2d(-6,24.5))
-                .forward(24)
-                .strafeLeft(33)
-                        .build();
-        drive.followTrajectorySequence(traj2);
-       /* Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-6,25.5))
-                .lineTo(new Vector2d(-13, 11))
                 .build();
 
-        drive.followTrajectory(traj3);*/
-          //where tiernan's code comes in
-        //TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(-13,11)) //edit coordinates accordingly to tiernan's positioning
-          //    .back(17)
-            //   .strafeRight(17)
-              //  .build();
-        //drive.followTrajectorySequence(traj4);
-        //drive.turn(Math.toRadians(-70));
-       // liftTargetPos=top;
-        //liftAndDeposit();
-        //drive.turn(Math.toRadians(70));
-       // Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-30,-5))
-         //       .lineTo(new Vector2d(-27,25.5))
-          //      .build();
-        //drive.followTrajectory(traj5);
+        drive.followTrajectorySequence(traj2);
         spinDuck();
-TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(-6,27.5))
-        .back(23)
-        .strafeLeft(2)
-        .build();
-drive.followTrajectorySequence(traj5);
+
+
     }
 
 
