@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.PIDS;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
-public class LiftPID {
+public class PID {
     private double kp, ki, kd;
     private double totalError, lastError, lastTime;
     private ArrayList<Double> errors;
 
-    public LiftPID(double kp, double ki, double kd) {
+    public PID(double kp, double ki, double kd) {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
@@ -27,8 +27,8 @@ public class LiftPID {
         return ki * totalError;
     }
 
-    public double getD(double currentError) {
-        return kd * (currentError - lastError);
+    public double getD(double currentError, ElapsedTime runtime) {
+        return kd * (currentError - lastError)/(runtime.time()-lastTime);
     }
 
     public boolean checkCorrection(double error){
@@ -40,7 +40,7 @@ public class LiftPID {
 
     }
 
-    public double getCorrection(double error) {
+    public double getCorrection(double error, ElapsedTime runtime) {
        /* if(errors.size() != 0) {
             totalError += error;
             double potentialError = getP(error) + getI(error) + getD(error, runtime);
@@ -57,11 +57,11 @@ public class LiftPID {
 
         totalError += error;
 
-        double output = getP(error) + getI(error) + getD(error);
+        double output = getP(error) + getI(error) + getD(error, runtime);
 
         lastError = error;
         errors.add(output);
-
+        lastTime = runtime.time();
 
         return output;
     }
