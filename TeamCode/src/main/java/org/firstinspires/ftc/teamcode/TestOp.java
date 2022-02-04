@@ -26,7 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class TestOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, intakeB, lift, liftB;
-    private Servo v4b1, v4b2, dep;
+    private Servo v4b1, v4b2, dep, lights;
     private CRServo duccL, duccR;
     private boolean direction, togglePrecision;
     Orientation angles;
@@ -89,6 +89,8 @@ public class TestOp extends OpMode {
         v4b1 = hardwareMap.servo.get("v4b1");
         v4b2 = hardwareMap.servo.get("v4b2");
         dep = hardwareMap.servo.get("dep");
+        lights = hardwareMap.servo.get("lights");
+
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
 
@@ -97,6 +99,8 @@ public class TestOp extends OpMode {
         v4b1.setDirection(Servo.Direction.REVERSE);
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
+        if(Distance.getDistance(DistanceUnit.MM) < 50)
+            lights.setPosition(0.35);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -156,6 +160,7 @@ public class TestOp extends OpMode {
         duccSpin();
         deposit();
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
 
 
         telemetry.addData("lift", lift.getCurrentPosition());
@@ -226,7 +231,7 @@ public class TestOp extends OpMode {
             //vertical position for asserting dominance
         }
 
-        if (gamepad1.right_trigger > .5) {
+        if (gamepad1.right_trigger > .4) {
             dep.setPosition(.3);
         } else {
             dep.setPosition(.52);

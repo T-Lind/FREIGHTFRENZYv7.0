@@ -111,8 +111,6 @@ public class BlueRight extends LinearOpMode //creates class
 
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
-
-        //pipeline = new CubeDetectionPipeline();
         pipeline = new NewDetectionPipeline();
         camera.setPipeline(pipeline);
 
@@ -150,14 +148,9 @@ public class BlueRight extends LinearOpMode //creates class
 
         telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
-        ElapsedTime delaytime = new ElapsedTime();
 
-        // JUST FOR TESTING - REMOVE FOR AUTO TO WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        while (delaytime.milliseconds() <= 3000)
-            heartbeat();
-
+        camera.setPipeline(pipeline2);
         liftError = liftTargetPos - lift.getCurrentPosition();
-
 
     }
 
@@ -275,22 +268,31 @@ public class BlueRight extends LinearOpMode //creates class
         }
         starts();
         blueRight();
-        //liftAndDeposit();
     }
 
     public void blueRight() throws InterruptedException{
         waitForStart();
 
         if (isStopRequested()) return;
-        camera.setPipeline(pipeline2);
 
-        double dx = get_dist(pipeline2);
+
+        /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
+            FIRST, I TURN THE INTAKE ON.
+            NEXT, I GET THE DISTANCE TO MOVE IN THE X AND Y DIRECTION
+            NOTE THAT THE X AND Y DISTANCE TO MOVE IS RELATIVE TO THE ROBOT
+            WHICH MEANS THAT THE X AND Y ARE SWITCHED IN ROADRUNNER.
+            MAKE SURE TO COPY THE METHODS AT THE END OF THE PROGRAM!
+            ALSO MAKE SURE THE PIPELINE SWITCH IS OCCURING AT THE END OF INIT.
+            AS WELL AS THAT THE PIPELINE2 OBJECT IS CREATED AT START OF THE PROGRAM.
+            MOVE THIS CODE WHERE YOU'D LIKE.
+                GOOD LUCK - TIERNAN
+
+        intake.setPower(-.75);
+        intakeB.setPower(-.75);
+
+
+        double dx = duccAttack();
         double dy = pipeline2.getDucc_y();
-
-        telemetry.addData("DX: ,",dx);
-        telemetry.update();
-        //intake.setPower(-.75);
-        //intakeB.setPower(-.75);
 
         Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
                 .lineTo(new Vector2d(dy, dx))
@@ -298,17 +300,8 @@ public class BlueRight extends LinearOpMode //creates class
 
         drive.followTrajectory(duccTraj);
 
-
-        telemetry.addLine("completed");
-        telemetry.update();
-        // REMOVE FOR FULL AUTO - DUCK TESTING*/
-
-        stop();
-
-
-
-
-
+        intake.setPower(0);
+        intakeB.setPower(0);*/
 
 
 
@@ -374,40 +367,28 @@ public class BlueRight extends LinearOpMode //creates class
         duccR.setPower(0);
 
     }
-    public static double standard_dev (ArrayList<Double> table, double mean)
-    {
-        double temp = 0;
-        for (int i = 0; i < table.size(); i++)
-        {
-            double val = table.get(i);
-            double squrDiffToMean = Math.pow(val - mean, 2);
-            temp += squrDiffToMean;
-        }
-        return Math.sqrt( temp / (double) (table.size()));
-    }
-    public double get_dist(DuckDetectionPipeline pipeline){
 
-        ArrayList<Double> ducc_x = new ArrayList<Double>();
+    public static double get_dist(DuckDetectionPipeline pipeline){
+        int cnt = 0;
         double mean = 0;
-        while(30 > ducc_x.size()){
+        while(10 > cnt){
             double dist_x = pipeline.getDucc_x();
             if(dist_x != Integer.MIN_VALUE) {
-                ducc_x.add(dist_x);
+                cnt++;
                 mean += dist_x;
             }
         }
-        mean /= ducc_x.size();
+        mean /= cnt;
+        return mean;
+    }
 
-        double dx = 0;
-        double sd = standard_dev(ducc_x, mean);
-
-        for(int i=ducc_x.size()-1;i>=0;i--)
-            if(Math.abs(ducc_x.get(i)) > mean+sd)
-                ducc_x.remove(i);
-            else
-                dx+=ducc_x.get(i);
-
-        dx/=ducc_x.size();
+    public double duccAttack(){
+        double dx = get_dist(pipeline2);
+        while(dx < -100) {
+            dx = get_dist(pipeline2);//pipeline2.getDucc_x();
+            telemetry.addData("DX: ,", dx);
+            telemetry.update();
+        }
         return dx;
     }
 }

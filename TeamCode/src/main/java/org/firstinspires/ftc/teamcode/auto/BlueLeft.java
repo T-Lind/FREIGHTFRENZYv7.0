@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
+import org.firstinspires.ftc.teamcode.DuckDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -77,6 +78,7 @@ public class BlueLeft extends LinearOpMode //creates class
     private WebcamName weCam;
     private OpenCvCamera camera;
     private NewDetectionPipeline pipeline;
+    private DuckDetectionPipeline pipeline2 = new DuckDetectionPipeline();
 
     private SampleMecanumDrive drive;
 
@@ -165,7 +167,7 @@ public class BlueLeft extends LinearOpMode //creates class
         telemetry.update();
 
 
-
+        camera.setPipeline(pipeline2);
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
 
@@ -249,7 +251,7 @@ public class BlueLeft extends LinearOpMode //creates class
 
 
         while(aman && opModeIsActive()){
-            redRight();
+            blueLeft();
             drive.update();
             keepLiftAlive();
         }
@@ -360,7 +362,34 @@ public class BlueLeft extends LinearOpMode //creates class
         runDepositFreight = false;
     }
 
-    public void redRight() throws InterruptedException{
+    public void blueLeft() throws InterruptedException{
+
+                /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
+            FIRST, I TURN THE INTAKE ON.
+            NEXT, I GET THE DISTANCE TO MOVE IN THE X AND Y DIRECTION
+            NOTE THAT THE X AND Y DISTANCE TO MOVE IS RELATIVE TO THE ROBOT
+            WHICH MEANS THAT THE X AND Y ARE SWITCHED IN ROADRUNNER.
+            MAKE SURE TO COPY THE METHODS AT THE END OF THE PROGRAM!
+            ALSO MAKE SURE THE PIPELINE SWITCH IS OCCURING AT THE END OF INIT.
+            MOVE THIS CODE WHERE YOU'D LIKE.
+
+                GOOD LUCK - TIERNAN
+
+        intake.setPower(-.75);
+        intakeB.setPower(-.75);
+
+
+        double dx = duccAttack();
+        double dy = pipeline2.getDucc_y();
+
+        Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
+                .lineTo(new Vector2d(dy, dx))
+                .build();
+
+        drive.followTrajectory(duccTraj);
+
+        intake.setPower(0);
+        intakeB.setPower(0);*/
 
         if(runAutoCall) {
 
@@ -384,6 +413,28 @@ public class BlueLeft extends LinearOpMode //creates class
         }
 
     }
+    public static double get_dist(DuckDetectionPipeline pipeline){
+        int cnt = 0;
+        double mean = 0;
+        while(10 > cnt){
+            double dist_x = pipeline.getDucc_x();
+            if(dist_x != Integer.MIN_VALUE) {
+                cnt++;
+                mean += dist_x;
+            }
+        }
+        mean /= cnt;
+        return mean;
+    }
 
+    public double duccAttack(){
+        double dx = get_dist(pipeline2);
+        while(dx < -100) {
+            dx = get_dist(pipeline2);//pipeline2.getDucc_x();
+            telemetry.addData("DX: ,", dx);
+            telemetry.update();
+        }
+        return dx;
+    }
 }
 

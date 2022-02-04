@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CubeDetectionPipeline;
+import org.firstinspires.ftc.teamcode.DuckDetectionPipeline;
 import org.firstinspires.ftc.teamcode.LiftPID;
 import org.firstinspires.ftc.teamcode.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -57,6 +58,7 @@ public class RedLeft extends LinearOpMode //creates class
     private WebcamName weCam;
     private OpenCvCamera camera;
     private NewDetectionPipeline pipeline;
+    private DuckDetectionPipeline pipeline2 = new DuckDetectionPipeline();
 
     private SampleMecanumDrive drive; //d
 
@@ -120,7 +122,7 @@ public class RedLeft extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -130,8 +132,6 @@ public class RedLeft extends LinearOpMode //creates class
         });
 
         while (!opModeIsActive()) {
-            //get the level, either 0, 1, or 2 (0 if not detected)
-
             level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
 
@@ -149,6 +149,7 @@ public class RedLeft extends LinearOpMode //creates class
         telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
 
+        camera.setPipeline(pipeline2);
         liftError = liftTargetPos - lift.getCurrentPosition();
 
 
@@ -272,7 +273,37 @@ public class RedLeft extends LinearOpMode //creates class
     public void redLeft() throws InterruptedException{
         waitForStart();
 
-        if (isStopRequested()) return;/*
+        if (isStopRequested()) return;
+
+                /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
+            FIRST, I TURN THE INTAKE ON.
+            NEXT, I GET THE DISTANCE TO MOVE IN THE X AND Y DIRECTION
+            NOTE THAT THE X AND Y DISTANCE TO MOVE IS RELATIVE TO THE ROBOT
+            WHICH MEANS THAT THE X AND Y ARE SWITCHED IN ROADRUNNER.
+            MAKE SURE TO COPY THE METHODS AT THE END OF THE PROGRAM!
+            ALSO MAKE SURE THE PIPELINE SWITCH IS OCCURING AT THE END OF INIT.
+            MOVE THIS CODE WHERE YOU'D LIKE.
+
+                GOOD LUCK - TIERNAN
+
+        intake.setPower(-.75);
+        intakeB.setPower(-.75);
+
+
+        double dx = duccAttack();
+        double dy = pipeline2.getDucc_y();
+
+        Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
+                .lineTo(new Vector2d(dy, dx))
+                .build();
+
+        drive.followTrajectory(duccTraj);
+
+        intake.setPower(0);
+        intakeB.setPower(0);*/
+
+
+        /*
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(),true)
                 .lineTo(new Vector2d(-17.5, -29.5))
                 .build();
@@ -450,6 +481,28 @@ drive.followTrajectorySequence(traj5);
         intake.setPower(0);
         intakeB.setPower(0);
     }
+    public static double get_dist(DuckDetectionPipeline pipeline){
+        int cnt = 0;
+        double mean = 0;
+        while(10 > cnt){
+            double dist_x = pipeline.getDucc_x();
+            if(dist_x != Integer.MIN_VALUE) {
+                cnt++;
+                mean += dist_x;
+            }
+        }
+        mean /= cnt;
+        return mean;
+    }
 
+    public double duccAttack(){
+        double dx = get_dist(pipeline2);
+        while(dx < -100) {
+            dx = get_dist(pipeline2);//pipeline2.getDucc_x();
+            telemetry.addData("DX: ,", dx);
+            telemetry.update();
+        }
+        return dx;
+    }
 }
 
