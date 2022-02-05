@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Misc;
 import java.util.ArrayList;
 
 public class Spline {
