@@ -21,55 +21,43 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        Trajectory trajSeq = drive.trajectoryBuilder(new Pose2d())
+        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(11,-63,Math.toRadians(90)))
+                .splineTo(new Vector2d(1, -35.5), Math.toRadians(90))
 
-                //.splineToConstantHeading(new Vector2d(-30, 6), Math.toRadians(0))
-               .splineToLinearHeading(new Pose2d(-18.6, 18), Math.toRadians(0))
 
-                //.splineTo(new Vector2d(6, 47), Math.toRadians(90))
-                //.back(43) //"forward"
-                //.turn(90)
-                //.lineTo(new Vector2d(-17.85, -25.5))
-                //.strafeLeft(20)
-                /*.waitSeconds(1)
-                .forward(16) //"back"
-                .turn(Math.toRadians(70))
-                .turn(Math.toRadians(-70))
+                .build();
+        drive.followTrajectory(traj1);
+        drive.turn(Math.toRadians(-135));
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(1, -35.5, Math.toRadians(-45)))
+                .splineTo(new Vector2d(55, -65), Math.toRadians(0))
 
-                .splineTo(new Vector2d(6, 47), Math.toRadians(90))
-                .waitSeconds(1)
-                //.back(50)
-                //.turn(Math.toRadians(-90))
-                //.back(49)
-                //.turn(Math.toRadians(-90))
-                //.back(21)
+
+                .build();
+        drive.followTrajectory(traj2);
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(55, -65, Math.toRadians(0)))
                 .setReversed(true)
-                .splineTo(new Vector2d(-20, -14), Math.toRadians(180)) //reverse spline
-                .turn(Math.toRadians(70))
-                .turn(Math.toRadians(-70))
-                .setReversed(false)
-                .splineTo(new Vector2d(6, 51), Math.toRadians(90))*/
+                .back(45)
+                .splineTo(new Vector2d(1, -35.5), Math.toRadians(135))
+
+
                 .build();
+        drive.followTrajectorySequence(traj3);
 
 
 
 
-        drive.followTrajectory(trajSeq);
-        Trajectory trajSeq1 = drive.trajectoryBuilder(new Pose2d(-18.6,18))
 
 
-                .splineTo(new Vector2d(35, 22), Math.toRadians(90))
-                .build();
-        drive.followTrajectory(trajSeq1);
 
-        /*Trajectory traj3 = test.trajectoryBuilder(new Pose2d())
-                .strafeRight(15)
-                .build();*/
+
+
+
 
     }
 }

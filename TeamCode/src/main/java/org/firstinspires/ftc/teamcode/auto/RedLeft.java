@@ -51,7 +51,7 @@ public class RedLeft extends LinearOpMode //creates class
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 650;
+    private final int top = 620;
     private final int med = 275;
 
 
@@ -65,7 +65,7 @@ public class RedLeft extends LinearOpMode //creates class
     public void initialize() {
 
         drive = new SampleMecanumDrive(hardwareMap);
-
+        drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
 
           intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
@@ -266,6 +266,7 @@ public class RedLeft extends LinearOpMode //creates class
             sleep(5000);
         }
         starts();
+        drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
         redLeft();
         //liftAndDeposit();
     }
@@ -274,6 +275,10 @@ public class RedLeft extends LinearOpMode //creates class
         waitForStart();
 
         if (isStopRequested()) return;
+
+
+
+
 
                 /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
             FIRST, I TURN THE INTAKE ON.
@@ -302,13 +307,58 @@ public class RedLeft extends LinearOpMode //creates class
         intake.setPower(0);
         intakeB.setPower(0);*/
 
+        drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
+        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+                .splineTo(new Vector2d(-31, -25.5), Math.toRadians(90))
 
-        /*
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(),true)
-                .lineTo(new Vector2d(-17.5, -29.5))
+                .build();
+        drive.followTrajectory(traj1);
+        drive.turn(Math.toRadians(90));
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-31, -25.5, Math.toRadians(-180)))//
+                .splineTo(new Vector2d(-60, -61), Math.toRadians(-180))
+
+                .build();
+        drive.followTrajectory(traj2);
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-60, -61, Math.toRadians(-180)),true)
+                .splineTo(new Vector2d(-52, -55),Math.toRadians(-270))
+
                 .build();
         drive.followTrajectory(traj3);
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-52, -55, Math.toRadians(-90)))
+                .lineTo(new Vector2d(-50, -61))
+
+                .build();
+        drive.followTrajectory(traj4);
+
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-50, -61, Math.toRadians(-90)),true)
+                .splineTo(new Vector2d(-29,-24),Math.toRadians(0))
+
+                .build();
+        drive.followTrajectory(traj5);
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-24, -24, Math.toRadians(-180)))
+                .splineTo(new Vector2d(-61,-35),Math.toRadians(-180))
+
+                .build();
+        drive.followTrajectory(traj6);
+
+
+
+
+
+
 /*
+
+        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(),true)
+                .splineToLinearHeading(new Pose2d(-20, 6), Math.toRadians(0))
+                .build();
+        drive.followTrajectory(traj1);
+        drive.turn(Math.toRadians(110));
+        drive.turn(Math.toRadians(70));
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-6,20),true)
+                .splineToLinearHeading(new Pose2d(-6, -25), Math.toRadians(180))
+                .build();
+        drive.followTrajectory(traj2);
+
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
                 .back(3)
                 .build();
@@ -392,7 +442,7 @@ public class RedLeft extends LinearOpMode //creates class
                 .strafeLeft(2)
                 .build();
 
-        drive.followTrajectory(traj7);*/
+        drive.followTrajectory(traj7);
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d())
                 .back(30)
@@ -435,12 +485,12 @@ public class RedLeft extends LinearOpMode //creates class
          //       .lineTo(new Vector2d(-27,25.5))
           //      .build();
         //drive.followTrajectory(traj5);
-        spinDuck();
+        /*spinDuck();
 TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(-6,27.5))
         .back(23)
         .strafeLeft(2)
         .build();
-drive.followTrajectorySequence(traj5);
+drive.followTrajectorySequence(traj5);*/
     }
 
 
@@ -452,16 +502,11 @@ drive.followTrajectorySequence(traj5);
         duccR.setPower(-.4);
 
 
-        while (spinTime.milliseconds() <= 2000)
+        while (spinTime.milliseconds() <= 4000)
             heartbeat();
 
 
-        duccL.setPower(-.2);
-        duccR.setPower(-.2);
 
-
-        while (spinTime.milliseconds() <= 4000)
-           heartbeat();
 
         duccL.setPower(0);
         duccR.setPower(0);
