@@ -27,27 +27,36 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(11,-63,Math.toRadians(90)))
-                .splineTo(new Vector2d(1, -35.5), Math.toRadians(90))
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
+                .splineTo(new Vector2d(8, -25), Math.toRadians(90))
+                .turn(Math.toRadians(-90))
 
 
                 .build();
-        drive.followTrajectory(traj1);
-        drive.turn(Math.toRadians(-135));
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(1, -35.5, Math.toRadians(-45)))
-                .splineTo(new Vector2d(55, -65), Math.toRadians(0))
+        drive.followTrajectorySequence(traj1);
+
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(8, -25, Math.toRadians(0)))
+                .lineTo(new Vector2d(8,-63))
+
+
+                .forward(50)
+
 
 
                 .build();
-        drive.followTrajectory(traj2);
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(55, -65, Math.toRadians(0)))
+        drive.followTrajectorySequence(traj2);
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(58, -63, Math.toRadians(0)))
                 .setReversed(true)
-                .back(45)
-                .splineTo(new Vector2d(1, -35.5), Math.toRadians(135))
+                .back(55)
+                .splineTo(new Vector2d(-12, -42), Math.toRadians(90))
 
 
                 .build();
         drive.followTrajectorySequence(traj3);
+        drive.followTrajectorySequence(traj2);
+        drive.followTrajectorySequence(traj3);
+
+
 
 
 

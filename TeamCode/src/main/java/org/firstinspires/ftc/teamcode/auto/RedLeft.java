@@ -309,34 +309,38 @@ public class RedLeft extends LinearOpMode //creates class
 
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
         Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .splineTo(new Vector2d(-31, -25.5), Math.toRadians(90))
+                .splineTo(new Vector2d(-35, -21), Math.toRadians(90))
 
                 .build();
         drive.followTrajectory(traj1);
         drive.turn(Math.toRadians(90));
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-31, -25.5, Math.toRadians(-180)))//
-                .splineTo(new Vector2d(-60, -61), Math.toRadians(-180))
+
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-35, -21, Math.toRadians(-180)))//
+                .splineTo(new Vector2d(-66, -61), Math.toRadians(-180))
 
                 .build();
         drive.followTrajectory(traj2);
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-60, -61, Math.toRadians(-180)),true)
-                .splineTo(new Vector2d(-52, -55),Math.toRadians(-270))
+
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-66, -61, Math.toRadians(-180)),true)
+                .splineTo(new Vector2d(-55, -40),Math.toRadians(-270))
 
                 .build();
         drive.followTrajectory(traj3);
+        /*
         Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-52, -55, Math.toRadians(-90)))
                 .lineTo(new Vector2d(-50, -61))
 
                 .build();
         drive.followTrajectory(traj4);
-
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-50, -61, Math.toRadians(-90)),true)
-                .splineTo(new Vector2d(-29,-24),Math.toRadians(0))
+*/ //tiernans lineTo to pick up duck
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-55, -40, Math.toRadians(-90)),true)
+                .splineTo(new Vector2d(-34.7,-16.5),Math.toRadians(0))
 
                 .build();
         drive.followTrajectory(traj5);
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-24, -24, Math.toRadians(-180)))
-                .splineTo(new Vector2d(-61,-35),Math.toRadians(-180))
+
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-34.7, -16.5, Math.toRadians(-180)))
+                .splineTo(new Vector2d(-74,-25.5),Math.toRadians(-180))
 
                 .build();
         drive.followTrajectory(traj6);
