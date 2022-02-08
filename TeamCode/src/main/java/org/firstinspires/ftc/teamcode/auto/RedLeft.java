@@ -326,18 +326,35 @@ public class RedLeft extends LinearOpMode //creates class
 
                 .build();
         drive.followTrajectory(traj3);
-        /*
+
+
+        // code to intake duck - dx and dy might need to be swapped
+        // cause based on what I know, dx and dy should be right but in my testing it was not.
+        // also dy should be the right amount but we'll see, that's easy to adjust
+
+        intake.setPower(-.75);
+        intakeB.setPower(-.75);
+
+
+        double dx = duccAttack();
+        double dy = -pipeline2.getDucc_y();
+
         Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-52, -55, Math.toRadians(-90)))
-                .lineTo(new Vector2d(-50, -61))
+                .splineTo(new Vector2d(-52+dx, -55+dy),Math.toRadians(270))
 
                 .build();
+
         drive.followTrajectory(traj4);
-*/ //tiernans lineTo to pick up duck
+
         Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-55, -40, Math.toRadians(-90)),true)
                 .splineTo(new Vector2d(-34.7,-16.5),Math.toRadians(0))
 
                 .build();
         drive.followTrajectory(traj5);
+
+        intake.setPower(0);
+        intakeB.setPower(0);
+        // I turn off intake here instead of earlier so that if the duck gets yeeted there is a possibility this yoinks it up
 
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-34.7, -16.5, Math.toRadians(-180)))
                 .splineTo(new Vector2d(-74,-25.5),Math.toRadians(-180))
