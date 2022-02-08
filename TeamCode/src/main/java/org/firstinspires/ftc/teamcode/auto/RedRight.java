@@ -45,10 +45,8 @@ public class RedRight extends LinearOpMode //creates class
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
-    private int x = 0;
-    private int y = 0;
-    private int z = 0;
 
+    private int intakePower = -1;
     private int cycles = 0;
 
     private Rev2mDistanceSensor Distance;
@@ -59,7 +57,7 @@ public class RedRight extends LinearOpMode //creates class
 
     //IMPORTANT BOOLEANS FOR STATE MACHINES
     private boolean aman = true;
-    private boolean runAutoCycling = false;
+    private boolean runFetchFreight = false;
     private boolean runAutoCall = true;
     private boolean runDepositFreight = false;
 
@@ -149,7 +147,7 @@ public class RedRight extends LinearOpMode //creates class
         });
 
         while (!opModeIsActive()) {
-            //get the level, either 0, 1, or 2 (0 if not detected)
+            //get the level, either 0, 1, or 2 or 3 (0 if not detected)
             level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
 
@@ -164,11 +162,21 @@ public class RedRight extends LinearOpMode //creates class
         // if the latest level was 0 then it must be in the 3 position.
         if(level == 0)
             level = 3;
+        //CHANGE THIS IN THE FUTURE -aman
+        level = 3;
         telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
 
         camera.setPipeline(pipeline2);
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
+
+        if(level == 1)
+            liftTargetPos = 0;
+         else if(level == 2)
+            liftTargetPos = med;
+        else
+            liftTargetPos = top;
+
 
 
 
@@ -195,35 +203,57 @@ public class RedRight extends LinearOpMode //creates class
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
 
-            if (liftTargetPos == 0 || level == 3) {
+            /*
+            if (level == 3) {
                 v4b1.setPosition(.81);
                 v4b2.setPosition(.81);
+                telemetry.addLine("reached");
+                telemetry.update();
             } else{
                 v4b1.setPosition(.5);
                 v4b2.setPosition(.5);
             }
 
 
-            if (aman && (!drive.isBusy())) {
-                dep.setPosition(.355);
-                sleep(450);
-                starts();
-                liftTargetPos = 0;
-                liftError = liftTargetPos - lift.getCurrentPosition();
+             */
 
-                lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
-                liftB.setPower(lift.getPower());
+                if (aman && !drive.isBusy()) {
+                    dep.setPosition(.355);
+                    sleep(450);
+                    starts();
+                    liftTargetPos = 0;
+                    liftError = liftTargetPos - lift.getCurrentPosition();
 
-                aman = false;
-                reading = Distance.getDistance(DistanceUnit.MM);
-                runAutoCycling = true;
-                runDepositFreight = false;
+                    lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+                    liftB.setPower(lift.getPower());
 
-                cycles++;
+                    aman = false;
+                    reading = Distance.getDistance(DistanceUnit.MM);
+                    runFetchFreight = true;
+                    runDepositFreight = false;
 
-            }
+                }
+
         }
 
+    }
+
+
+    public void safeGuard(){
+        intake.setPower(intakePower);
+        intakeB.setPower(intakePower);
+
+        boolean fridge = true;
+
+        reading = Distance.getDistance(DistanceUnit.MM);
+
+        if(reading < 100){
+            intakePower = 1;
+            intake.setPower(intakePower);
+            intakeB.setPower(intakePower);
+            runDepositFreight = true;
+
+        }
 
     }
 
@@ -249,140 +279,86 @@ public class RedRight extends LinearOpMode //creates class
 
         starts();
 
-        redRight();
+        drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
 
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .back(10)
-                .turn(Math.toRadians(-90))
-                .back(40)
-                .build();
-
-        //drive.followTrajectorySequence(trajSeq);
-
-        ElapsedTime sherwin = new ElapsedTime();
-
-        while(sherwin.milliseconds() < 10000){
-            telemetry.addData("X", drive.getPoseEstimate().getX());
-            telemetry.addData("Y", drive.getPoseEstimate().getY());
-            telemetry.update();
-
+        while(aman){
+            redRight(); //Initial predeposit
+            drive.update(); //Updates the drive asynch
+            keepLiftAlive(); //Keeps the lift alive
         }
 
+        //The second while loop which will perform autocycling
 
-        /*
-        while(aman && opModeIsActive()){
-            redRight();
-            drive.update();
-            keepLiftAlive();
-        }
-
-
-        while(opModeIsActive()){
+        for(int i = 0; i < 2; i++){
             fetchFreight();
+            level = 3;
+            liftTargetPos = 0;
+
+            while(drive.isBusy()){
+                drive.update();
+                safeGuard();
+                keepLiftAlive();
+            }
+
+            liftTargetPos = top;
+
             depositCycledFreight();
 
-            if(!runDepositFreight)
-            keepLiftAlive();
-
-            drive.update();
-            if(cycles == 2)
-                break;
+            while(drive.isBusy()){
+                drive.update();
+                safeGuard();
+                keepLiftAlive();
+                intakePower = 0;
+            }
+            intakePower = -1;
+            cycles++;
         }
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-35.5, 3, Math.toRadians(90)))
-                .strafeLeft(25)
-                .forward(40)
-                .build();
 
-        drive.followTrajectorySequence(trajSeq);
-
-    */
 
     }
 
 
+
     public void fetchFreight() throws InterruptedException {
-        if (runAutoCycling) {
-            //START: -35.5, 4
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-35.5, 3, Math.toRadians(90)))
-                    .strafeLeft(36 + y)
-                    .forward(25 + x)
-                    .forward(12)
+
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, -20, Math.toRadians(0)))
+                    .lineTo(new Vector2d(0,-53.6))
+                    .forward(58)
                     .build();
-            //END: -9, 4
-            drive.followTrajectorySequence(trajSeq);
+
+            drive.followTrajectorySequenceAsync(traj2); //goes to warehouse
 
 
-            int i = 0;
-
-
-
-            //sleep(300);
-            succ.reset();
-            while(succ.milliseconds() < 600){
-                if (reading < full) {
-                    intake.setPower(1);
-                    intakeB.setPower(1);
-
-                } else {
-                    intake.setPower(-1);
-                    intakeB.setPower(-1);
-
-                }
-            }
-
-            intake.setPower(0);
-            intakeB.setPower(0);
-
-
-
-            runAutoCycling = false;
-            runDepositFreight = true;
-            x += 1.5;
-
-        }
     }
 
 
 
     public void depositCycledFreight() throws InterruptedException{
-        if(runDepositFreight){
-            aman = true;
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(58, -50, Math.toRadians(0)))
+                //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
+                // wont ever be extremely accurate
+                .setReversed(true)
+                .back(60)
+                .splineTo(new Vector2d(-12, -32), Math.toRadians(90))
 
-            liftTargetPos = top;
 
-        if(z == 0) {
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-71.5 - y, 33.5, Math.toRadians(90)))
-                    .back(9)
-                    .back(23.5)
-                    .strafeRight(29.5 + y)
-                    .back(1.5)
-                    .build();
-            drive.followTrajectorySequenceAsync(trajSeq);
-
-        } else{
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-71.5 - y, 33.5, Math.toRadians(90)))
-                    .back(9)
-                    .back(22.5 - z)
-                    .strafeRight(29.5 + y)
-                    .build();
-            drive.followTrajectorySequenceAsync(trajSeq);
-
-        }
-
-        intake.setPower(0);
-        intakeB.setPower(0);
-
-            y++;
-            z += 1.5;
-
-            keepLiftAlive();
-
-        }
-
-        runDepositFreight = false;
+                .build();
+        drive.followTrajectorySequenceAsync(traj3); //goes to deposit
     }
 
     public void redRight() throws InterruptedException{
+
+        if(runAutoCall) {
+
+            TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
+                    .splineTo(new Vector2d(10, -20), Math.toRadians(90))
+                    .turn(Math.toRadians(-90))
+                    .build();
+            drive.followTrajectorySequenceAsync(traj1); //initial deposit
+
+        }
+
+        runAutoCall = false;
 
                 /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
             FIRST, I TURN THE INTAKE ON.
@@ -412,39 +388,7 @@ public class RedRight extends LinearOpMode //creates class
         intakeB.setPower(0);*/
 
 
-        if(runAutoCall) {
 
-            //.back means FORWARD (in direction of jerry)
-
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(0,0,0))
-                  //  .back(27.5)
-                    //.back(25)
-                    //.turn(Math.toRadians(67.5))
-                    //.back(6)
-                    //.forward(6)
-                    //.forward(54)
-                    //.waitSeconds(3)
-                    //.back(19)
-
-                    //.back(41)
-                    //.back(27.5)
-                    //.turn(Math.toRadians(67.5))
-                    //.back(6)
-
-                    .splineTo(new Vector2d(6, 47), Math.toRadians(0))
-                    //.setReversed(true)
-                    //.splineTo(new Vector2d(-20, -14), Math.toRadians(180))
-                    .build();
-
-
-            //-35.5, 4
-
-            drive.followTrajectorySequence(trajSeq);
-            runAutoCall = false;
-            level = 0;
-
-
-        }
 
     }
 
