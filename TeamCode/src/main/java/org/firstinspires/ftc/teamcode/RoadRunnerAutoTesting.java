@@ -28,33 +28,61 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
         if (isStopRequested()) return;
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
-                .splineTo(new Vector2d(8, -25), Math.toRadians(90))
+                .splineTo(new Vector2d(10, -20), Math.toRadians(90))
                 .turn(Math.toRadians(-90))
 
 
                 .build();
-        drive.followTrajectorySequence(traj1);
+        drive.followTrajectorySequence(traj1); //initial deposit
 
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(8, -25, Math.toRadians(0)))
-                .lineTo(new Vector2d(8,-63))
-
-
-                .forward(50)
-
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, -20, Math.toRadians(0)))
+                .lineTo(new Vector2d(0,-53.6))
+               // .lineTo(new Vector2d(58, -60))
+               // .splineToConstantHeading(new Vector2d(2, -60), Math.toRadians(0))
+                //.splineToConstantHeading(new Vector2d(2, -60), Math.toRadians(-180))
+                .forward(58)
 
 
                 .build();
-        drive.followTrajectorySequence(traj2);
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(58, -63, Math.toRadians(0)))
+        drive.followTrajectorySequence(traj2); //goes to warehouse
+
+
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(58, -50, Math.toRadians(0)))
+                //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
+                                                                        // wont ever be extremely accurate
                 .setReversed(true)
-                .back(55)
-                .splineTo(new Vector2d(-12, -42), Math.toRadians(90))
+                .back(60)
+                .splineTo(new Vector2d(-12, -32), Math.toRadians(90))
 
 
                 .build();
-        drive.followTrajectorySequence(traj3);
-        drive.followTrajectorySequence(traj2);
-        drive.followTrajectorySequence(traj3);
+        drive.followTrajectorySequence(traj3); //goes to deposit
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-12, -42, Math.toRadians(90)))
+
+                .splineTo(new Vector2d(1, -51), Math.toRadians(0))
+                .forward(60)
+
+
+                .build();
+
+        drive.followTrajectorySequence(traj4); //goes back to warehouse, should have enough room to go forward
+                                                // and accelerate over obstacle
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(61, -51, Math.toRadians(0)))
+                .setReversed(true)
+                .back(60)
+                .splineTo(new Vector2d(-12, -32), Math.toRadians(90))
+
+
+                .build();
+        drive.followTrajectorySequence(traj5); //goes back to deposit
+        //after repeating spline and going back and forth and whatnot,
+        //  give a little bit room for error, we lose about 1-2 inches in localization in x and y
+
+
+
+
+
+
 
 
 

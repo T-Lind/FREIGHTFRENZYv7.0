@@ -57,7 +57,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(.8, 0, 0); //used to be 2.45
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2, 0, 0); //used to be 1.45
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2.5, 0, 0); //used to be 1.45
 
     public static double LATERAL_MULTIPLIER = 1.56; //used to be 1.139240506329114
 
@@ -102,10 +102,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         // upward (normal to the floor) using a command like the following:
         BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "FL");
-        leftRear = hardwareMap.get(DcMotorEx.class, "BL");
-        rightRear = hardwareMap.get(DcMotorEx.class, "BR");
-        rightFront = hardwareMap.get(DcMotorEx.class, "FR");
+        leftFront = hardwareMap.get(DcMotorEx.class, "BL"); //FL
+        leftRear = hardwareMap.get(DcMotorEx.class, "FL"); //BL
+        rightRear = hardwareMap.get(DcMotorEx.class, "FR"); //BR
+        rightFront = hardwareMap.get(DcMotorEx.class, "BR"); //FR
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

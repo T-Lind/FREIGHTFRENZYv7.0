@@ -318,7 +318,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         // duck intake movement ends
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-55, -40, Math.toRadians(-90)),true)
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-55+dx, -40+dy, Math.toRadians(-90)),true)
                 .splineTo(new Vector2d(-34.7,-16.5),Math.toRadians(0))
 
                 .build();
