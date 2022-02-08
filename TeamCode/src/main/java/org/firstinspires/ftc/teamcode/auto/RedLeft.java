@@ -277,36 +277,6 @@ public class RedLeft extends LinearOpMode //creates class
         if (isStopRequested()) return;
 
 
-
-
-
-                /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
-            FIRST, I TURN THE INTAKE ON.
-            NEXT, I GET THE DISTANCE TO MOVE IN THE X AND Y DIRECTION
-            NOTE THAT THE X AND Y DISTANCE TO MOVE IS RELATIVE TO THE ROBOT
-            WHICH MEANS THAT THE X AND Y ARE SWITCHED IN ROADRUNNER.
-            MAKE SURE TO COPY THE METHODS AT THE END OF THE PROGRAM!
-            ALSO MAKE SURE THE PIPELINE SWITCH IS OCCURING AT THE END OF INIT.
-            MOVE THIS CODE WHERE YOU'D LIKE.
-
-                GOOD LUCK - TIERNAN
-
-        intake.setPower(-.75);
-        intakeB.setPower(-.75);
-
-
-        double dx = duccAttack();
-        double dy = pipeline2.getDucc_y();
-
-        Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
-                .lineTo(new Vector2d(dy, dx))
-                .build();
-
-        drive.followTrajectory(duccTraj);
-
-        intake.setPower(0);
-        intakeB.setPower(0);*/
-
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
         Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
                 .splineTo(new Vector2d(-35, -21), Math.toRadians(90))
@@ -336,15 +306,17 @@ public class RedLeft extends LinearOpMode //creates class
         intakeB.setPower(-.75);
 
 
-        double dx = duccAttack();
-        double dy = -pipeline2.getDucc_y();
+        double dx = -duccAttack(); // this is NOT negative on the blue side!!!!
+        double dy = -pipeline2.getDucc_y(); // this is NOT negative on the blue side!!!!
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-52, -55, Math.toRadians(-90)))
-                .splineTo(new Vector2d(-52+dx, -55+dy),Math.toRadians(270))
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-55, -50, Math.toRadians(-90)))
+                .splineTo(new Vector2d(-55+dx, -40+dy),Math.toRadians(270))
 
                 .build();
 
         drive.followTrajectory(traj4);
+
+        // duck intake movement ends
 
         Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-55, -40, Math.toRadians(-90)),true)
                 .splineTo(new Vector2d(-34.7,-16.5),Math.toRadians(0))
