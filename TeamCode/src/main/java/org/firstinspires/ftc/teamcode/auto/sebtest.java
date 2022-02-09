@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -19,23 +17,18 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.CameraPipelines.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.CameraPipelines.DuckDetectionPipeline;
-import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 import org.firstinspires.ftc.teamcode.CameraPipelines.NewDetectionPipeline;
+import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-
-@Autonomous(name = "RedRight")
-public class RedRight extends LinearOpMode //creates class
+@Autonomous(name = "sebTest")
+public class sebtest extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
 
@@ -268,8 +261,8 @@ public class RedRight extends LinearOpMode //creates class
 
 
     public void starts(){
-        //v4b1.setPosition(.19);
-        //v4b2.setPosition(.19);
+        v4b1.setPosition(.19);
+        v4b2.setPosition(.19);
         telemetry.addData("V4b", v4b1.getPosition());
         telemetry.update();
         dep.setPosition(.52);
@@ -287,6 +280,18 @@ public class RedRight extends LinearOpMode //creates class
 
         if (isStopRequested()) return;
 
+        while(!isStopRequested()) {
+            if (test.milliseconds() > 0 && test.milliseconds() < 2000) {
+                v4b1.setPosition(.81);
+            }
+            if (test.milliseconds() > 2000 && test.milliseconds() < 4000) {
+                v4b1.setPosition(.19);
+            }
+            if (test.milliseconds() > 2000) {
+                test.reset();
+            }
+        }
+/*
 
         drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
 
@@ -327,7 +332,7 @@ public class RedRight extends LinearOpMode //creates class
             cycles++;
         }
 
-
+        */
     }
 
 
