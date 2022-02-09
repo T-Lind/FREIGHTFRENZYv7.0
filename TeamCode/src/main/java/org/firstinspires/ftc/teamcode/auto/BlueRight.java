@@ -63,7 +63,7 @@ public class BlueRight extends LinearOpMode //creates class
     public void initialize() throws InterruptedException {
 
         drive = new SampleMecanumDrive(hardwareMap);
-
+        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
@@ -274,7 +274,62 @@ public class BlueRight extends LinearOpMode //creates class
         waitForStart();
 
         if (isStopRequested()) return;
+        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
+        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, 63, Math.toRadians(-90)))
+                .splineTo(new Vector2d(-35, 21), Math.toRadians(-90))
 
+                .build();
+        drive.followTrajectory(traj1);
+        drive.turn(Math.toRadians(-90));
+
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-35, 21, Math.toRadians(-180)))//
+                .splineTo(new Vector2d(-66, 61), Math.toRadians(-180))
+
+                .build();
+        drive.followTrajectory(traj2);
+
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-66, 61, Math.toRadians(180)),true)
+                .splineTo(new Vector2d(-55, 40),Math.toRadians(270))
+
+                .build();
+        drive.followTrajectory(traj3);
+
+
+        // code to intake duck - dx and dy might need to be swapped
+        // cause based on what I know, dx and dy should be right but in my testing it was not.
+        // also dy should be the right amount but we'll see, that's easy to adjust
+
+        intake.setPower(-.75);
+        intakeB.setPower(-.75);
+
+
+        double dx = -duccAttack(); // this is NOT negative on the blue side!!!!
+        double dy = -pipeline2.getDucc_y(); // this is NOT negative on the blue side!!!!
+
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-55, 40, Math.toRadians(90)))
+                .splineTo(new Vector2d(-55+dx, 40+dy),Math.toRadians(90))
+
+                .build();
+
+        drive.followTrajectory(traj4);
+
+        // duck intake movement ends
+
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-55+dx, 40+dy, Math.toRadians(90)),true)
+                .splineTo(new Vector2d(-29,24),Math.toRadians(0))
+
+                .build();
+        drive.followTrajectory(traj5);
+
+        intake.setPower(0);
+        intakeB.setPower(0);
+        // I turn off intake here instead of earlier so that if the duck gets yeeted there is a possibility this yoinks it up
+
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-29, 24, Math.toRadians(180)))
+                .lineTo(new Vector2d(-74,35))
+
+                .build();
+        drive.followTrajectory(traj6);
 
         /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
             FIRST, I TURN THE INTAKE ON.
@@ -302,7 +357,7 @@ public class BlueRight extends LinearOpMode //creates class
 
         intake.setPower(0);
         intakeB.setPower(0);*/
-
+/*
 
 
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
@@ -352,7 +407,7 @@ public class BlueRight extends LinearOpMode //creates class
                 .strafeRight(2)
                 .build();
 
-        drive.followTrajectory(traj7);
+        drive.followTrajectory(traj7);*/
 
     }
 

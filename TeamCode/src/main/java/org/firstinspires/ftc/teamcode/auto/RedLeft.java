@@ -309,7 +309,7 @@ public class RedLeft extends LinearOpMode //creates class
         double dx = -duccAttack(); // this is NOT negative on the blue side!!!!
         double dy = -pipeline2.getDucc_y(); // this is NOT negative on the blue side!!!!
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-55, -50, Math.toRadians(-90)))
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-55, -40, Math.toRadians(-90)))
                 .splineTo(new Vector2d(-55+dx, -40+dy),Math.toRadians(270))
 
                 .build();
