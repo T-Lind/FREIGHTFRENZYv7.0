@@ -48,7 +48,7 @@ public class RedRight extends LinearOpMode //creates class
     private TrajectorySequence traj3;
 
 
-    private double intakePower = -1;
+    private double intakePower = -0.65;
     private int cycles = 0;
 
     private Rev2mDistanceSensor Distance;
@@ -250,18 +250,21 @@ public class RedRight extends LinearOpMode //creates class
 
 
     public void safeGuard(){
-        if(drive.getPoseEstimate().getY() < 50)
-        intake.setPower(intakePower);
-        intakeB.setPower(intakePower);
+        double currentPose = drive.getPoseEstimate().getX();
 
-        reading = Distance.getDistance(DistanceUnit.MM);
-
-        if(reading < 100){
-            intakePower = 1;
+        if(Math.abs(currentPose - 53) < 15) {
             intake.setPower(intakePower);
             intakeB.setPower(intakePower);
-            runDepositFreight = true;
 
+            reading = Distance.getDistance(DistanceUnit.MM);
+
+            if (reading < 100) {
+                intakePower = 0.75;
+                intake.setPower(intakePower);
+                intakeB.setPower(intakePower);
+                runDepositFreight = true;
+
+            }
         }
 
     }
@@ -309,6 +312,8 @@ public class RedRight extends LinearOpMode //creates class
                 drive.update();
                 safeGuard();
                 keepLiftAlive();
+                telemetry.addData("Intake Power 1", intake.getPower());
+                telemetry.update();
             }
 
             liftTargetPos = top;
@@ -317,14 +322,22 @@ public class RedRight extends LinearOpMode //creates class
 
             depositCycledFreight();
 
+            ElapsedTime turnOffIntake = new ElapsedTime();
             while(drive.isBusy()){
                 drive.update();
-                safeGuard();
                 keepLiftAlive();
                 intakePower = 0;
+
+                if(turnOffIntake.milliseconds() > 3000){
+                    intake.setPower(0);
+                    intakeB.setPower(0);
+                }
+
+                telemetry.addData("Intake Power 1", intake.getPower());
+                telemetry.update();
             }
             starts();
-            intakePower = -1;
+            intakePower = -0.65;
             cycles++;
         }
 
@@ -337,7 +350,7 @@ public class RedRight extends LinearOpMode //creates class
         if(cycles == 0) {
             TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, -20, Math.toRadians(0)))
                     .lineTo(new Vector2d(0, -53.6))
-                    .forward(51.5)
+                    .forward(65)
                     .build();
 
             drive.followTrajectorySequenceAsync(traj2); //goes to warehouse
@@ -345,7 +358,7 @@ public class RedRight extends LinearOpMode //creates class
             TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-12, -42, Math.toRadians(90)))
 
                     .splineTo(new Vector2d(1, -51), Math.toRadians(0))
-                    .forward(52)
+                    .forward(63)
                     .build();
 
             drive.followTrajectorySequenceAsync(traj4); //goes back to warehouse, should have enough room to go forward
@@ -358,20 +371,20 @@ public class RedRight extends LinearOpMode //creates class
 
     public void depositCycledFreight() throws InterruptedException{
         if(cycles == 0) {
-            traj3 = drive.trajectorySequenceBuilder(new Pose2d(49, -50, Math.toRadians(0)))
+            traj3 = drive.trajectorySequenceBuilder(new Pose2d(64, -50, Math.toRadians(0)))
                     //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
                     // wont ever be extremely accurate
                     .setReversed(true)
-                    .back(55.5)
+                    .back(69)
                     .splineTo(new Vector2d(-12, -33.5), Math.toRadians(90))
 
 
                     .build();
             drive.followTrajectorySequenceAsync(traj3); //goes to deposit
         } else{
-            TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(53, -51, Math.toRadians(0)))
+            TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(62, -51, Math.toRadians(0)))
                     .setReversed(true)
-                    .back(56)
+                    .back(68)
                     .splineTo(new Vector2d(-12, -33.5), Math.toRadians(90))
 
 
