@@ -52,7 +52,7 @@ public class RedLeft extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 620;
-    private final int med = 275;
+    private final int med = 225;
 
 
     private WebcamName weCam;
@@ -183,10 +183,19 @@ public class RedLeft extends LinearOpMode //creates class
         double targetV4B = 0;
         telemetry.addLine("enteredLift");
         telemetry.update();
-        if(level == 1)
-            targetV4B = .5;
-        else
+        if(level == 1) {
+            targetV4B = .53;
+
+        }
+        else if(level==2){
+                targetV4B=.7;
+                liftTargetPos=med;
+        }
+
+            else if(level==3) {
             targetV4B = .81;
+            liftTargetPos=top;
+        }
 
         liftError = liftTargetPos - lift.getCurrentPosition();
 
@@ -272,7 +281,7 @@ public class RedLeft extends LinearOpMode //creates class
     }
 
     public void redLeft() throws InterruptedException{
-        waitForStart();
+
 
         if (isStopRequested()) return;
 
@@ -284,15 +293,17 @@ public class RedLeft extends LinearOpMode //creates class
                 .build();
         drive.followTrajectory(traj1);
         drive.turn(Math.toRadians(90));
+      // level=1;
+        liftAndDeposit();
 
         Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-35, -21, Math.toRadians(-180)))//
-                .splineTo(new Vector2d(-64, -58.5), Math.toRadians(-180))
+                .splineTo(new Vector2d(-64, -58.5), Math.toRadians(-90))
 
                 .build();
         drive.followTrajectory(traj2);
         spinDuck();
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-64, -58.5, Math.toRadians(-180)),true)
-                .splineTo(new Vector2d(-49, -40),Math.toRadians(-270))
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-64, -60, Math.toRadians(-90)),true)
+                .splineTo(new Vector2d(-49, -35),Math.toRadians(-270))
 
                 .build();
         drive.followTrajectory(traj3);
@@ -301,39 +312,34 @@ public class RedLeft extends LinearOpMode //creates class
         // code to intake duck - dx and dy might need to be swapped
         // cause based on what I know, dx and dy should be right but in my testing it was not.
         // also dy should be the right amount but we'll see, that's easy to adjust
-        intake.setPower(-.75);
-        intakeB.setPower(-.75);
+        intake.setPower(-.7);
+        intakeB.setPower(-.7);
 
 
-        double dx = duccAttack(); // this is NOT negative on the blue side!!!!
-        double dx2 = duccAttack();
-        if(dx2 < dx)
-            dx = dx2;
-        double dx3 = duccAttack();
-        if(dx3 < dx)
-            dx = dx3;
+        double dx = pipeline2.getDucc_x();
+        for(int i = 0;i<35;i++){
+            double dx_add = pipeline2.getDucc_x();
+            if(dx_add != Integer.MIN_VALUE)
+                dx+=dx_add;
+        }
+        dx/=10;
+        dx*=-1;
 
-        double dy = -pipeline2.getDucc_y(); // this is NOT negative on the blue side!!!!
+        double dy = -25;
 
         telemetry.addData("dx: ",dx);
         telemetry.update();
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-49, -40, Math.toRadians(-90)))
-                .lineTo(new Vector2d(-49+dx, -40+dy))
+        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-49, -35, Math.toRadians(-90)))
+                .lineTo(new Vector2d(-49-dx, -35+dy))
 
                 .build();
 
         drive.followTrajectory(traj4);
-        Trajectory traj45 = drive.trajectoryBuilder(new Pose2d(-52+dx, -40+dy, Math.toRadians(-90)))
-                .strafeRight(3)
-
-                .build();
-
-        drive.followTrajectory(traj45);
 
         // duck intake movement ends
 
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-55+dx, -40+dy, Math.toRadians(-90)),true)
+        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-49-dx, -35+dy, Math.toRadians(-90)),true)
                 .splineTo(new Vector2d(-34.7,-18.5),Math.toRadians(0))
 
                 .build();
@@ -342,9 +348,9 @@ public class RedLeft extends LinearOpMode //creates class
         intake.setPower(0);
         intakeB.setPower(0);
         // I turn off intake here instead of earlier so that if the duck gets yeeted there is a possibility this yoinks it up
-
+        liftAndDeposit();
         Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-34.7, -18.5, Math.toRadians(-180)))
-                .lineTo(new Vector2d(-74,-38))//,Math.toRadians(-180))
+                .lineTo(new Vector2d(-74,-37))//,Math.toRadians(-180))
 
                 .build();
         drive.followTrajectory(traj6);
@@ -506,18 +512,23 @@ drive.followTrajectorySequence(traj5);*/
 
     public void spinDuck() throws InterruptedException{
         ElapsedTime spinTime = new ElapsedTime();
-        duccL.setPower(-.4);
-        duccR.setPower(-.4);
+        duccL.setPower(-.25);
+        duccR.setPower(-.25);
 
 
-        while (spinTime.milliseconds() <= 4000)
+        while (spinTime.milliseconds() <= 2500)
             heartbeat();
-
-
-
-
         duccL.setPower(0);
         duccR.setPower(0);
+        while (spinTime.milliseconds() <= 4000) {
+
+            heartbeat();
+            duccL.setPower(-.7);
+            duccR.setPower(-.7);
+        }
+        duccL.setPower(0);
+        duccR.setPower(0);
+
 
      // duckIntake();
 
@@ -548,14 +559,5 @@ drive.followTrajectorySequence(traj5);*/
         return mean;
     }
 
-    public double duccAttack(){
-        double dx = get_dist(pipeline2);
-        while(dx < -100) {
-            dx = get_dist(pipeline2);//pipeline2.getDucc_x();
-            telemetry.addData("DX: ,", dx);
-            telemetry.update();
-        }
-        return dx;
-    }
 }
 

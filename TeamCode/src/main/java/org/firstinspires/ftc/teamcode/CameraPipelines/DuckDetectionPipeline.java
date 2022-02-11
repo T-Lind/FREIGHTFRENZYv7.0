@@ -23,7 +23,7 @@ public class DuckDetectionPipeline extends OpenCvPipeline{
     Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
 
     static final int CB_CHAN_IDX = 2;
-    static final double ducc_y = 20.5;//32.25;
+    static final double ducc_y = 24;
     @Override
     public Mat processFrame(Mat input) {
         return analyze(input);
@@ -66,7 +66,7 @@ public class DuckDetectionPipeline extends OpenCvPipeline{
             if((p2.x-p1.x > 40 && p2.y-p1.y > 20)){// && Math.abs(p2.x-p1.x)/Math.abs(p2.y-p1.y) > 0.86){
                 Imgproc.rectangle(saved, boundRect[i].tl(), boundRect[i].br(), color, 2);
 
-                angle = (((p2.x+p1.x)/2-(input.cols()/2.0))/(input.cols()/2.0))*28;
+                angle = (((p2.x+p1.x)/2-(input.cols()/2.0))/(input.cols()/2.0))*30;
                 ducc_x = (Math.tan((angle)*3.14159/180)*ducc_y); // amount to strafe in inches
             }
         }
