@@ -52,7 +52,7 @@ public class NewDetectionPipeline extends OpenCvPipeline{
         for (int x = 0; x < output3.rows(); x++) {
             double[] l = output3.get(x, 0);
             double slope = Math.abs(l[3]-l[1]/(l[2]-l[0]));
-            if((l[1] < output1.rows()/2.0) && (l[3] < output1.rows()/2.0)){
+            if((l[1] < output1.rows()/2.0) && (l[3] < output1.rows()/2.0) && l[1] > 20 && (l[0] < (14*output1.cols()/16))){
                 Imgproc.line(saved,
                         new Point(l[0], l[1]),
                         new Point(l[2], l[3]),
