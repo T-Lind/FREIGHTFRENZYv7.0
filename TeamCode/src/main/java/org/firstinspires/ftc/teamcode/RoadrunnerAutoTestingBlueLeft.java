@@ -21,7 +21,7 @@ public class RoadrunnerAutoTestingBlueLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(11, 63, Math.toRadians(-90)));
+        drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(-90)));
 
         waitForStart();
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -40,14 +41,17 @@ public class BlueLeft extends LinearOpMode //creates class
 
     private int level = 0;
     private boolean delay = false;
+    private double targetV4B;
+    private double depositTarget;
     private DcMotorEx lift, liftB , intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
-    private int x = 0;
-    private int y = 0;
-    private int z = 0;
+    private TrajectorySequence traj3;
+    private TrajectorySequence traj5;
 
+
+    private double intakePower = -0.70;
     private int cycles = 0;
 
     private Rev2mDistanceSensor Distance;
@@ -58,12 +62,13 @@ public class BlueLeft extends LinearOpMode //creates class
 
     //IMPORTANT BOOLEANS FOR STATE MACHINES
     private boolean aman = true;
-    private boolean runAutoCycling = false;
+    private boolean runFetchFreight = false;
     private boolean runAutoCall = true;
     private boolean runDepositFreight = false;
 
     private ElapsedTime extend = new ElapsedTime();
     private ElapsedTime succ = new ElapsedTime();
+    private ElapsedTime test = new ElapsedTime();
 
 
     final int liftGrav = (int) (9.8 * 3);
@@ -71,8 +76,8 @@ public class BlueLeft extends LinearOpMode //creates class
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 620;
-    private final int med = 276;
+    private final int top = 600;
+    private final int med = 225;
 
 
     private WebcamName weCam;
@@ -113,7 +118,7 @@ public class BlueLeft extends LinearOpMode //creates class
         intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         drive = new SampleMecanumDrive(hardwareMap);
-
+        drive.setPoseEstimate(new Pose2d(11, 63, Math.toRadians(-90)));
 
         duccL.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -138,6 +143,8 @@ public class BlueLeft extends LinearOpMode //creates class
                 telemetry.update();
 
 
+
+
                 camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -147,11 +154,15 @@ public class BlueLeft extends LinearOpMode //creates class
             }
         });
 
+
+        starts();
+        //dep.setPosition(.52);
+
+
         while (!opModeIsActive()) {
-            //get the level, either 0, 1, or 2 (0 if not detected)
+            //get the level, either 0, 1, or 2 or 3 (0 if not detected)
             level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
-
             if(gamepad1.a)
                 delay = true;
 
@@ -160,15 +171,23 @@ public class BlueLeft extends LinearOpMode //creates class
             telemetry.update();
         }
 
-        // if the latest level was 0 then it must be in the 3 position.
-        if(level == 0)
-            level = 3;
+
+        targetV4B = 0;
         telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
 
-
         camera.setPipeline(pipeline2);
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
+
+        if(level == 0)
+            level = 3;
+        if(level == 1)
+            liftTargetPos = 0;
+        else if(level == 2)
+            liftTargetPos = med;
+        else
+            liftTargetPos = top;
+
 
 
 
@@ -188,6 +207,23 @@ public class BlueLeft extends LinearOpMode //creates class
 
         if(true) {
 
+            if(level == 1) {
+                targetV4B = .57;
+                depositTarget = .36;
+
+            }
+            else if(level==2){
+                targetV4B = .68;
+                liftTargetPos=med;
+                depositTarget = .3;
+            }
+
+            else if(level == 3) {
+                targetV4B = .81;
+                liftTargetPos=top;
+                depositTarget = .36;
+            }
+
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
@@ -195,18 +231,15 @@ public class BlueLeft extends LinearOpMode //creates class
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
 
-            if (liftTargetPos == 0 || level == 3) {
-                v4b1.setPosition(.81);
-                v4b2.setPosition(.81);
-            } else{
-                v4b1.setPosition(.5);
-                v4b2.setPosition(.5);
+            if(level != 0) {
+                v4b1.setPosition(targetV4B);
+                v4b2.setPosition(targetV4B);
             }
 
-
-            if (aman && (!drive.isBusy())) {
-                dep.setPosition(.355);
-                sleep(450);
+            if (aman && !drive.isBusy()) {
+                dep.setPosition(depositTarget);
+                test.reset();
+                sleep(300);
                 starts();
                 liftTargetPos = 0;
                 liftError = liftTargetPos - lift.getCurrentPosition();
@@ -216,15 +249,27 @@ public class BlueLeft extends LinearOpMode //creates class
 
                 aman = false;
                 reading = Distance.getDistance(DistanceUnit.MM);
-                runAutoCycling = true;
+                runFetchFreight = true;
                 runDepositFreight = false;
 
-                cycles++;
-
             }
+
         }
 
+    }
 
+
+    public void safeGuard(){
+        intake.setPower(intakePower);
+        intakeB.setPower(intakePower);
+
+        reading = Distance.getDistance(DistanceUnit.MM);
+
+        if (reading < 100) {
+            intakePower = 1.0;
+            intake.setPower(intakePower);
+            intakeB.setPower(intakePower);
+        }
     }
 
 
@@ -232,6 +277,8 @@ public class BlueLeft extends LinearOpMode //creates class
     public void starts(){
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
+        telemetry.addData("V4b", v4b1.getPosition());
+        telemetry.update();
         dep.setPosition(.52);
         intake.setPower(0);
         intakeB.setPower(0);
@@ -247,194 +294,135 @@ public class BlueLeft extends LinearOpMode //creates class
 
         if (isStopRequested()) return;
 
-        starts();
 
+        drive.setPoseEstimate(new Pose2d(11, 63, Math.toRadians(-90)));
 
-        while(aman && opModeIsActive()){
-            blueLeft();
+        BlueLeft(); //Initial predeposit
+
+        while(aman){
             drive.update();
             keepLiftAlive();
         }
 
+        starts();
+        ElapsedTime whenToTurn = new ElapsedTime();
+        int timer = 2750;
 
-        while(opModeIsActive()){
+        for(int i = 0; i < 2; i++){
             fetchFreight();
-            depositCycledFreight();
+            liftTargetPos = 0;
+            level = 0;
 
-            if(!runDepositFreight)
+            whenToTurn.reset();
+            while(drive.isBusy()){
+                drive.update();
+                if(whenToTurn.milliseconds() > timer)
+                    safeGuard();
                 keepLiftAlive();
 
-            drive.update();
-            if(cycles == 2)
-                break;
+            }
+
+            liftTargetPos = top;
+            level = 3;
+            aman = true;
+
+            depositCycledFreight();
+
+            ElapsedTime turnOffIntake = new ElapsedTime();
+            while(drive.isBusy()){
+                drive.update();
+                keepLiftAlive();
+                intakePower = 0;
+
+                if(turnOffIntake.milliseconds() > 2250){
+                    intake.setPower(0);
+                    intakeB.setPower(0);
+                }
+            }
+            starts();
+            intakePower = -0.70;
+            cycles++;
+
+            timer = 1500;
         }
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-35.5, 3, Math.toRadians(90)))
-                .strafeRight(25)
-                .forward(40)
+
+        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(traj5.end())
+                .splineTo(new Vector2d(55, 50),Math.toRadians(0))
+
                 .build();
 
-        drive.followTrajectorySequence(trajSeq);
+        drive.followTrajectorySequenceAsync(traj6);
 
 
+
+        liftTargetPos = 0;
+        level = 0;
+        aman = false;
+
+        while(opModeIsActive()) {
+            drive.update();
+            keepLiftAlive();
+        }
 
     }
 
 
+
     public void fetchFreight() throws InterruptedException {
-        if (runAutoCycling) {
-            //START: -35.5, 4
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-35.5, -3, Math.toRadians(-90)))
-                    .strafeRight(36 + y)
-                    .forward(25 + x)
-                    .forward(12)
+        if(cycles == 0) {
+            TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, 19, Math.toRadians(0)))
+                    .lineTo(new Vector2d(0, 53.6))
+                    .forward(52.5)
                     .build();
-            //END: -9, 4
-            drive.followTrajectorySequence(trajSeq);
 
+            drive.followTrajectorySequenceAsync(traj2); //goes to warehouse
+        } else{
+            TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-12, -42, Math.toRadians(90)))
 
-            int i = 0;
+                    .splineTo(new Vector2d(1, 46), Math.toRadians(0))
+                    .forward(59)
+                    .build();
 
-
-
-            //sleep(300);
-            succ.reset();
-            while(succ.milliseconds() < 600){
-                if (reading < full) {
-                    intake.setPower(1);
-                    intakeB.setPower(1);
-
-                } else {
-                    intake.setPower(-1);
-                    intakeB.setPower(-1);
-
-                }
-            }
-
-            intake.setPower(0);
-            intakeB.setPower(0);
-
-
-
-            runAutoCycling = false;
-            runDepositFreight = true;
-            x += 1.5;
-
+            drive.followTrajectorySequenceAsync(traj4); //goes back to warehouse, should have enough room to go forward
+            // and accelerate over obstacle
         }
+
     }
 
 
 
     public void depositCycledFreight() throws InterruptedException{
-        if(runDepositFreight){
-            aman = true;
-
-            liftTargetPos = top;
-
-            if(z == 0) {
-                TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-71.5 - y, -33.5, Math.toRadians(-90)))
-                        .back(9)
-                        .back(23.5)
-                        .strafeLeft(29.5 + y)
-                        .back(1.5)
-                        .build();
-                drive.followTrajectorySequenceAsync(trajSeq);
-
-            } else{
-                TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(-71.5 - y, -33.5, Math.toRadians(-90)))
-                        .back(9)
-                        .back(22.5 - z)
-                        .strafeLeft(29.5 + y)
-                        .build();
-                drive.followTrajectorySequenceAsync(trajSeq);
-
-            }
-
-            intake.setPower(0);
-            intakeB.setPower(0);
-
-            y++;
-            z += 1.5;
-
-            keepLiftAlive();
-
-        }
-
-        runDepositFreight = false;
-    }
-
-    public void blueLeft() throws InterruptedException{
-
-                /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
-            FIRST, I TURN THE INTAKE ON.
-            NEXT, I GET THE DISTANCE TO MOVE IN THE X AND Y DIRECTION
-            NOTE THAT THE X AND Y DISTANCE TO MOVE IS RELATIVE TO THE ROBOT
-            WHICH MEANS THAT THE X AND Y ARE SWITCHED IN ROADRUNNER.
-            MAKE SURE TO COPY THE METHODS AT THE END OF THE PROGRAM!
-            ALSO MAKE SURE THE PIPELINE SWITCH IS OCCURING AT THE END OF INIT.
-            MOVE THIS CODE WHERE YOU'D LIKE.
-
-                GOOD LUCK - TIERNAN
-
-        intake.setPower(-.75);
-        intakeB.setPower(-.75);
+        if(cycles == 0) {
+            traj3 = drive.trajectorySequenceBuilder(new Pose2d(51, 50, Math.toRadians(0)))
+                    //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
+                    // wont ever be extremely accurate
+                    .setReversed(true)
+                    .back(54)
+                    .splineTo(new Vector2d(-15, 29.6), Math.toRadians(-90))
 
 
-        double dx = duccAttack();
-        double dy = pipeline2.getDucc_y();
-
-        Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
-                .lineTo(new Vector2d(dy, dx))
-                .build();
-
-        drive.followTrajectory(duccTraj);
-
-        intake.setPower(0);
-        intakeB.setPower(0);*/
-
-        if(runAutoCall) {
-
-            //.back means FORWARD (in direction of jerry)
-
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(0,0,0))
-                    .back(13)
-                    .back(22.5)
-                    .turn(Math.toRadians(-90))
-                    .back(3)
                     .build();
+            drive.followTrajectorySequenceAsync(traj3); //goes to deposit
+        } else{
+            traj5 = drive.trajectorySequenceBuilder(new Pose2d(58, 47, Math.toRadians(0)))
+                    .setReversed(true)
+                    .back(63)
+                    .splineTo(new Vector2d(-15.7, 27.8), Math.toRadians(-90))
 
 
-            //-35.5, 4
-
-            drive.followTrajectorySequenceAsync(trajSeq);
-            runAutoCall = false;
-            level = 0;
-
-
+                    .build();
+            drive.followTrajectorySequenceAsync(traj5); //goes back to deposit
         }
-
-    }
-    public static double get_dist(DuckDetectionPipeline pipeline){
-        int cnt = 0;
-        double mean = 0;
-        while(10 > cnt){
-            double dist_x = pipeline.getDucc_x();
-            if(dist_x != Integer.MIN_VALUE) {
-                cnt++;
-                mean += dist_x;
-            }
-        }
-        mean /= cnt;
-        return mean;
     }
 
-    public double duccAttack(){
-        double dx = get_dist(pipeline2);
-        while(dx < -100) {
-            dx = get_dist(pipeline2);//pipeline2.getDucc_x();
-            telemetry.addData("DX: ,", dx);
-            telemetry.update();
-        }
-        return dx;
+    public void BlueLeft() throws InterruptedException{
+
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, 63, Math.toRadians(-90)))
+                .splineTo(new Vector2d(8.5, 18), Math.toRadians(-90))
+                .turn(Math.toRadians(90))
+                .build();
+        drive.followTrajectorySequenceAsync(traj1); //initial deposit
     }
+
 }
 

@@ -183,15 +183,15 @@ public class BlueRight extends LinearOpMode //creates class
         telemetry.addLine("enteredLift");
         telemetry.update();
         if(level == 1) {
-            targetV4B = .57;
+            targetV4B = .49;
 
         }
         else if(level==2){
-            targetV4B = .65;
+            targetV4B=.65;
             liftTargetPos=med;
         }
 
-        else if(level == 3) {
+        else if(level==3) {
             targetV4B = .81;
             liftTargetPos=top;
         }
@@ -284,7 +284,7 @@ public class BlueRight extends LinearOpMode //creates class
         if (isStopRequested()) return;
         drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
         Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, 63, Math.toRadians(-90)))
-                .splineTo(new Vector2d(-34.5, 21), Math.toRadians(-90))
+                .splineTo(new Vector2d(-32.5, 21), Math.toRadians(-90))
 
                 .build();
         drive.followTrajectory(traj1);
@@ -292,7 +292,7 @@ public class BlueRight extends LinearOpMode //creates class
 
         liftAndDeposit();
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-34.5, 21, Math.toRadians(-180)))//
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-33, 21, Math.toRadians(-180)))//
                 .splineTo(new Vector2d(-66, 61), Math.toRadians(-180))
 
 

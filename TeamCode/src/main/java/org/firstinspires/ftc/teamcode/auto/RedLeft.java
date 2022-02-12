@@ -184,11 +184,11 @@ public class RedLeft extends LinearOpMode //creates class
         telemetry.addLine("enteredLift");
         telemetry.update();
         if(level == 1) {
-            targetV4B = .53;
+            targetV4B = .5;
 
         }
         else if(level==2){
-                targetV4B=.7;
+                targetV4B=.65;
                 liftTargetPos=med;
         }
 
@@ -288,7 +288,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
         Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .splineTo(new Vector2d(-35, -21), Math.toRadians(90))
+                .splineTo(new Vector2d(-33, -21), Math.toRadians(90))
 
                 .build();
         drive.followTrajectory(traj1);
@@ -296,7 +296,7 @@ public class RedLeft extends LinearOpMode //creates class
       // level=1;
         liftAndDeposit();
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-35, -21, Math.toRadians(-180)))//
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-34, -21, Math.toRadians(-180)))//
                 .splineTo(new Vector2d(-64, -58.5), Math.toRadians(-90))
 
                 .build();
