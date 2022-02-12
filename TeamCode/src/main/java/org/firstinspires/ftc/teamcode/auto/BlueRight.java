@@ -50,7 +50,7 @@ public class BlueRight extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 650;
-    private final int med = 350;
+    private final int med = 225;
 
 
     private WebcamName weCam;
@@ -182,11 +182,19 @@ public class BlueRight extends LinearOpMode //creates class
         double targetV4B = 0;
         telemetry.addLine("enteredLift");
         telemetry.update();
-        if(level == 1)
-            targetV4B = .5;
-        else
-            targetV4B = .81;
+        if(level == 1) {
+            targetV4B = .57;
 
+        }
+        else if(level==2){
+            targetV4B = .65;
+            liftTargetPos=med;
+        }
+
+        else if(level == 3) {
+            targetV4B = .81;
+            liftTargetPos=top;
+        }
         liftError = liftTargetPos - lift.getCurrentPosition();
 
         boolean depositRun = true;
@@ -276,7 +284,7 @@ public class BlueRight extends LinearOpMode //creates class
         if (isStopRequested()) return;
         drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
         Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, 63, Math.toRadians(-90)))
-                .splineTo(new Vector2d(-37, 21), Math.toRadians(-90))
+                .splineTo(new Vector2d(-34.5, 21), Math.toRadians(-90))
 
                 .build();
         drive.followTrajectory(traj1);
@@ -284,15 +292,16 @@ public class BlueRight extends LinearOpMode //creates class
 
         liftAndDeposit();
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-37, 21, Math.toRadians(-180)))//
-                .splineTo(new Vector2d(-64, 60.5), Math.toRadians(-180))
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-34.5, 21, Math.toRadians(-180)))//
+                .splineTo(new Vector2d(-66, 61), Math.toRadians(-180))
+
 
                 .build();
         drive.followTrajectory(traj2);
 
         spinDuck();
-
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-64, 60, Math.toRadians(180)),true)
+/*
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-64, 61, Math.toRadians(180)),true)
                 .splineTo(new Vector2d(-55, 35),Math.toRadians(270))
 
                 .build();
@@ -302,24 +311,24 @@ public class BlueRight extends LinearOpMode //creates class
         // code to intake duck - dx and dy might need to be swapped
         // cause based on what I know, dx and dy should be right but in my testing it was not.
         // also dy should be the right amount but we'll see, that's easy to adjust
-        intake.setPower(-.7);
-        intakeB.setPower(-.7);
+       // intake.setPower(-.7);
+       // intakeB.setPower(-.7);
 
 
-        double dx = pipeline2.getDucc_x();
-        for(int i = 0;i<10;i++){
+       // double dx = pipeline2.getDucc_x();
+       /* for(int i = 0;i<10;i++){
             double dx_add = pipeline2.getDucc_x();
             if(dx_add != Integer.MIN_VALUE)
                 dx+=dx_add;
-        }
-        dx/=-10;
+        }*/
+       // dx/=-10;
 
-        double dy = 29;
+       // double dy = 29;
 
-        telemetry.addData("dx: ",dx);
-        telemetry.update();
+        //telemetry.addData("dx: ",dx);
+        //telemetry.update();
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-55, 40, Math.toRadians(90)))
+       /* Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-55, 40, Math.toRadians(90)))
                 .lineTo(new Vector2d(-49-dx, 35+dy))
 
                 .build();
@@ -338,9 +347,9 @@ public class BlueRight extends LinearOpMode //creates class
         liftAndDeposit();
 
         // I turn off intake here instead of earlier so that if the duck gets yeeted there is a possibility this yoinks it up
-
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-31, 24, Math.toRadians(180)))
-                .lineTo(new Vector2d(-74,40))
+*/
+        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-66, 60, Math.toRadians(-180)))
+                .lineTo(new Vector2d(-67,39))
 
                 .build();
         drive.followTrajectory(traj6);

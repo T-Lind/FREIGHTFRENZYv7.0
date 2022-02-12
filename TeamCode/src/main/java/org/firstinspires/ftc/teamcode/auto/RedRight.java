@@ -41,14 +41,17 @@ public class RedRight extends LinearOpMode //creates class
 
     private int level = 0;
     private boolean delay = false;
+    private double targetV4B;
+    private double depositTarget;
     private DcMotorEx lift, liftB , intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
     private TrajectorySequence traj3;
+    private TrajectorySequence traj5;
 
 
-    private double intakePower = -0.65;
+    private double intakePower = -0.70;
     private int cycles = 0;
 
     private Rev2mDistanceSensor Distance;
@@ -73,8 +76,8 @@ public class RedRight extends LinearOpMode //creates class
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 620;
-    private final int med = 275;
+    private final int top = 600;
+    private final int med = 225;
 
 
     private WebcamName weCam;
@@ -153,6 +156,8 @@ public class RedRight extends LinearOpMode //creates class
 
 
         starts();
+        //dep.setPosition(.52);
+
 
         while (!opModeIsActive()) {
             //get the level, either 0, 1, or 2 or 3 (0 if not detected)
@@ -166,17 +171,16 @@ public class RedRight extends LinearOpMode //creates class
             telemetry.update();
         }
 
-        // if the latest level was 0 then it must be in the 3 position.
-        if(level == 0)
-            level = 3;
-        //CHANGE THIS IN THE FUTURE -aman
-        level = 3;
+
+        targetV4B = 0;
         telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
 
         camera.setPipeline(pipeline2);
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
+        if(level == 0)
+            level = 3;
         if(level == 1)
             liftTargetPos = 0;
          else if(level == 2)
@@ -203,6 +207,23 @@ public class RedRight extends LinearOpMode //creates class
 
         if(true) {
 
+            if(level == 1) {
+                targetV4B = .57;
+                depositTarget = .36;
+
+            }
+            else if(level==2){
+                targetV4B = .68;
+                liftTargetPos=med;
+                depositTarget = .3;
+            }
+
+            else if(level == 3) {
+                targetV4B = .81;
+                liftTargetPos=top;
+                depositTarget = .36;
+            }
+
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
@@ -210,24 +231,13 @@ public class RedRight extends LinearOpMode //creates class
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
 
-
-            if (level == 3) {
-                v4b1.setPosition(.81);
-                v4b2.setPosition(.81);
-                telemetry.addData("V4b", v4b1.getPosition());
-                telemetry.update();
-            } else if(level == 1 || level == 2){
-                v4b1.setPosition(.5);
-                v4b2.setPosition(.5);
+            if(level != 0) {
+                v4b1.setPosition(targetV4B);
+                v4b2.setPosition(targetV4B);
             }
 
-
-
-
-
-
-                if (aman && !drive.isBusy()) {
-                    dep.setPosition(.355);
+            if (aman && !drive.isBusy()) {
+                    dep.setPosition(depositTarget);
                     test.reset();
                     sleep(300);
                     starts();
@@ -250,23 +260,16 @@ public class RedRight extends LinearOpMode //creates class
 
 
     public void safeGuard(){
-        double currentPose = drive.getPoseEstimate().getX();
-
-        if(Math.abs(currentPose - 53) < 15) {
             intake.setPower(intakePower);
             intakeB.setPower(intakePower);
 
             reading = Distance.getDistance(DistanceUnit.MM);
 
             if (reading < 100) {
-                intakePower = 0.75;
+                intakePower = 1.0;
                 intake.setPower(intakePower);
                 intakeB.setPower(intakePower);
-                runDepositFreight = true;
-
             }
-        }
-
     }
 
 
@@ -294,26 +297,29 @@ public class RedRight extends LinearOpMode //creates class
 
         drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
 
+        redRight(); //Initial predeposit
+
         while(aman){
-            redRight(); //Initial predeposit
-            drive.update(); //Updates the drive asynch
-            keepLiftAlive(); //Keeps the lift alive
+            drive.update();
+            keepLiftAlive();
         }
 
         starts();
-        //The second while loop which will perform autocycling
+        ElapsedTime whenToTurn = new ElapsedTime();
+        int timer = 2750;
 
         for(int i = 0; i < 2; i++){
             fetchFreight();
             liftTargetPos = 0;
             level = 0;
 
+             whenToTurn.reset();
             while(drive.isBusy()){
                 drive.update();
-                safeGuard();
+                if(whenToTurn.milliseconds() > timer)
+                    safeGuard();
                 keepLiftAlive();
-                telemetry.addData("Intake Power 1", intake.getPower());
-                telemetry.update();
+
             }
 
             liftTargetPos = top;
@@ -328,19 +334,35 @@ public class RedRight extends LinearOpMode //creates class
                 keepLiftAlive();
                 intakePower = 0;
 
-                if(turnOffIntake.milliseconds() > 3000){
+                if(turnOffIntake.milliseconds() > 2250){
                     intake.setPower(0);
                     intakeB.setPower(0);
                 }
-
-                telemetry.addData("Intake Power 1", intake.getPower());
-                telemetry.update();
             }
             starts();
-            intakePower = -0.65;
+            intakePower = -0.70;
             cycles++;
+
+            timer = 1500;
         }
 
+        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(traj5.end())
+       .splineTo(new Vector2d(53, -50),Math.toRadians(0))
+
+                .build();
+
+        drive.followTrajectorySequenceAsync(traj6);
+
+
+
+        liftTargetPos = 0;
+        level = 0;
+        aman = false;
+
+        while(opModeIsActive()) {
+            drive.update();
+            keepLiftAlive();
+        }
 
     }
 
@@ -348,17 +370,17 @@ public class RedRight extends LinearOpMode //creates class
 
     public void fetchFreight() throws InterruptedException {
         if(cycles == 0) {
-            TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, -20, Math.toRadians(0)))
+            TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, -19, Math.toRadians(0)))
                     .lineTo(new Vector2d(0, -53.6))
-                    .forward(65)
+                    .forward(52.5)
                     .build();
 
             drive.followTrajectorySequenceAsync(traj2); //goes to warehouse
         } else{
             TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-12, -42, Math.toRadians(90)))
 
-                    .splineTo(new Vector2d(1, -51), Math.toRadians(0))
-                    .forward(63)
+                    .splineTo(new Vector2d(1, -46), Math.toRadians(0))
+                    .forward(59)
                     .build();
 
             drive.followTrajectorySequenceAsync(traj4); //goes back to warehouse, should have enough room to go forward
@@ -371,21 +393,21 @@ public class RedRight extends LinearOpMode //creates class
 
     public void depositCycledFreight() throws InterruptedException{
         if(cycles == 0) {
-            traj3 = drive.trajectorySequenceBuilder(new Pose2d(64, -50, Math.toRadians(0)))
+            traj3 = drive.trajectorySequenceBuilder(new Pose2d(51, -50, Math.toRadians(0)))
                     //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
                     // wont ever be extremely accurate
                     .setReversed(true)
-                    .back(69)
-                    .splineTo(new Vector2d(-12, -33.5), Math.toRadians(90))
+                    .back(54)
+                    .splineTo(new Vector2d(-15, -29.6), Math.toRadians(90))
 
 
                     .build();
             drive.followTrajectorySequenceAsync(traj3); //goes to deposit
         } else{
-            TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(62, -51, Math.toRadians(0)))
+             traj5 = drive.trajectorySequenceBuilder(new Pose2d(58, -47, Math.toRadians(0)))
                     .setReversed(true)
-                    .back(68)
-                    .splineTo(new Vector2d(-12, -33.5), Math.toRadians(90))
+                    .back(63)
+                    .splineTo(new Vector2d(-15.7, -27.8), Math.toRadians(90))
 
 
                     .build();
@@ -395,48 +417,11 @@ public class RedRight extends LinearOpMode //creates class
 
     public void redRight() throws InterruptedException{
 
-        if(runAutoCall) {
-
             TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
-                    .splineTo(new Vector2d(10, -20), Math.toRadians(90))
+                    .splineTo(new Vector2d(8.5, -18), Math.toRadians(90))
                     .turn(Math.toRadians(-90))
                     .build();
             drive.followTrajectorySequenceAsync(traj1); //initial deposit
-
-        }
-
-        runAutoCall = false;
-
-                /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
-            FIRST, I TURN THE INTAKE ON.
-            NEXT, I GET THE DISTANCE TO MOVE IN THE X AND Y DIRECTION
-            NOTE THAT THE X AND Y DISTANCE TO MOVE IS RELATIVE TO THE ROBOT
-            WHICH MEANS THAT THE X AND Y ARE SWITCHED IN ROADRUNNER.
-            MAKE SURE TO COPY THE METHODS AT THE END OF THE PROGRAM!
-            ALSO MAKE SURE THE PIPELINE SWITCH IS OCCURING AT THE END OF INIT.
-            MOVE THIS CODE WHERE YOU'D LIKE.
-
-                GOOD LUCK - TIERNAN
-
-        intake.setPower(-.75);
-        intakeB.setPower(-.75);
-
-
-        double dx = duccAttack();
-        double dy = pipeline2.getDucc_y();
-
-        Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
-                .lineTo(new Vector2d(dy, dx))
-                .build();
-
-        drive.followTrajectory(duccTraj);
-
-        intake.setPower(0);
-        intakeB.setPower(0);*/
-
-
-
-
     }
 
 }

@@ -28,19 +28,19 @@ public class RoadrunnerAutoTestingBlueLeft extends LinearOpMode {
         if (isStopRequested()) return;
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
-                .splineTo(new Vector2d(10, 20), Math.toRadians(-90))
+                .splineTo(new Vector2d(10, 18), Math.toRadians(-90))
                 .turn(Math.toRadians(90))
 
 
                 .build();
         drive.followTrajectorySequence(traj1); //initial deposit
 
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, 20, Math.toRadians(0)))
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, 18, Math.toRadians(0)))
                 .lineTo(new Vector2d(0,53.6))
                 // .lineTo(new Vector2d(58, -60))
                 // .splineToConstantHeading(new Vector2d(2, -60), Math.toRadians(0))
                 //.splineToConstantHeading(new Vector2d(2, -60), Math.toRadians(-180))
-                .forward(58)
+                .forward(65)
 
 
                 .build();

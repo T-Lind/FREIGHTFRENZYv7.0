@@ -45,14 +45,14 @@ public class NewDetectionPipeline extends OpenCvPipeline{
                 output3,
                 1,
                 Math.PI/180,
-                20,
-                25,
+                15,
+                10,
                 10); // runs the actual detection
 
         for (int x = 0; x < output3.rows(); x++) {
             double[] l = output3.get(x, 0);
             double slope = Math.abs(l[3]-l[1]/(l[2]-l[0]));
-            if((l[1] < output1.rows()/2.0) && (l[3] < output1.rows()/2.0) && l[1] > 20 && (l[0] < (14*output1.cols()/16))){
+            if((l[1] < output1.rows()/2.0) && (l[3] < output1.rows()/2.0) && l[1] > 20 && (l[1] < output1.rows()/6  || l[3] < output1.rows()/6) && l[0] < 14*output1.cols()/16.0){
                 Imgproc.line(saved,
                         new Point(l[0], l[1]),
                         new Point(l[2], l[3]),
@@ -77,12 +77,12 @@ public class NewDetectionPipeline extends OpenCvPipeline{
         Imgproc.line(saved, new Point(output1.cols()/3.0,0), new Point(2*output1.cols()/3.0,0), new Scalar(100,0,100), 1, Imgproc.LINE_AA, 0);
         Imgproc.line(saved, new Point(2*output1.cols()/3.0,0),new Point(2*output1.cols()/3.0,output1.rows()/2.0), new Scalar(100,0,100), 1, Imgproc.LINE_AA, 0);
 
-        if((one_count > two_count) && (one_count > three_count))
+        if((one_count > two_count/4) && (one_count > three_count))
             level = 1;
-        else if((two_count > three_count) && (two_count > one_count))
-            level = 2;
-        else
+        else if((two_count/2 < three_count) && (three_count > one_count))
             level = 3;
+        else
+            level = 2;
 
         return saved;
     }
