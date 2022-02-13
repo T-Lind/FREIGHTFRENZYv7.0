@@ -45,14 +45,14 @@ public class NewDetectionPipeline extends OpenCvPipeline{
                 output3,
                 1,
                 Math.PI/180,
-                15,
-                10,
+                12,
+                5,
                 10); // runs the actual detection
 
         for (int x = 0; x < output3.rows(); x++) {
             double[] l = output3.get(x, 0);
             double slope = Math.abs(l[3]-l[1]/(l[2]-l[0]));
-            if((l[1] < output1.rows()/2.0) && (l[3] < output1.rows()/2.0) && l[1] > 20 && (l[1] < output1.rows()/6  || l[3] < output1.rows()/6) && l[0] < 14*output1.cols()/16.0){
+            if((l[1] < output1.rows()/2.0) && l[1] > 20  && l[0] < 14*output1.cols()/16.0){//&& (l[1] < output1.rows()/6  || l[3] < output1.rows()/6) && l[0] < 14*output1.cols()/16.0){
                 Imgproc.line(saved,
                         new Point(l[0], l[1]),
                         new Point(l[2], l[3]),
@@ -60,7 +60,7 @@ public class NewDetectionPipeline extends OpenCvPipeline{
                         7,
                         Imgproc.LINE_4,
                         0);
-                if(l[0] < output1.cols()/3.0)
+                if(l[0] < (2.5/10)*output1.cols())
                     one_count++;
                 else if(l[0] < 2*output1.cols()/3.0)
                     two_count++;
@@ -71,7 +71,7 @@ public class NewDetectionPipeline extends OpenCvPipeline{
 
         // level 1 lines
         Imgproc.line(saved, new Point(0,0),new Point(output1.cols()/3.0,0), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
-        Imgproc.line(saved, new Point(output1.cols()/3.0,0),new Point(output1.cols()/3.0,output1.rows()/2.0), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
+        Imgproc.line(saved, new Point(output1.cols()*(2.5/10),0),new Point(output1.cols()*(2.5/10),output1.rows()/2.0), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
 
         // line 2 lines
         Imgproc.line(saved, new Point(output1.cols()/3.0,0), new Point(2*output1.cols()/3.0,0), new Scalar(100,0,100), 1, Imgproc.LINE_AA, 0);

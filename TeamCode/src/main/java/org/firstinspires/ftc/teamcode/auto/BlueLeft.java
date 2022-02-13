@@ -208,8 +208,8 @@ public class BlueLeft extends LinearOpMode //creates class
         if(true) {
 
             if(level == 1) {
-                targetV4B = .57;
-                depositTarget = .36;
+                targetV4B = .55;
+                depositTarget = .33;
 
             }
             else if(level==2){
@@ -223,7 +223,6 @@ public class BlueLeft extends LinearOpMode //creates class
                 liftTargetPos=top;
                 depositTarget = .36;
             }
-
             liftError = liftTargetPos - lift.getCurrentPosition();
 
             //Takes the lift up
@@ -239,7 +238,10 @@ public class BlueLeft extends LinearOpMode //creates class
             if (aman && !drive.isBusy()) {
                 dep.setPosition(depositTarget);
                 test.reset();
-                sleep(300);
+                if(cycles != 1)
+                    sleep(550);
+                else
+                    sleep(450);
                 starts();
                 liftTargetPos = 0;
                 liftError = liftTargetPos - lift.getCurrentPosition();
@@ -372,7 +374,7 @@ public class BlueLeft extends LinearOpMode //creates class
         if(cycles == 0) {
             TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, 19, Math.toRadians(0)))
                     .lineTo(new Vector2d(0, 53.6))
-                    .forward(52.5)
+                    .forward(51)
                     .build();
 
             drive.followTrajectorySequenceAsync(traj2); //goes to warehouse
@@ -397,8 +399,8 @@ public class BlueLeft extends LinearOpMode //creates class
                     //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
                     // wont ever be extremely accurate
                     .setReversed(true)
-                    .back(54)
-                    .splineTo(new Vector2d(-15, 29.6), Math.toRadians(-90))
+                    .back(55.5)
+                    .splineTo(new Vector2d(-15, 33), Math.toRadians(-90))
 
 
                     .build();
@@ -407,7 +409,7 @@ public class BlueLeft extends LinearOpMode //creates class
             traj5 = drive.trajectorySequenceBuilder(new Pose2d(58, 47, Math.toRadians(0)))
                     .setReversed(true)
                     .back(63)
-                    .splineTo(new Vector2d(-15.7, 27.8), Math.toRadians(-90))
+                    .splineTo(new Vector2d(-13, 31.5), Math.toRadians(-90))
 
 
                     .build();
@@ -418,7 +420,7 @@ public class BlueLeft extends LinearOpMode //creates class
     public void BlueLeft() throws InterruptedException{
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, 63, Math.toRadians(-90)))
-                .splineTo(new Vector2d(8.5, 18), Math.toRadians(-90))
+                .splineTo(new Vector2d(8.5, 16.75), Math.toRadians(-90))
                 .turn(Math.toRadians(90))
                 .build();
         drive.followTrajectorySequenceAsync(traj1); //initial deposit
