@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CameraPipelines.DuckDetectionPipeline;
+import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
 import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 import org.firstinspires.ftc.teamcode.CameraPipelines.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -55,7 +56,7 @@ public class BlueRight extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private NewDetectionPipeline pipeline;
+    private TSEDetectionPipeline pipeline;
     private DuckDetectionPipeline pipeline2 = new DuckDetectionPipeline();
 
     private SampleMecanumDrive drive;
@@ -111,7 +112,7 @@ public class BlueRight extends LinearOpMode //creates class
 
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
-        pipeline = new NewDetectionPipeline();
+        pipeline = new TSEDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
