@@ -209,9 +209,13 @@ public class RogueOp extends OpMode{
     }
 
     public void speak() {
-        if (gamepad1.dpad_left) {
-            telemetry.speak("for jon in jon on jon");
+        if (gamepad1.dpad_left || gamepad2.dpad_up || toggleDown.nowTrue() || gamepad2.dpad_down ||gamepad2.left_bumper || gamepad2.a || gamepad2.b || gamepad2.y || gamepad2.x){
+            telemetry.speak("DONT THROW");
         }
+
+
+
+
     }
 
     public void lift() {

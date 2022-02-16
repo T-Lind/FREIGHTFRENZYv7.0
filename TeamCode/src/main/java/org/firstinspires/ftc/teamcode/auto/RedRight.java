@@ -374,17 +374,17 @@ public class RedRight extends LinearOpMode //creates class
 
     public void fetchFreight() throws InterruptedException {
         if(cycles == 0) {
-            TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, -19, Math.toRadians(0)))
+            TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-3, -37, Math.toRadians(0)))
                     .lineTo(new Vector2d(0, -53.6))
-                    .forward(51)
+                    .forward(58)
                     .build();
 
             drive.followTrajectorySequenceAsync(traj2); //goes to warehouse
         } else{
             TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-12, -42, Math.toRadians(90)))
 
-                    .splineTo(new Vector2d(1, -46), Math.toRadians(0))
-                    .forward(59)
+                    .splineTo(new Vector2d(6, -51), Math.toRadians(0))
+                    .forward(50)
                     .build();
 
             drive.followTrajectorySequenceAsync(traj4); //goes back to warehouse, should have enough room to go forward
@@ -397,21 +397,21 @@ public class RedRight extends LinearOpMode //creates class
 
     public void depositCycledFreight() throws InterruptedException{
         if(cycles == 0) {
-            traj3 = drive.trajectorySequenceBuilder(new Pose2d(51, -50, Math.toRadians(0)))
+            traj3 = drive.trajectorySequenceBuilder(new Pose2d(58, -50, Math.toRadians(0)))
                     //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
                     // wont ever be extremely accurate
                     .setReversed(true)
-                    .back(55.5)
-                    .splineTo(new Vector2d(-15, -33), Math.toRadians(90))
+                    .back(50)
+                    .splineTo(new Vector2d(-3, -37), Math.toRadians(120))
 
 
                     .build();
             drive.followTrajectorySequenceAsync(traj3); //goes to deposit
         } else{
-             traj5 = drive.trajectorySequenceBuilder(new Pose2d(58, -47, Math.toRadians(0)))
+             traj5 = drive.trajectorySequenceBuilder(new Pose2d(61, -51, Math.toRadians(0)))
                     .setReversed(true)
-                    .back(63)
-                    .splineTo(new Vector2d(-15.7, -31.5), Math.toRadians(90))
+                    .back(50)
+                    .splineTo(new Vector2d(-3, -37), Math.toRadians(120))
 
 
                     .build();
@@ -422,10 +422,12 @@ public class RedRight extends LinearOpMode //creates class
     public void redRight() throws InterruptedException{
 
             TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
-                    .splineTo(new Vector2d(8.5, -18), Math.toRadians(90))
-                    .turn(Math.toRadians(-90))
+                    .splineTo(new Vector2d(-3, -37), Math.toRadians(120))
+
                     .build();
             drive.followTrajectorySequenceAsync(traj1); //initial deposit
+            drive.turn((Math.toRadians(-120)));
+
     }
 
 }
