@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -60,6 +61,9 @@ public class sebtest extends LinearOpMode //creates class
     private ElapsedTime succ = new ElapsedTime();
     private ElapsedTime test = new ElapsedTime();
 
+    RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver.BlinkinPattern pattern;
+
 
     final int liftGrav = (int) (9.8 * 3);
     private LiftPID liftPID = new LiftPID(.05, 0, 0);
@@ -109,6 +113,8 @@ public class sebtest extends LinearOpMode //creates class
         intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         drive = new SampleMecanumDrive(hardwareMap);
 
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
+        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
 
         duccL.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -148,16 +154,9 @@ public class sebtest extends LinearOpMode //creates class
         starts();
 
         while (!opModeIsActive()) {
-            //get the level, either 0, 1, or 2 or 3 (0 if not detected)
-            level = pipeline.getLevel();
-            telemetry.addData("DETECTED LEVEL: ",level);
-            if(gamepad1.a)
-                delay = true;
-
-
-            telemetry.addData("Is delay turned on?", delay);
-            telemetry.update();
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         }
+        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
 
         // if the latest level was 0 then it must be in the 3 position.
         if(level == 0)
@@ -279,7 +278,7 @@ public class sebtest extends LinearOpMode //creates class
         waitForStart();
 
         if (isStopRequested()) return;
-
+/*
         while(!isStopRequested()) {
             if (test.milliseconds() > 0 && test.milliseconds() < 2000) {
                 v4b1.setPosition(.81);
@@ -290,7 +289,7 @@ public class sebtest extends LinearOpMode //creates class
             if (test.milliseconds() > 2000) {
                 test.reset();
             }
-        }
+        }*/
 /*
 
         drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));

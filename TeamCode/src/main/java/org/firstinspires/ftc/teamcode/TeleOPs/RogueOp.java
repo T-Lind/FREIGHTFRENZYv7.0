@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOPs;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -41,6 +42,7 @@ public class RogueOp extends OpMode{
     boolean succing = false;
     double full = 100; //distance sensor reading for filled deposit
     double reading = 0;
+    RevBlinkinLedDriver blinkinLedDriver;
 //thing
     @Override
     public void init() {
@@ -82,6 +84,9 @@ public class RogueOp extends OpMode{
         liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
+        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
 
         liftB.setDirection(DcMotor.Direction.REVERSE);
 
@@ -175,6 +180,7 @@ public class RogueOp extends OpMode{
                     intake.setPower(1);
                     intakeB.setPower(1);
                     succing = false;
+                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
                 } else {
                     intake.setPower(-1);
                     intakeB.setPower(-1);
@@ -278,6 +284,7 @@ public class RogueOp extends OpMode{
         } else {
             dep.setPosition(.52);
         }
+        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 
 }
