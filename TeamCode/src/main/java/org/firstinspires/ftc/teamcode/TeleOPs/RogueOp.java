@@ -40,6 +40,7 @@ public class RogueOp extends OpMode{
     boolean find = false;
     boolean extend = false;
     boolean succing = false;
+    boolean yellow = false;
     double full = 100; //distance sensor reading for filled deposit
     double reading = 0;
     RevBlinkinLedDriver blinkinLedDriver;
@@ -167,6 +168,14 @@ public class RogueOp extends OpMode{
         telemetry.addData("lift power", lift.getPower());
         telemetry.update();
 
+        double distance = Distance.getDistance(DistanceUnit.CM);
+        if(yellow)
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+        else if(distance > 5)
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+        else
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
+
 
         //deadwheel time
         // deadwheels were a lie :(
@@ -180,17 +189,18 @@ public class RogueOp extends OpMode{
                     intake.setPower(1);
                     intakeB.setPower(1);
                     succing = false;
-                    blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
                 } else {
                     intake.setPower(-1);
                     intakeB.setPower(-1);
                     succing = true;
                 }
             } else if (gamepad1.left_bumper) {
+                yellow = true;
                 intake.setPower(1);
                 intakeB.setPower(1);
                 succing = false;
             } else {
+                yellow = false;
                 intake.setPower(0);
                 intakeB.setPower(0);
                 succing = false;
@@ -219,11 +229,13 @@ public class RogueOp extends OpMode{
 
         liftError = liftTargetPos - lift.getCurrentPosition();
         if(toggleUp.nowTrue() && !succing){ // this scares me too much
+            yellow = true;
             liftTargetPos = top;
             find = true;
             extend = true;
         } else if(toggleDown.nowTrue()) {
             extend = false;
+            yellow = false;
             v4b1.setPosition(.19);
             v4b2.setPosition(.19);
             liftTargetPos = 0;
@@ -240,7 +252,7 @@ public class RogueOp extends OpMode{
         }
         if(extend) {
             if(Math.abs(liftError) < 100){
-                v4b1.setPosition(.81);
+                v4b1.setPosition(.81);;
                 v4b2.setPosition(.81);
                 extend = false;
             }
@@ -257,6 +269,7 @@ public class RogueOp extends OpMode{
     public void duccSpin() {
         if (gamepad2.a) {
             duccL.setPower(-1);
+
             duccR.setPower(-1);
         } else {
             duccL.setPower(0);
@@ -284,7 +297,6 @@ public class RogueOp extends OpMode{
         } else {
             dep.setPosition(.52);
         }
-        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 
 }
