@@ -45,7 +45,8 @@ public class NewDetectionPipeline extends OpenCvPipeline{
                 output3,
                 1,
                 Math.PI/180,
-                12,
+                6
+                ,
                 5,
                 10); // runs the actual detection
 
@@ -70,12 +71,14 @@ public class NewDetectionPipeline extends OpenCvPipeline{
         }
 
         // level 1 lines
-        Imgproc.line(saved, new Point(0,0),new Point(output1.cols()/3.0,0), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
-        Imgproc.line(saved, new Point(output1.cols()*(2.5/10),0),new Point(output1.cols()*(2.5/10),output1.rows()/2.0), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
-
+        Imgproc.line(saved, new Point(0,10),new Point(75,10), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
+        Imgproc.line(saved, new Point(75,10),new Point(75,160), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
+        Imgproc.line(saved, new Point(0,160),new Point(75,160), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
         // line 2 lines
-        Imgproc.line(saved, new Point(output1.cols()/3.0,0), new Point(2*output1.cols()/3.0,0), new Scalar(100,0,100), 1, Imgproc.LINE_AA, 0);
-        Imgproc.line(saved, new Point(2*output1.cols()/3.0,0),new Point(2*output1.cols()/3.0,output1.rows()/2.0), new Scalar(100,0,100), 1, Imgproc.LINE_AA, 0);
+        Imgproc.line(saved, new Point(230,10),new Point(345,10), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
+        Imgproc.line(saved, new Point(345,10),new Point(345,160), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
+        Imgproc.line(saved, new Point(230,160),new Point(345,160), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
+        Imgproc.line(saved, new Point(230,10),new Point(230,160), new Scalar(50,200,200), 1, Imgproc.LINE_AA, 0);
 
         if((one_count > two_count/4) && (one_count > three_count))
             level = 1;
