@@ -299,7 +299,7 @@ public class RedLeft extends LinearOpMode //creates class
         drive.followTrajectory(traj1);
         drive.turn(Math.toRadians(90));
       // level=1;
-        liftAndDeposit();
+        //liftAndDeposit();
 
         Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-34, -21, Math.toRadians(-180)))//
                 .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))
@@ -307,6 +307,27 @@ public class RedLeft extends LinearOpMode //creates class
                 .build();
         drive.followTrajectory(traj2);
         spinDuck();
+
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
+                .lineTo(new Vector2d(-70,-33.5))
+
+                .build();
+        drive.followTrajectory(traj3);
+
+        double strafe_amount = pipeline2.getDucc_x();
+        for(int i=0;i<10;i++) {
+            strafe_amount = pipeline2.getDucc_x();
+            if(strafe_amount == Integer.MIN_VALUE)
+                i--;
+        }
+        telemetry.addData("sa: ",strafe_amount);
+        telemetry.update();
+        Trajectory traj23 = drive.trajectoryBuilder(new Pose2d(-70,-33.5),drive.getPoseEstimate().getHeading())
+                .strafeRight(strafe_amount)
+
+                .build();
+        drive.followTrajectory(traj23);
+
         /*
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-64, -60, Math.toRadians(-90)),true)
                 .splineTo(new Vector2d(-49, -35),Math.toRadians(-270))
@@ -355,13 +376,13 @@ public class RedLeft extends LinearOpMode //creates class
         intakeB.setPower(0);
         // I turn off intake here instead of earlier so that if the duck gets yeeted there is a possibility this yoinks it up
         liftAndDeposit();*/
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
+        /*Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-63+strafe_amount, -58.5, Math.toRadians(-90)))
                 .lineTo(new Vector2d(-70,-29))//,Math.toRadians(-180))
 
                 .build();
         drive.followTrajectory(traj6);
 
-
+*/
 
 
 
