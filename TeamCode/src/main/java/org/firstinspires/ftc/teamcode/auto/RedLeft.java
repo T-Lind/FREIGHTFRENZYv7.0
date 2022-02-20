@@ -309,7 +309,7 @@ public class RedLeft extends LinearOpMode //creates class
         spinDuck();
 
         Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
-                .lineTo(new Vector2d(-70,-33.5))
+                .splineTo(new Vector2d(-50,-33.5), Math.toRadians(-90))
 
                 .build();
         drive.followTrajectory(traj3);
@@ -322,8 +322,8 @@ public class RedLeft extends LinearOpMode //creates class
         }
         telemetry.addData("sa: ",strafe_amount);
         telemetry.update();
-        Trajectory traj23 = drive.trajectoryBuilder(new Pose2d(-70,-33.5),drive.getPoseEstimate().getHeading())
-                .strafeRight(strafe_amount)
+        Trajectory traj23 = drive.trajectoryBuilder(new Pose2d(-50,-33.5),Math.toRadians(-90))
+                .splineTo(new Vector2d(-50+strafe_amount,-50), Math.toRadians(-90))
 
                 .build();
         drive.followTrajectory(traj23);
