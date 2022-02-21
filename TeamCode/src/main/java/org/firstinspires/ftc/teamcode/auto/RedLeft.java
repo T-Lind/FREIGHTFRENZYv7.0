@@ -186,7 +186,7 @@ public class RedLeft extends LinearOpMode //creates class
         telemetry.addLine("enteredLift");
         telemetry.update();
         if(level == 1) {
-            targetV4B = .595;
+            targetV4B = .81;
             targetDeposit = .3;
 
         }
@@ -292,15 +292,25 @@ public class RedLeft extends LinearOpMode //creates class
 
 
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .splineTo(new Vector2d(-33, -21), Math.toRadians(90))
+        double x = -33;
+        level=2;
+
+        if(level==1){
+             x = -33-2.3;
+        }
+
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+                .setAccelConstraint((a,e,c,d)->25)
+                .splineTo(new Vector2d(x, -21), Math.toRadians(90))
 
                 .build();
-        drive.followTrajectory(traj1);
+        drive.followTrajectorySequence(traj1);
         drive.turn(Math.toRadians(90));
-      // level=1;
-        //liftAndDeposit();
+        telemetry.addData("x value", drive.getPoseEstimate().getX());
 
+       level=2;
+        liftAndDeposit();
+/*
         Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-34, -21, Math.toRadians(-180)))//
                 .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))
 
@@ -357,181 +367,8 @@ public class RedLeft extends LinearOpMode //creates class
         telemetry.addData("dx: ",dx);
         telemetry.update();
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-49, -35, Math.toRadians(-90)))
-                .lineTo(new Vector2d(-49-dx, -35+dy))
-
-                .build();
-
-        drive.followTrajectory(traj4);
-
-        // duck intake movement ends
-
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-49-dx, -35+dy, Math.toRadians(-90)),true)
-                .splineTo(new Vector2d(-34.7,-18.5),Math.toRadians(0))
-
-                .build();
-        drive.followTrajectory(traj5);
-
-        intake.setPower(0);
-        intakeB.setPower(0);
-        // I turn off intake here instead of earlier so that if the duck gets yeeted there is a possibility this yoinks it up
-        liftAndDeposit();*/
-        /*Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-63+strafe_amount, -58.5, Math.toRadians(-90)))
-                .lineTo(new Vector2d(-70,-29))//,Math.toRadians(-180))
-
-                .build();
-        drive.followTrajectory(traj6);
-
-*/
-
-
-
-
-/*
-
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(),true)
-                .splineToLinearHeading(new Pose2d(-20, 6), Math.toRadians(0))
-                .build();
-        drive.followTrajectory(traj1);
-        drive.turn(Math.toRadians(110));
-        drive.turn(Math.toRadians(70));
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-6,20),true)
-                .splineToLinearHeading(new Pose2d(-6, -25), Math.toRadians(180))
-                .build();
-        drive.followTrajectory(traj2);
-
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                .back(3)
-                .build();
-
-        drive.followTrajectory(traj3);
-
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-3,0))
-                .strafeRight(21.75)
-                .build();
-
-        drive.followTrajectory(traj);
-
-
-
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-3,-21.75))
-                .back(11.5)
-                .build();
-
-        drive.followTrajectory(traj2);
-*/
-/*
-        liftAndDeposit();
-
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-17.5,-29.5))
-                .forward(12.5)
-                .build();
-
-        //DO NOT MESS WITH ANYTHING HERE AFTER
-        drive.followTrajectory(traj4);
-
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4.5,-29.5))
-                .strafeLeft(55)
-                .build();
-
-        drive.followTrajectory(traj5);
-
-        spinDuck();
-        Trajectory traj9 = drive.trajectoryBuilder(new Pose2d(-4.5, 26))
-                .back(2.5)
-                .build();
-        drive.followTrajectory(traj9);
-
-        intake.setPower(-.55);
-        intakeB.setPower(-.55);
-
-       /*  Trajectory traj10 = drive.trajectoryBuilder(new Pose2d(-6.5, 23.5))
-                .forward(6.5)
-                .build();
-        drive.followTrajectory(traj9);
-
-       Trajectory traj = drive.trajectoryBuilder(new Pose2d(-4.5, 23.5))
-                .forward(4.5)
-                .build();
-        drive.followTrajectory(traj);*/
-
-      /*  Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-1.5, 25))
-                .strafeRight(52)
-                .build();
-        drive.followTrajectory(traj6);
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-1.5, -26.5))
-                .back(12)
-                .build();
-        drive.followTrajectory(traj7);
-        intake.setPower(0);
-        intakeB.setPower(0);
-        liftTargetPos = top;
-        liftAndDeposit();
-        Trajectory traj8 = drive.trajectoryBuilder(new Pose2d(-13.5,-26.5),true)
-                .lineTo(new Vector2d(-23.75, 33.75))
-                .build();
-        drive.followTrajectory(traj8);
-
-     /*   Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(3.5,27.75))
-                .back(29.5)
-                .build();
-
-        drive.followTrajectory(traj6);
         */
-/*
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-14,-27))
-                .strafeLeft(2)
-                .build();
-
-        drive.followTrajectory(traj7);
-
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d())
-                .back(30)
-                .strafeRight(6.5)
-                .build();
-
-        drive.followTrajectorySequence(traj1);
-        drive.turn(Math.toRadians(-50));
-        level = 1;
-        liftAndDeposit();
-        drive.turn(Math.toRadians(50));
-        //TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30,-6.5))
-            //    .forward(25)
-              //  .strafeLeft(29)
-              //  .build();
-
-        //drive.followTrajectorySequence(traj2);
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30,-6.5))
-               // .lineTo(new Vector2d(-6,24.5))
-                .forward(24)
-                .strafeLeft(33)
-                        .build();
-        drive.followTrajectorySequence(traj2);
-       /* Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-6,25.5))
-                .lineTo(new Vector2d(-13, 11))
-                .build();
-
-        drive.followTrajectory(traj3);*/
-          //where tiernan's code comes in
-        //TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(-13,11)) //edit coordinates accordingly to tiernan's positioning
-          //    .back(17)
-            //   .strafeRight(17)
-              //  .build();
-        //drive.followTrajectorySequence(traj4);
-        //drive.turn(Math.toRadians(-70));
-       // liftTargetPos=top;
-        //liftAndDeposit();
-        //drive.turn(Math.toRadians(70));
-       // Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-30,-5))
-         //       .lineTo(new Vector2d(-27,25.5))
-          //      .build();
-        //drive.followTrajectory(traj5);
-        /*spinDuck();
-TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(-6,27.5))
-        .back(23)
-        .strafeLeft(2)
-        .build();
-drive.followTrajectorySequence(traj5);*/
+        spinDuck();
     }
 
 
@@ -539,11 +376,21 @@ drive.followTrajectorySequence(traj5);*/
 
     public void spinDuck() throws InterruptedException{
         ElapsedTime spinTime = new ElapsedTime();
-        duccL.setPower(-.25);
-        duccR.setPower(-.25);
+        duccL.setPower(-.001);
+        duccR.setPower(-.001);
+        double power = .2;
+        while(spinTime.milliseconds()<=3000){
+            heartbeat();
+
+            duccL.setPower(power);
+            power = power + .00015;
+            telemetry.addData("duck power: ",power);
+            telemetry.update();
+
+        }
 
 
-        while (spinTime.milliseconds() <= 2500)
+      /*  while (spinTime.milliseconds() <= 2500)
             heartbeat();
         duccL.setPower(0);
         duccR.setPower(0);
@@ -555,7 +402,7 @@ drive.followTrajectorySequence(traj5);*/
         }
         duccL.setPower(0);
         duccR.setPower(0);
-
+*/
 
      // duckIntake();
 

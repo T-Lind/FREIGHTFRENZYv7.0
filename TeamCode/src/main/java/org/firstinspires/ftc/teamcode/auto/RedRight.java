@@ -422,11 +422,12 @@ public class RedRight extends LinearOpMode //creates class
     public void redRight() throws InterruptedException{
 
             TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
-                    .splineTo(new Vector2d(-3, -37), Math.toRadians(120))
+                    .splineTo(new Vector2d(10, -25), Math.toRadians(90))
+                    .turn(Math.toRadians(-90))
 
                     .build();
             drive.followTrajectorySequenceAsync(traj1); //initial deposit
-            drive.turn((Math.toRadians(-120)));
+
 
     }
 

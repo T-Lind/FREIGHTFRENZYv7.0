@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CameraPipelines.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -296,10 +298,10 @@ public class RedRightMeet2 extends LinearOpMode //creates class
     public void runOpMode() throws InterruptedException {
 
         initialize();
-        if(delay){
+       /* if(delay){
             sleep(6000);
         }
-        starts();
+        starts();*/
         RedRightMeet2();
         //liftAndDeposit();
     }
@@ -309,43 +311,21 @@ public class RedRightMeet2 extends LinearOpMode //creates class
 
         if (isStopRequested()) return;
 
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                .back(3)
+
+
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
+                .splineTo(new Vector2d(10, -25), Math.toRadians(90))
+                .turn(Math.toRadians(-90))
+
                 .build();
-
-        drive.followTrajectory(traj3);
-
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-3,0))
-                .strafeLeft(21)
-                .build();
-
-        drive.followTrajectory(traj);
+        drive.followTrajectorySequence(traj1); //initial deposit
+        level=0;
+        liftAndDeposit();
 
 
 
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-3,21))
-                .back(11.5)
-                .build();
 
-        drive.followTrajectory(traj2);
-
-      //  liftAndDeposit();
-
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-15.5,21))
-                .forward(1.5)
-                .build();
-
-        //DO NOT MESS WITH ANYTHING HERE AFTER
-        drive.followTrajectory(traj4);
-
-        drive.turn(Math.toRadians(90));
-
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-14,21, Math.toRadians(90)))
-                .forward(60)
-                .build();
-
-        drive.followTrajectory(traj5);
 
 
     }
