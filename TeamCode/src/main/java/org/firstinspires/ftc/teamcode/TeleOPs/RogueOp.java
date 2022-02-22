@@ -47,10 +47,10 @@ public class RogueOp extends OpMode{
 //thing
     @Override
     public void init() {
-        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
-        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
-        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
-        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
+        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
+        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
+        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
+        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
 
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -65,8 +65,7 @@ public class RogueOp extends OpMode{
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
+
 
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
@@ -137,6 +136,7 @@ public class RogueOp extends OpMode{
         factor = togglePrecision ? .3 : 1; //the power is 1/5th of its normal value while in precision mode
 
         // Do not mess with this, if it works, it works
+        /*
         double x = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
         double stickAngle = Math.atan2(direction ? -gamepad1.left_stick_y : gamepad1.left_stick_y, direction ? gamepad1.left_stick_x : -gamepad1.left_stick_x); // desired robot angle from the angle of stick
         double powerAngle = stickAngle - (Math.PI / 4); // conversion for correct power values
@@ -154,8 +154,48 @@ public class RogueOp extends OpMode{
         leftBack.setPower(leftRearPower * factor);
         rightFront.setPower(rightFrontPower * factor);
         rightBack.setPower(rightRearPower * factor);
+        */
 
-        speak();
+        if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1  || Math.abs(gamepad1.right_stick_x) > 0.1) {
+            double FLP = gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
+            double FRP = -gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
+            double BLP = gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
+            double BRP = -gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
+
+            double max = Math.max(Math.max(Math.abs(FLP), Math.abs(FRP)), Math.max(Math.abs(BLP), Math.abs(BRP)));
+
+            if (max > 1) {
+                FLP /= max;
+                FRP /= max;
+                BLP /= max;
+                BRP /= max;
+            }
+
+            if (gamepad1.right_trigger > 0.5) {
+                leftFront.setPower(FLP * 0.35);
+                rightFront.setPower(FRP * 0.35);
+                leftBack.setPower(BLP * 0.35);
+                rightBack.setPower(BRP * 0.35);
+                telemetry.addData("FrontLeftPow:", FLP * 0.35);
+                telemetry.addData("FrontRightPow:", FRP * 0.35);
+                telemetry.addData("BackLeftPow:", BLP * 0.35);
+                telemetry.addData("BackRightPow:", BRP * 0.35);
+            } else {
+                leftFront.setPower(FLP);
+                rightFront.setPower(FRP);
+                leftBack.setPower(BLP);
+                rightBack.setPower(BRP);
+
+            }
+
+        } else {
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+        }
+
+
 
         succ();
         duccSpin();

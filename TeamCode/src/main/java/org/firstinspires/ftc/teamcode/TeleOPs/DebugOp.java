@@ -115,15 +115,19 @@ public class DebugOp extends OpMode{
         }else {
             rightFront.setPower(0);
         }
-        if(gamepad1.right_bumper){
-            intake.setPower(-1);
-            intakeB.setPower(-1);
 
-        }
-        else{
+        if (gamepad1.left_trigger > .5) {
+            intake.setPower(-.5);
+            intakeB.setPower(-.5);
+        } else if (gamepad1.left_bumper) {
+            intake.setPower(.5);
+            intakeB.setPower(.5);
+        } else {
             intake.setPower(0);
             intakeB.setPower(0);
         }
+
+
 
         telemetry.addData("RF", rightFront.getCurrentPosition());
         telemetry.addData("RB", rightBack.getCurrentPosition());
