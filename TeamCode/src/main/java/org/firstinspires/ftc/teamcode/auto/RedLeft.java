@@ -292,6 +292,52 @@ public class RedLeft extends LinearOpMode //creates class
 
 
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+                .setAccelConstraint((a,e,c,d)->25)
+                .splineTo(new Vector2d(-33, -21), Math.toRadians(90))
+
+                .build();
+        drive.followTrajectorySequence(traj1);
+        drive.turn(Math.toRadians(90));
+
+
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-34, -21, Math.toRadians(-180)))//
+                .setAccelConstraint((a,e,c,d)->35)
+                .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))
+
+                .build();
+        drive.followTrajectorySequence(traj2);
+        spinDuck();
+
+//spin duck
+
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
+                .strafeLeft(20)
+                .turn(Math.toRadians(-15))
+                .setAccelConstraint((a,e,c,d)->5)
+                .lineTo(new Vector2d(-60,-62))
+
+                .build();
+        drive.followTrajectorySequenceAsync(traj3);
+        duckIntake();
+
+
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
+                .setReversed(true)
+                .setAccelConstraint((a,e,c,d)->25)
+                .splineTo(new Vector2d(-33, -26), Math.toRadians(0))
+
+                .build();
+        drive.followTrajectorySequence(traj4);
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
+
+                .lineTo(new Vector2d(-63, -38))
+
+                .build();
+        drive.followTrajectorySequence(traj5);
+
+
+        /*
         double x = -33;
         level=2;
 
@@ -381,8 +427,9 @@ public class RedLeft extends LinearOpMode //creates class
         double power = .2;
         while(spinTime.milliseconds()<=3000){
             heartbeat();
+            duccR.setPower(power);
 
-            duccL.setPower(power);
+            duccL.setPower(-power);
             power = power + .00015;
             telemetry.addData("duck power: ",power);
             telemetry.update();
@@ -407,11 +454,13 @@ public class RedLeft extends LinearOpMode //creates class
      // duckIntake();
 
 
+
     }
     public void duckIntake() throws InterruptedException{
 
         ElapsedTime spinTime = new ElapsedTime();
-
+intake.setPower(1);
+intakeB.setPower(1);
 
 
         while (spinTime.milliseconds() <= 2000)
