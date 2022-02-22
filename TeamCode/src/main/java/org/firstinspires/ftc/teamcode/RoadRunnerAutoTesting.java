@@ -45,61 +45,67 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
                 //.splineToConstantHeading(new Vector2d(2, -60), Math.toRadians(-180))
                 //.forward(58)
                 //.splineTo(new Vector2d(58,-51),Math.toRadians(0))
-                .lineTo(new Vector2d(58,-53))
+                .lineTo(new Vector2d(51,-53))
 
 
                 .build();
         drive.followTrajectorySequence(traj2); //goes to warehouse
 
 
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(58, -53, Math.toRadians(0)))
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(51, -53, Math.toRadians(0)))
                 //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
                                                                         // wont ever be extremely accurate
                 .setReversed(true)
-                .back(45)
+              //  .back(45)
              //   .setAccelConstraint((a,e,c,d)->55)
-                .splineTo(new Vector2d(-5, -35), Math.toRadians(120))
+             //   .splineTo(new Vector2d(-5, -35), Math.toRadians(120))
+                .back(55.5)
 
-           // .splineTo(new Vector2d(1,-51),Math.toRadians(90))
+            .splineTo(new Vector2d(-15,-33),Math.toRadians(90))
                 .build();
         drive.followTrajectorySequence(traj3); //goes to deposit
 
-        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(-5, -33, Math.toRadians(-60)))//new Pose2d(-12, -42, Math.toRadians(90)))
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-5, -33, Math.toRadians(-60)))//new Pose2d(-12, -42, Math.toRadians(90)))
               //  .setAccelConstraint((a,e,c,d)->55)
-                .splineTo(new Vector2d(8, -51), Math.toRadians(0))
+              //  .splineTo(new Vector2d(8, -51), Math.toRadians(0))
                // .setAccelConstraint((a,e,c,d)->60)
-                .forward(50)
+             //   .forward(50)
+                .splineTo(new Vector2d(1, -46), Math.toRadians(0))
+                .forward(59)
 
 
                 .build();
 
         drive.followTrajectorySequence(traj4); //goes back to warehouse, should have enough room to go forward
                                                 // and accelerate over obstacle
-        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(56, -49, Math.toRadians(0)))
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(60, -46, Math.toRadians(0)))
                 .setReversed(true)
-                .back(45)
+               // .back(45)
                 //.setAccelConstraint((a,e,c,d)->55)
 
-                .splineTo(new Vector2d(6, -33), Math.toRadians(120))
+              //  .splineTo(new Vector2d(6, -33), Math.toRadians(120))
               //  .splineTo(new Vector2d(1,-51),Math.toRadians(90))
+                .back(63)
 
+                .splineTo(new Vector2d(-15.7, -31.5), Math.toRadians(90))
                 .build();
         drive.followTrajectorySequence(traj5); //goes back to deposit
         //after repeating spline and going back and forth and whatnot,
         //  give a little bit room for error, we lose about 1-2 inches in localization in x and y
 
-        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(2, -30, Math.toRadians(-60)))
+        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(-15.7, -31.5, Math.toRadians(90)))//new Pose2d(2, -30, Math.toRadians(-60)))
 
                // .setAccelConstraint((a,e,c,d)->55)
-                .splineTo(new Vector2d(9, -48.5), Math.toRadians(0))
+              //  .splineTo(new Vector2d(9, -48.5), Math.toRadians(0))
                // .setAccelConstraint((a,e,c,d)->60)
+                .splineTo(new Vector2d(9, -48.5), Math.toRadians(0))
                 .forward(50)
 
                 .build();
         drive.followTrajectorySequence(traj6);
-        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(56, -48.5, Math.toRadians(0)))
+        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(59, -48.5, Math.toRadians(0)))//new Pose2d(56, -48.5, Math.toRadians(0)))
 
-                .back(40)
+                .back(50)
                // .setAccelConstraint((a,e,c,d)->55)
                   .splineTo(new Vector2d(10, -30), Math.toRadians(110))
                 //.splineTo(new Vector2d(1,-51),Math.toRadians(90))
