@@ -336,6 +336,7 @@ public class RogueOp extends OpMode{
             v4b2.setPosition(.5);
             //vertical position for asserting dominance
         }
+        //tiernan bad
 
         if (gamepad2.right_trigger > .5 && v4b1.getPosition() > .4) {
             dep.setPosition(.23);
