@@ -109,7 +109,7 @@ public class RogueOp extends OpMode{
 
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
-        dep.setPosition(.52);
+        dep.setPosition(.63);
 
 
 
@@ -338,10 +338,13 @@ public class RogueOp extends OpMode{
         }
 
         if (gamepad2.right_trigger > .5 && v4b1.getPosition() > .4) {
-            dep.setPosition(.3);
-        } else {
-            dep.setPosition(.52);
+            dep.setPosition(.23);
+        } else if(reading < full){
+            dep.setPosition(.46);
+        } else{
+            dep.setPosition(.63);
         }
+
     }
 
 }
