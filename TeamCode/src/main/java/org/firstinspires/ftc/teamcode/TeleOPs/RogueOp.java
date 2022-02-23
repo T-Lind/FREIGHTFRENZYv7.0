@@ -136,6 +136,7 @@ public class RogueOp extends OpMode{
         factor = togglePrecision ? .3 : 1; //the power is 1/5th of its normal value while in precision mode
 
         // Do not mess with this, if it works, it works
+        // it doesnt work
         /*
         double x = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
         double stickAngle = Math.atan2(direction ? -gamepad1.left_stick_y : gamepad1.left_stick_y, direction ? gamepad1.left_stick_x : -gamepad1.left_stick_x); // desired robot angle from the angle of stick
@@ -249,15 +250,12 @@ public class RogueOp extends OpMode{
         }
     }
 
-    public void speak() {
-        if (gamepad1.dpad_left || gamepad2.dpad_up || toggleDown.nowTrue() || gamepad2.dpad_down ||gamepad2.left_bumper || gamepad2.a || gamepad2.b || gamepad2.y || gamepad2.x){
-            telemetry.speak("DONT THROW");
-        }
 
 
 
 
-    }
+
+
 
     public void lift() {
 
