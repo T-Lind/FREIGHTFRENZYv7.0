@@ -32,9 +32,9 @@ public class RogueOp extends OpMode{
     private Rev2mDistanceSensor Distance;
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
-    int top = 605;
+    int top = 590;
     final int liftGrav = (int)(9.8 * 3);
-    private LiftPID liftPID = new LiftPID(.05, 0, 0);
+    private LiftPID liftPID = new LiftPID(.03, 0, 0);
     int liftError = 0;
     int liftTargetPos = 0;
     boolean find = false;
@@ -107,8 +107,8 @@ public class RogueOp extends OpMode{
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
+        v4b1.setPosition(.18);
+        v4b2.setPosition(.18);
         dep.setPosition(.63);
 
 
@@ -202,11 +202,16 @@ public class RogueOp extends OpMode{
         duccSpin();
         deposit();
         macroLift();
+        if(v4b1.getPosition() < .4) {
+            reading = Distance.getDistance(DistanceUnit.MM);
+        }
 
 
         telemetry.addData("lift", lift.getCurrentPosition());
         telemetry.addData("liftTargetPos", liftTargetPos);
         telemetry.addData("lift power", lift.getPower());
+        telemetry.addData("distance", Distance.getDistance(DistanceUnit.MM));
+
         telemetry.update();
 
         double distance = Distance.getDistance(DistanceUnit.CM);
@@ -226,7 +231,6 @@ public class RogueOp extends OpMode{
     public void succ() {
         if(liftTargetPos == 0) {
             if (gamepad1.left_trigger > .5) {
-                reading = Distance.getDistance(DistanceUnit.MM);
                 if (reading < full) {
                     intake.setPower(1);
                     intakeB.setPower(1);
@@ -279,18 +283,18 @@ public class RogueOp extends OpMode{
         } else if(toggleDown.nowTrue()) {
             extend = false;
             yellow = false;
-            v4b1.setPosition(.19);
-            v4b2.setPosition(.19);
+            v4b1.setPosition(.18);
+            v4b2.setPosition(.18);
             liftTargetPos = 0;
             find = false;
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
             liftB.setPower(lift.getPower());
         }
         if(find) {
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -.2, 1));
             liftB.setPower(lift.getPower());
         } else {
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
             liftB.setPower(lift.getPower());
         }
         if(extend) {
@@ -304,7 +308,7 @@ public class RogueOp extends OpMode{
             top = 350;
         }
         if(gamepad2.right_bumper){
-            top = 650;
+            top = 590;
         }
 
     }
@@ -326,8 +330,8 @@ public class RogueOp extends OpMode{
             v4b2.setPosition(.81);
             //dep position
         } else if (gamepad2.x) {
-            v4b1.setPosition(.19);
-            v4b2.setPosition(.19);
+            v4b1.setPosition(.18);
+            v4b2.setPosition(.18);
             //in position
         } else if (gamepad2.b && !succing) {
             v4b1.setPosition(.5);
@@ -340,7 +344,7 @@ public class RogueOp extends OpMode{
             dep.setPosition(.23);
         } else if(reading < full){
             dep.setPosition(.46);
-        } else{
+        } else {
             dep.setPosition(.63);
         }
 

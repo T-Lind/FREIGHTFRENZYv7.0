@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.EasyToggle;
 public class TestOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, intakeB, lift, liftB;
-    private Servo v4b1, v4b2, dep, lights;
+    private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
     private boolean direction, togglePrecision;
     Orientation angles;
@@ -90,7 +90,6 @@ public class TestOp extends OpMode {
         v4b1 = hardwareMap.servo.get("v4b1");
         v4b2 = hardwareMap.servo.get("v4b2");
         dep = hardwareMap.servo.get("dep");
-        lights = hardwareMap.servo.get("lights");
 
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
@@ -100,8 +99,7 @@ public class TestOp extends OpMode {
         v4b1.setDirection(Servo.Direction.REVERSE);
 
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
-        if(Distance.getDistance(DistanceUnit.MM) < 50)
-            lights.setPosition(0.35);
+
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
