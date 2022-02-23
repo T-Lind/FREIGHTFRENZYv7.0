@@ -32,7 +32,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class sebtest extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
-
+    //test
     private int level = 0;
     private boolean delay = false;
     private DcMotorEx lift, liftB , intake, intakeB;
