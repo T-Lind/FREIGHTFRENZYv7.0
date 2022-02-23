@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class BlueRight extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
-
+    //test
     private int level = 0;
     private double targetDeposit;
     private DcMotorEx lift, liftB, intake, intakeB;

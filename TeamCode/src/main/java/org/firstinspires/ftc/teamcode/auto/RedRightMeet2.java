@@ -32,7 +32,7 @@ public class RedRightMeet2 extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
 
-    private int level = 0;
+    private int level = 0; //test
 
     private DcMotorEx lift, liftB;
     private Servo v4b1, v4b2, dep;

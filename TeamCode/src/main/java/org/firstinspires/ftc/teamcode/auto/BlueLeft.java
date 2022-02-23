@@ -50,7 +50,7 @@ public class BlueLeft extends LinearOpMode //creates class
 
     private TrajectorySequence traj3;
     private TrajectorySequence traj5;
-
+//uwu
 
     private double intakePower = -0.70;
     private int cycles = 0;
