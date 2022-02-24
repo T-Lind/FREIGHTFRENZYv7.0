@@ -34,7 +34,7 @@ public class RogueOp extends OpMode{
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
     int top = 590;
     final int liftGrav = (int)(9.8 * 3);
-    private LiftPID liftPID = new LiftPID(.03, 0, 0);
+    private LiftPID liftPID = new LiftPID(.025, 0, 0);
     int liftError = 0;
     int liftTargetPos = 0;
     boolean find = false;
@@ -291,7 +291,7 @@ public class RogueOp extends OpMode{
             liftB.setPower(lift.getPower());
         }
         if(find) {
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -.2, 1));
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .9));
             liftB.setPower(lift.getPower());
         } else {
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
