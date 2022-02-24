@@ -67,7 +67,7 @@ public class DriveConstants {
      * inches.
      */
     public static double MAX_VEL = 70; //used to be 41.4, 70
-    public static double MAX_ACCEL = 70; //used to be 62
+    public static double MAX_ACCEL = 80; //used to be 62, SO LIMIT EVERY ACCELERATION TO BE 62 FOR OTHER AUTOS BESIDES REDRIGHT AND BLUELEFT
     public static double MAX_ANG_VEL = 5;//3.806
     public static double MAX_ANG_ACCEL = 4;
 
