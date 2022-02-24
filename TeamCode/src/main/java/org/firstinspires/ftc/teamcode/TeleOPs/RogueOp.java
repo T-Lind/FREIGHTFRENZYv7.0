@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 @TeleOp(name="RogueOp")
 public class RogueOp extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime retract = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, intakeB, lift, liftB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
@@ -285,10 +286,7 @@ public class RogueOp extends OpMode{
             yellow = false;
             v4b1.setPosition(.18);
             v4b2.setPosition(.18);
-            liftTargetPos = 0;
-            find = false;
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
-            liftB.setPower(lift.getPower());
+            retract.reset();
         }
         if(find) {
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .9));
@@ -303,6 +301,14 @@ public class RogueOp extends OpMode{
                 v4b2.setPosition(.81);
                 extend = false;
             }
+        } else {
+            if(retract.milliseconds() > 100 && retract.milliseconds() < 150) {
+                liftTargetPos = 0;
+                find = false;
+                lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
+                liftB.setPower(lift.getPower());
+            }
+
         }
         if(gamepad2.left_bumper){
             top = 350;
