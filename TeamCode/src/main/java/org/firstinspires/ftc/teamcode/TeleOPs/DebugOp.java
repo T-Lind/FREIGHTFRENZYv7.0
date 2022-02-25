@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.EasyToggle;
@@ -19,13 +20,16 @@ import org.firstinspires.ftc.teamcode.EasyToggle;
 public class DebugOp extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, intakeB, lift, liftB;
-    private Servo v4b1, v4b2, dep;
-    private CRServo duccL, duccR;
+    private Servo v4b1, v4b2, dep, duccRot, duccTilt;
+    private CRServo duccL, duccR, duccEx;
     private boolean direction, togglePrecision;
     private double factor;
     boolean reverse;
     private Rev2mDistanceSensor Distance;
     EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
+    double rot = .5;
+    double tilt = .5;
+    double extend = 0;
 
 
     @Override
@@ -50,7 +54,7 @@ public class DebugOp extends OpMode{
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-      intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -79,6 +83,10 @@ public class DebugOp extends OpMode{
         dep = hardwareMap.servo.get("dep");
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
+
+        duccRot = hardwareMap.servo.get("DRoT");
+        duccTilt = hardwareMap.servo.get("DT");
+        duccEx = hardwareMap.crservo.get("DE");
 
         duccL.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -127,6 +135,21 @@ public class DebugOp extends OpMode{
             intakeB.setPower(0);
         }
 
+        extend = gamepad1.left_stick_y;
+        if(extend < .2 && extend > .2)
+            extend = 0;
+        if(gamepad1.left_stick_x > .3)
+            rot += .005;
+        else if(gamepad1.left_stick_x < -.3)
+            rot -= .005;
+        if(gamepad1.right_stick_y > .3)
+            tilt -= .005;
+        else if(gamepad1.right_stick_y < -.3)
+            tilt += .005;
+
+        duccEx.setPower(Range.clip(extend, -1, 1));
+        duccRot.setPosition(Range.clip(rot, -1, 1));
+        duccTilt.setPosition(Range.clip(tilt, -1, 1));
 
 
         telemetry.addData("RF", rightFront.getCurrentPosition());
@@ -135,6 +158,8 @@ public class DebugOp extends OpMode{
         telemetry.addData("LB", leftBack.getCurrentPosition());
         telemetry.addData("intake current", intake.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("intakeB current", intakeB.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("rot", duccRot.getPosition());
+        telemetry.addData("tilt", duccTilt.getPosition());
         telemetry.speak("sussy sebby");
         telemetry.update();
 
