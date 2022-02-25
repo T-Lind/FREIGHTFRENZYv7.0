@@ -54,7 +54,7 @@ public class RedLeft extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 620;
-    private final int med = 225;
+    private final int med = 175;
 
 
     private WebcamName weCam;
@@ -144,7 +144,7 @@ public class RedLeft extends LinearOpMode //creates class
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
         }
-
+        dep.setPosition(.63);
         // if the latest level was 0 then it must be in the 3 position.
         if(level == 0)
             level = 3;
@@ -269,7 +269,7 @@ public class RedLeft extends LinearOpMode //creates class
     public void starts(){
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
-        dep.setPosition(.52);
+        dep.setPosition(.63);
     }
 
     @Override
@@ -299,8 +299,10 @@ public class RedLeft extends LinearOpMode //creates class
                 .build();
         drive.followTrajectorySequence(traj1);
         drive.turn(Math.toRadians(90));
+        level=2;
+        liftAndDeposit();
 
-
+/*
         TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-34, -21, Math.toRadians(-180)))//
                 .setAccelConstraint((a,e,c,d)->35)
                 .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))

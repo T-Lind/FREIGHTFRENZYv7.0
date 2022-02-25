@@ -33,7 +33,7 @@ public class RogueOp extends OpMode{
     private Rev2mDistanceSensor Distance;
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
-    int top = 590;
+    int top = 550;
     final int liftGrav = (int)(9.8 * 3);
     private LiftPID liftPID = new LiftPID(.025, 0, 0);
     int liftError = 0;
@@ -287,6 +287,10 @@ public class RogueOp extends OpMode{
             v4b1.setPosition(.18);
             v4b2.setPosition(.18);
             retract.reset();
+            liftTargetPos = 0;
+            find = false;
+            lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
+            liftB.setPower(lift.getPower());
         }
         if(find) {
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .9));
@@ -303,18 +307,15 @@ public class RogueOp extends OpMode{
             }
         } else {
             if(retract.milliseconds() > 100 && retract.milliseconds() < 150) {
-                liftTargetPos = 0;
-                find = false;
-                lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
-                liftB.setPower(lift.getPower());
+
             }
 
         }
         if(gamepad2.left_bumper){
-            top = 350;
+            top = 250;
         }
         if(gamepad2.right_bumper){
-            top = 590;
+            top = 550;
         }
 
     }
