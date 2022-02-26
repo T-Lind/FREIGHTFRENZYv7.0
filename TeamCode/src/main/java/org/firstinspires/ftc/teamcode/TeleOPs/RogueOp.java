@@ -24,8 +24,8 @@ public class RogueOp extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime retract = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, intakeB, lift, liftB;
-    private Servo v4b1, v4b2, dep;
-    private CRServo duccL, duccR;
+    private Servo v4b1, v4b2, dep, duccRot, duccTilt;
+    private CRServo duccL, duccR, duccEx;
     private boolean direction, togglePrecision;
     private double factor;
     //test
@@ -44,6 +44,9 @@ public class RogueOp extends OpMode{
     boolean yellow = false;
     double full = 100; //distance sensor reading for filled deposit
     double reading = 0;
+    double rot = .5;
+    double tilt = .5;
+    double extendD = 0;
     RevBlinkinLedDriver blinkinLedDriver;
 //thing
     @Override
@@ -113,8 +116,6 @@ public class RogueOp extends OpMode{
         dep.setPosition(.63);
 
 
-
-
     }
 
     @Override
@@ -126,53 +127,19 @@ public class RogueOp extends OpMode{
     public void loop() {
         toggleUp.updateStart(gamepad2.dpad_up);
         toggleDown.updateStart(gamepad2.dpad_down);
-
-        //toggles precision mode if the right stick button is pressed
-        if (gamepad1.left_stick_button)
-            togglePrecision = true;
-        else if (gamepad1.right_stick_button)
-            togglePrecision = false;
-
-        //sets the factor multiplied to the power of the motors
-        factor = togglePrecision ? .3 : 1; //the power is 1/5th of its normal value while in precision mode
-
-        // Do not mess with this, if it works, it works
-        // it doesnt work
-        /*
-        double x = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        double stickAngle = Math.atan2(direction ? -gamepad1.left_stick_y : gamepad1.left_stick_y, direction ? gamepad1.left_stick_x : -gamepad1.left_stick_x); // desired robot angle from the angle of stick
-        double powerAngle = stickAngle - (Math.PI / 4); // conversion for correct power values
-        double rightX = -gamepad1.right_stick_x; // right stick x axis controls turning
-        final double leftFrontPower = Range.clip(x * Math.cos(powerAngle) - rightX, -1.0, 1.0);
-        final double leftRearPower = Range.clip(x * Math.sin(powerAngle) - rightX, -1.0, 1.0);
-        final double rightFrontPower = Range.clip(x * Math.sin(powerAngle) + rightX, -1.0, 1.0);
-        final double rightRearPower = Range.clip(x * Math.cos(powerAngle) + rightX, -1.0, 1.0);
-
-        //leftFront.setDirection(DcMotor.Direction.FORWARD);
-        //leftBack.setDirection(DcMotor.Direction.FORWARD);
-        //rightFront.setDirection(DcMotor.Direction.REVERSE);
-        //rightBack.setDirection(DcMotor.Direction.REVERSE);
-        leftFront.setPower(leftFrontPower * factor);
-        leftBack.setPower(leftRearPower * factor);
-        rightFront.setPower(rightFrontPower * factor);
-        rightBack.setPower(rightRearPower * factor);
-        */
-
+    //thanks jeff
         if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1  || Math.abs(gamepad1.right_stick_x) > 0.1) {
             double FLP = gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
             double FRP = -gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
             double BLP = gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
             double BRP = -gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
-
             double max = Math.max(Math.max(Math.abs(FLP), Math.abs(FRP)), Math.max(Math.abs(BLP), Math.abs(BRP)));
-
             if (max > 1) {
                 FLP /= max;
                 FRP /= max;
                 BLP /= max;
                 BRP /= max;
             }
-
             if (gamepad1.right_trigger > 0.5) {
                 leftFront.setPower(FLP * 0.35);
                 rightFront.setPower(FRP * 0.35);
@@ -187,9 +154,7 @@ public class RogueOp extends OpMode{
                 rightFront.setPower(FRP);
                 leftBack.setPower(BLP);
                 rightBack.setPower(BRP);
-
             }
-
         } else {
             leftFront.setPower(0);
             rightFront.setPower(0);
@@ -198,7 +163,7 @@ public class RogueOp extends OpMode{
         }
 
 
-
+        ducc();
         succ();
         duccSpin();
         deposit();
@@ -260,19 +225,18 @@ public class RogueOp extends OpMode{
 
 
 
-
-
-    public void lift() {
-
-        if (gamepad2.dpad_up) {
-            lift.setPower(.6);
-        } else if (gamepad2.dpad_down) {
-            lift.setPower(-.6);
-        } else {
-            lift.setPower(0);
-        }
+    public void ducc(){
+        extendD = gamepad2.left_stick_y;
+        if(Math.abs(extendD) < .1)
+            extendD = 0;
+        if(Math.abs(gamepad2.left_stick_x) > .1)
+            rot += .0025 * gamepad2.left_stick_x;
+        if(Math.abs(gamepad2.right_stick_y) > .1)
+            tilt -= .0025 * gamepad2.right_stick_y;
+        duccEx.setPower(Range.clip(extendD, -1, 1));
+        duccRot.setPosition(Range.clip(rot, -1, 1));
+        duccTilt.setPosition(Range.clip(tilt, -1, 1));
     }
-
     public void macroLift() {
 
         liftError = liftTargetPos - lift.getCurrentPosition();
