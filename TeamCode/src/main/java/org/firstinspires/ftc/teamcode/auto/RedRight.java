@@ -78,7 +78,7 @@ public class RedRight extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 600;
-    private final int med = 225;
+    private final int med = 130;
 
 
     private WebcamName weCam;
@@ -426,7 +426,8 @@ public class RedRight extends LinearOpMode //creates class
                     .turn(Math.toRadians(-90))
 
                     .build();
-            drive.followTrajectorySequenceAsync(traj1); //initial deposit
+            //drive.followTrajectorySequenceAsync(traj1); //initial deposit
+        drive.followTrajectorySequence(traj1);
 
 
     }

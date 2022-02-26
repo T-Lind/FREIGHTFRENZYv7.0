@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,13 +15,19 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CameraPipelines.CubeDetectionPipeline;
+import org.firstinspires.ftc.teamcode.CameraPipelines.DuckDetectionPipeline;
+import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
 import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
+import org.firstinspires.ftc.teamcode.CameraPipelines.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,11 +36,12 @@ import java.util.Map;
 public class RedRightMeet2 extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
+    //test
+    private int level = 0;
 
-    private int level = 0; //test
-
-    private DcMotorEx lift, liftB;
+    private DcMotorEx lift, liftB, intake, intakeB;
     private Servo v4b1, v4b2, dep;
+    private double targetDeposit;
     private CRServo duccL, duccR;
     private boolean delay = false;
 
@@ -47,31 +53,37 @@ public class RedRightMeet2 extends LinearOpMode //creates class
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 650;
-    private final int med = 350;
+    private final int top = 620;
+    private final int med = 130;
 
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private CubeDetectionPipeline pipeline;
+    private TSEDetectionPipeline pipeline;
+    private DuckDetectionPipeline pipeline2 = new DuckDetectionPipeline();
 
-    private SampleMecanumDrive drive;
+    private SampleMecanumDrive drive; //d
 
     public void initialize() {
 
         drive = new SampleMecanumDrive(hardwareMap);
+        drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
 
-
-        //  intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
+        intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
-        //intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
+
+        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
+        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
         liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -103,7 +115,7 @@ public class RedRightMeet2 extends LinearOpMode //creates class
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new CubeDetectionPipeline();
+        pipeline = new TSEDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -112,7 +124,7 @@ public class RedRightMeet2 extends LinearOpMode //creates class
                 telemetry.update();
 
 
-                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -120,15 +132,10 @@ public class RedRightMeet2 extends LinearOpMode //creates class
 
             }
         });
-        Map<Integer,Double > levels = new HashMap();
-        ElapsedTime eet = new ElapsedTime();
+
         while (!opModeIsActive()) {
-
-            int bLevel = getLevel();
-
-            levels.put(bLevel,eet.milliseconds());
-
-            telemetry.addData("DETECTED LEVEL: ",bLevel);
+            level = pipeline.getLevel();
+            telemetry.addData("DETECTED LEVEL: ",level);
 
             if(gamepad1.a)
                 delay = true;
@@ -137,53 +144,19 @@ public class RedRightMeet2 extends LinearOpMode //creates class
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
         }
-
-        double finalTime = eet.milliseconds();
-
-        level = 3;
-        liftTargetPos = top;
-
-        if(levels.containsKey(1)){
-            level = 1;
-            liftTargetPos = 0;
-        } else {
-            for(double i : levels.keySet()){
-                if(levels.get(i) >= finalTime - 2000 && i == 1) {
-                    level = 2;
-                    liftTargetPos = med;
-                }
-            }
-
-        }
-    }
-
-    public int getLevel() {
-
-        int num = pipeline.getCubeNum();
-
-        for (int i = 0; i < num; i++) {
-            try {
-                telemetry.addData("Height", pipeline.getHeight(i));
-
-                if ((pipeline.getHeight(i) > 100) && (pipeline.getY(i) > 400)) {
-                    telemetry.addData("X Pos", pipeline.getX(i));
-                    telemetry.addData("Y Pos", pipeline.getY(i));
-
-                    if (pipeline.getX(i) > 150)
-                        return 2;
-                    else if ((pipeline.getX(i) < 150) && (pipeline.getX(i) > 0))
-                        return 1;
-
-                }
-            }
-            catch(Exception e){
-                telemetry.addData("exception",0);
-                telemetry.update();
-            }
-        }
+        dep.setPosition(.63);
+        // if the latest level was 0 then it must be in the 3 position.
+        if(level == 0)
+            level = 3;
+        telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
-        return 3;
+
+        camera.setPipeline(pipeline2);
+        liftError = liftTargetPos - lift.getCurrentPosition();
+
+
     }
+
 
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone
@@ -212,10 +185,25 @@ public class RedRightMeet2 extends LinearOpMode //creates class
         double targetV4B = 0;
         telemetry.addLine("enteredLift");
         telemetry.update();
-        if(level == 1 || level == 2)
-            targetV4B = .4;
-        else
+        if(level == 1) {
             targetV4B = .81;
+            liftTargetPos=15;
+
+            targetDeposit = .3;
+
+
+        }
+        else if(level==2){
+            targetV4B=.7;
+            liftTargetPos=med;
+            targetDeposit = .3;
+        }
+
+        else if(level==3) {
+            targetV4B = .81;
+            liftTargetPos=top;
+            targetDeposit = .3;
+        }
 
         liftError = liftTargetPos - lift.getCurrentPosition();
 
@@ -237,7 +225,7 @@ public class RedRightMeet2 extends LinearOpMode //creates class
             telemetry.update();
             keepLiftAlive();
             //while(!die) {
-            if (extend.milliseconds() < 2000) {
+            if (extend.milliseconds() < 1000) {
                 keepLiftAlive();
 
                 //Moves the virtual bars forward
@@ -245,28 +233,21 @@ public class RedRightMeet2 extends LinearOpMode //creates class
                 v4b2.setPosition(targetV4B);
             }
 
-            if (extend.milliseconds() > 2000 && extend.milliseconds() < 3000) {
+            if (extend.milliseconds() > 1000 && extend.milliseconds() < 2000) {
                 keepLiftAlive();
 
                 //Opens the deposit
-                dep.setPosition(.3);
+                dep.setPosition(targetDeposit);
             }
-            if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
+
+            if (extend.milliseconds() > 2000 && extend.milliseconds() < 2500) {
                 keepLiftAlive();
-
-                //Closes the deposit
-                // keepLiftAlive();
-
                 dep.setPosition(.52);
-            }
-            if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
-                keepLiftAlive();
-
                 //Moves the virtual bars backward
                 v4b1.setPosition(.19);
                 v4b2.setPosition(.19);
             }
-            if (extend.milliseconds() > 5000 && extend.milliseconds() < 6500) {
+            if (extend.milliseconds() > 2500 && extend.milliseconds() < 3500) {
 
                 //Gravity pulls the lift down
                 liftTargetPos = 0;
@@ -275,7 +256,7 @@ public class RedRightMeet2 extends LinearOpMode //creates class
 
 
             }
-            if(extend.milliseconds() > 6500){
+            if(extend.milliseconds() > 3500){
                 depositRun = false;
             }
 
@@ -291,55 +272,41 @@ public class RedRightMeet2 extends LinearOpMode //creates class
     public void starts(){
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
-        dep.setPosition(.52);
+        dep.setPosition(.46);
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         initialize();
-       /* if(delay){
-            sleep(6000);
+        if(delay){
+            sleep(5000);
         }
-        starts();*/
-        RedRightMeet2();
+        starts();
+        drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
+        redRight();
         //liftAndDeposit();
     }
 
-    public void RedRightMeet2() throws InterruptedException{
-        waitForStart();
+    public void redRight() throws InterruptedException {
+
 
         if (isStopRequested()) return;
+        double x = 11;
+        level =1;
+        if (level == 1) {
+            x = x + 2;
+        }
+        drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
 
-
-
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
-                .splineTo(new Vector2d(10, -25), Math.toRadians(90))
-                .turn(Math.toRadians(-90))
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(x, -63, Math.toRadians(90)))
+                .setAccelConstraint((a, e, c, d) -> 25)
+                .splineTo(new Vector2d(x, -24), Math.toRadians(90))
 
                 .build();
-        drive.followTrajectorySequence(traj1); //initial deposit
-        level=0;
+        drive.followTrajectorySequence(traj1);
+        drive.turn(Math.toRadians(-90));
+
         liftAndDeposit();
-
-
-
-
-
-
-
-    }
-
-
-    public void spinDuck() throws InterruptedException{
-        ElapsedTime spinTime = new ElapsedTime();
-        duccL.setPower(-0.2);
-        duccR.setPower(-0.2);
-        while (spinTime.milliseconds() <= 6000)
-            heartbeat();
-        duccL.setPower(0);
-        duccR.setPower(0);
-
     }
 }
-
