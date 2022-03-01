@@ -272,7 +272,7 @@ public class RedRightMeet2 extends LinearOpMode //creates class
     public void starts(){
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
-        dep.setPosition(.46);
+        dep.setPosition(.63);
     }
 
     @Override
@@ -292,20 +292,21 @@ public class RedRightMeet2 extends LinearOpMode //creates class
 
 
         if (isStopRequested()) return;
-        double x = 11;
+        double y = -42.5;
         level =1;
         if (level == 1) {
-            x = x + 2;
+            y = y - 2;
         }
         drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
 
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(x, -63, Math.toRadians(90)))
-                .setAccelConstraint((a, e, c, d) -> 25)
-                .splineTo(new Vector2d(x, -24), Math.toRadians(90))
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
+                .setAccelConstraint((a, e, c, d) -> 35)
+                .lineTo(new Vector2d(-2, y))
+
 
                 .build();
         drive.followTrajectorySequence(traj1);
-        drive.turn(Math.toRadians(-90));
+        drive.turn(Math.toRadians(-155));
 
         liftAndDeposit();
     }

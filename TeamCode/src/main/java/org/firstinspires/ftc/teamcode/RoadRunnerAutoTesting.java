@@ -54,15 +54,15 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
                                                                         // wont ever be extremely accurate
                 .setReversed(true)
                 .back(50)
-                .setAccelConstraint((a,e,c,d)->55)
-                .splineTo(new Vector2d(2, -38), Math.toRadians(120))
+               // .setAccelConstraint((a,e,c,d)->55)
+                .splineTo(new Vector2d(3, -38), Math.toRadians(120))
 
                 .build();
         drive.followTrajectorySequence(traj3); //goes to deposit
 
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(2, -38, Math.toRadians(-60)))//new Pose2d(-12, -42, Math.toRadians(90)))
                 .splineTo(new Vector2d(8, -51), Math.toRadians(0))
-                .setAccelConstraint((a,e,c,d)->60)
+                //.setAccelConstraint((a,e,c,d)->60)
                 .forward(50)
 
 
@@ -72,34 +72,34 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
         drive.followTrajectorySequence(traj4); //goes back to warehouse, should have enough room to go forward
                                                 // and accelerate over obstacle
         TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(60, -52, Math.toRadians(0)))
-                .setAccelConstraint((a,e,c,d)->60)
+                //.setAccelConstraint((a,e,c,d)->60)
                 .setReversed(true)
-                .back(50)
-                .setAccelConstraint((a,e,c,d)->55)
+                .back(53)
+                //.setAccelConstraint((a,e,c,d)->55)
 
-             .splineTo(new Vector2d(6, -33), Math.toRadians(120))
+             .splineTo(new Vector2d(10, -40), Math.toRadians(120))
 
                 .build();
         drive.followTrajectorySequence(traj5); //goes back to deposit
         //after repeating spline and going back and forth and whatnot,
         //  give a little bit room for error, we lose about 1-2 inches in localization in x and y
 
-        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(6, -33, Math.toRadians(-60)))
+        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(6.5, -33, Math.toRadians(-60)))
 
-                .setAccelConstraint((a,e,c,d)->55)
-                .splineTo(new Vector2d(9, -48.5), Math.toRadians(0))
-                .setAccelConstraint((a,e,c,d)->60)
+              //  .setAccelConstraint((a,e,c,d)->55)
+                .splineTo(new Vector2d(9, -53), Math.toRadians(0))
+                //.setAccelConstraint((a,e,c,d)->60)
               //  .setAccelConstraint((a,e,c,d)->60)
                // .splineTo(new Vector2d(9, -48.5), Math.toRadians(0))
                 .forward(50)
 
                 .build();
         drive.followTrajectorySequence(traj6);
-        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(59, -48.5, Math.toRadians(0)))
-                .setAccelConstraint((a,e,c,d)->60)
+        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(59, -53, Math.toRadians(0)))
+                //.setAccelConstraint((a,e,c,d)->60)
                 .back(47)
                // .setAccelConstraint((a,e,c,d)->55)
-                  .splineTo(new Vector2d(10, -32.5), Math.toRadians(120))
+                  .splineTo(new Vector2d(14, -38.5), Math.toRadians(120))
                 //.splineTo(new Vector2d(1,-51),Math.toRadians(90))
                // .turn(Math.toRadians(-120))
                // .back(60)

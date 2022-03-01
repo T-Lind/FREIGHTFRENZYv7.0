@@ -9,12 +9,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
+import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.PositionalDeviceTracker;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
 @Autonomous(group = "drive")
 public class RoadRunnerCycleTest extends LinearOpMode {
@@ -28,69 +31,77 @@ public class RoadRunnerCycleTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
-                 .setAccelConstraint((a,e,c,d)->50)
-                .splineTo(new Vector2d(10, -25), Math.toRadians(90))
-                .turn(Math.toRadians(-90))
-                //   .setReversed(true)
-                // .splineTo(new Vector2d(-5, -33), Math.toRadians(120))
-
-
-
+                .splineTo(new Vector2d(-4, -46), Math.toRadians(90))
+                .turn(Math.toRadians(-155))
                 .build();
-        drive.followTrajectorySequence(traj1); //initial deposit
-
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, -25, Math.toRadians(0)))
-                .setAccelConstraint((a,e,c,d)->50)
-                .turn(Math.toRadians(-25))
-                .lineTo(new Vector2d(9.5,-32))
-
-
-
+        drive.followTrajectorySequence(traj1);
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-4, -46, Math.toRadians(-65)))
+                .splineTo(new Vector2d(20,-58), Math.toRadians(0))
+                .forward(26)
                 .build();
-        drive.followTrajectorySequence(traj2); //goes to warehouse
-
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY(), Math.toRadians(-25)))
-
-                .forward(50)
+        drive.followTrajectorySequence(traj2);
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(46, -58, Math.toRadians(0)))
+                .setReversed(true)
+                .back(26)
+                .splineTo(new Vector2d(-5,-43),Math.toRadians(110))
                 .build();
         drive.followTrajectorySequence(traj3);
-        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY(), Math.toRadians(-25)))
-                .back(48)
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(-5, -43, Math.toRadians(-70)))
+                .splineTo(new Vector2d(20,-58), Math.toRadians(0))
+                .forward(28)
                 .build();
         drive.followTrajectorySequence(traj4);
-        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY()+.5, Math.toRadians(-25)))
-                .forward(51)
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(48, -58, Math.toRadians(0)))
+                .setReversed(true)
+                .back(28)
+                .splineTo(new Vector2d(-5,-43),Math.toRadians(110))
                 .build();
         drive.followTrajectorySequence(traj5);
-        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY()+.5, Math.toRadians(-25)))
-                .back(49)
+        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(-5, -43, Math.toRadians(-70)))
+                .splineTo(new Vector2d(20,-58), Math.toRadians(0))
+                .forward(30)
                 .build();
         drive.followTrajectorySequence(traj6);
-        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX()+.25,drive.getPoseEstimate().getY()+.5, Math.toRadians(-25)))
-                .forward(53)
+        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(50, -58, Math.toRadians(0)))
+                .setReversed(true)
+                .back(30)
+                .splineTo(new Vector2d(-5,-43),Math.toRadians(110))
                 .build();
         drive.followTrajectorySequence(traj7);
-        TrajectorySequence traj8 = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY()+.5, Math.toRadians(-25)))
-                .back(51)
+        TrajectorySequence traj8 = drive.trajectorySequenceBuilder(new Pose2d(-5, -43, Math.toRadians(-70)))
+                .splineTo(new Vector2d(20,-58), Math.toRadians(0))
+                .forward(32)
                 .build();
         drive.followTrajectorySequence(traj8);
-        TrajectorySequence traj9 = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY()+.5, Math.toRadians(-25)))
-                .forward(55)
+        TrajectorySequence traj9 = drive.trajectorySequenceBuilder(new Pose2d(52, -58, Math.toRadians(0)))
+                .setReversed(true)
+                .back(32)
+                .splineTo(new Vector2d(-5,-43),Math.toRadians(110))
                 .build();
         drive.followTrajectorySequence(traj9);
-        TrajectorySequence traj10 = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY()+.5, Math.toRadians(-25)))
-                .back(53)
+        TrajectorySequence traj10 = drive.trajectorySequenceBuilder(new Pose2d(-5, -43, Math.toRadians(-70)))
+                .splineTo(new Vector2d(20,-58), Math.toRadians(0))
+                .forward(34)
                 .build();
         drive.followTrajectorySequence(traj10);
-        /*TrajectorySequence traj11 = drive.trajectorySequenceBuilder(traj10.end())
-                .forward(52)
+        TrajectorySequence traj11 = drive.trajectorySequenceBuilder(new Pose2d(54, -58, Math.toRadians(0)))
+                .setReversed(true)
+                .back(34)
+                .splineTo(new Vector2d(-5,-43),Math.toRadians(110))
+
                 .build();
         drive.followTrajectorySequence(traj11);
-        TrajectorySequence traj12 = drive.trajectorySequenceBuilder(traj11.end())
-                .back(50)
-                .build();
-        drive.followTrajectorySequence(traj12);
-*/
+
+
+
+
+
+
+
+
+
+
+
 
 
 

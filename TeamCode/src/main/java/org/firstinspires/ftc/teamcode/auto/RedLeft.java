@@ -292,18 +292,18 @@ public class RedLeft extends LinearOpMode //creates class
 
 
         if (isStopRequested()) return;
-double x = -34;
-            if(level==1){
-                x = x-1.8;
-            }
+        double y = -42.5;
+        level =2;
+        if (level == 1) {
+            y = y - 1.3;}
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
                 .setAccelConstraint((a,e,c,d)->25)
-                .splineTo(new Vector2d(x, -21), Math.toRadians(90))
+                .lineTo(new Vector2d(-24, y))
 
                 .build();
         drive.followTrajectorySequence(traj1);
-        drive.turn(Math.toRadians(90));
+        drive.turn(Math.toRadians(-195));
 
         liftAndDeposit();
 
@@ -421,7 +421,7 @@ double x = -34;
         telemetry.update();
 
         */
-        spinDuck();
+       // spinDuck();
     }
 
 
