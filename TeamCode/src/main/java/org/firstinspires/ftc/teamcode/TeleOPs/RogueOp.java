@@ -44,7 +44,7 @@ public class RogueOp extends OpMode{
     boolean yellow = false;
     double full = 100; //distance sensor reading for filled deposit
     double reading = 0;
-    double rot = .5;
+    double rot = .74;
     double tilt = .5;
     double extendD = 0;
     RevBlinkinLedDriver blinkinLedDriver;
@@ -109,6 +109,10 @@ public class RogueOp extends OpMode{
 
         v4b1.setDirection(Servo.Direction.REVERSE);
 
+        duccRot = hardwareMap.servo.get("DRoT");
+        duccTilt = hardwareMap.servo.get("DT");
+        duccEx = hardwareMap.crservo.get("DE");
+
         Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
         v4b1.setPosition(.18);
@@ -128,6 +132,43 @@ public class RogueOp extends OpMode{
         toggleUp.updateStart(gamepad2.dpad_up);
         toggleDown.updateStart(gamepad2.dpad_down);
     //thanks jeff
+
+
+        drive();
+        ducc();
+        succ();
+        duccSpin();
+        deposit();
+        macroLift();
+        if(v4b1.getPosition() < .4) {
+            reading = Distance.getDistance(DistanceUnit.MM);
+        }
+
+
+        telemetry.addData("lift", lift.getCurrentPosition());
+        telemetry.addData("liftTargetPos", liftTargetPos);
+        telemetry.addData("lift power", lift.getPower());
+        telemetry.addData("distance", Distance.getDistance(DistanceUnit.MM));
+        telemetry.addData("rot", duccRot.getPosition());
+        telemetry.addData("tilt", duccTilt.getPosition());
+
+        telemetry.update();
+
+        double distance = Distance.getDistance(DistanceUnit.CM);
+        if(yellow)
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+        else if(distance > 5)
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+        else
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
+
+
+        //deadwheel time
+        // deadwheels were a lie :(
+        // maybe next year?
+    }
+
+    public void drive(){
         if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1  || Math.abs(gamepad1.right_stick_x) > 0.1) {
             double FLP = gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
             double FRP = -gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
@@ -161,37 +202,6 @@ public class RogueOp extends OpMode{
             leftBack.setPower(0);
             rightBack.setPower(0);
         }
-
-
-        ducc();
-        succ();
-        duccSpin();
-        deposit();
-        macroLift();
-        if(v4b1.getPosition() < .4) {
-            reading = Distance.getDistance(DistanceUnit.MM);
-        }
-
-
-        telemetry.addData("lift", lift.getCurrentPosition());
-        telemetry.addData("liftTargetPos", liftTargetPos);
-        telemetry.addData("lift power", lift.getPower());
-        telemetry.addData("distance", Distance.getDistance(DistanceUnit.MM));
-
-        telemetry.update();
-
-        double distance = Distance.getDistance(DistanceUnit.CM);
-        if(yellow)
-            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-        else if(distance > 5)
-            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-        else
-            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
-
-
-        //deadwheel time
-        // deadwheels were a lie :(
-        // maybe next year?
     }
 
     public void succ() {
@@ -229,16 +239,16 @@ public class RogueOp extends OpMode{
         extendD = gamepad2.left_stick_y;
         if(Math.abs(extendD) < .1)
             extendD = 0;
-        if(Math.abs(gamepad2.left_stick_x) > .1)
-            rot += .0025 * gamepad2.left_stick_x;
+        if(Math.abs(gamepad2.right_stick_x) > .1)
+            rot += .005 * gamepad2.right_stick_x;
         if(Math.abs(gamepad2.right_stick_y) > .1)
-            tilt -= .0025 * gamepad2.right_stick_y;
+            tilt -= .005 * gamepad2.right_stick_y;
         duccEx.setPower(Range.clip(extendD, -1, 1));
         duccRot.setPosition(Range.clip(rot, -1, 1));
         duccTilt.setPosition(Range.clip(tilt, -1, 1));
     }
-    public void macroLift() {
 
+    public void macroLift() {
         liftError = liftTargetPos - lift.getCurrentPosition();
         if(toggleUp.nowTrue() && !succing){ // this scares me too much
             yellow = true;
