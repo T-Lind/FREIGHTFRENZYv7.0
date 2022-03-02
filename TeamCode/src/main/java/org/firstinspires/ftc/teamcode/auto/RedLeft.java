@@ -189,20 +189,20 @@ public class RedLeft extends LinearOpMode //creates class
             targetV4B = .81;
             liftTargetPos=10;
 
-            targetDeposit = .3;
+            targetDeposit = .23;
 
 
         }
         else if(level==2){
                 targetV4B=.7;
                 liftTargetPos=med;
-                targetDeposit = .3;
+                targetDeposit = .23;
         }
 
             else if(level==3) {
             targetV4B = .81;
             liftTargetPos=top;
-            targetDeposit = .3;
+            targetDeposit = .23;
         }
 
         liftError = liftTargetPos - lift.getCurrentPosition();
@@ -242,7 +242,7 @@ public class RedLeft extends LinearOpMode //creates class
 
                     if (extend.milliseconds() > 2000 && extend.milliseconds() < 2500) {
                         keepLiftAlive();
-                        dep.setPosition(.52);
+                        dep.setPosition(.63);
                         //Moves the virtual bars backward
                         v4b1.setPosition(.19);
                         v4b2.setPosition(.19);
@@ -270,8 +270,8 @@ public class RedLeft extends LinearOpMode //creates class
 
 
     public void starts(){
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
+        v4b1.setPosition(.18);
+        v4b2.setPosition(.18);
         dep.setPosition(.63);
     }
 

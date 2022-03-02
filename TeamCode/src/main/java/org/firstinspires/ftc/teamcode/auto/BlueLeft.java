@@ -210,19 +210,19 @@ public class BlueLeft extends LinearOpMode //creates class
 
             if(level == 1) {
                 targetV4B = .55;
-                depositTarget = .33;
+                depositTarget = .23;
 
             }
             else if(level==2){
                 targetV4B = .68;
                 liftTargetPos=med;
-                depositTarget = .3;
+                depositTarget = .23;
             }
 
             else if(level == 3) {
                 targetV4B = .81;
                 liftTargetPos=top;
-                depositTarget = .36;
+                depositTarget = .23;
             }
             liftError = liftTargetPos - lift.getCurrentPosition();
 
@@ -234,10 +234,11 @@ public class BlueLeft extends LinearOpMode //creates class
             if(level != 0) {
                 v4b1.setPosition(targetV4B);
                 v4b2.setPosition(targetV4B);
+                dep.setPosition(.46);
             }
 
             if (aman && !drive.isBusy()) {
-                dep.setPosition(depositTarget);
+                dep.setPosition(.23);
                 test.reset();
                 if(cycles != 1)
                     sleep(550);
@@ -278,11 +279,9 @@ public class BlueLeft extends LinearOpMode //creates class
 
 
     public void starts(){
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
-        telemetry.addData("V4b", v4b1.getPosition());
-        telemetry.update();
-        dep.setPosition(.52);
+        v4b1.setPosition(.18);
+        v4b2.setPosition(.18);
+        dep.setPosition(.63);
         intake.setPower(0);
         intakeB.setPower(0);
     }

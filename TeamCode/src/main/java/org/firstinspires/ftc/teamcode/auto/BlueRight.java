@@ -187,19 +187,19 @@ public class BlueRight extends LinearOpMode //creates class
         telemetry.update();
         if(level == 1) {
             targetV4B = .595;
-            targetDeposit = .3;
+            targetDeposit = .23;
 
         }
         else if(level==2){
             targetV4B=.675;
             liftTargetPos=med;
-            targetDeposit = .3;
+            targetDeposit = .23;
         }
 
         else if(level==3) {
             targetV4B = .81;
             liftTargetPos=top;
-            targetDeposit = .3;
+            targetDeposit = .23;
         }
 
         liftError = liftTargetPos - lift.getCurrentPosition();
@@ -242,7 +242,7 @@ public class BlueRight extends LinearOpMode //creates class
                 //Closes the deposit
                 // keepLiftAlive();
 
-                dep.setPosition(.52);
+                dep.setPosition(.63);
             }
             if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
                 keepLiftAlive();
@@ -268,9 +268,9 @@ public class BlueRight extends LinearOpMode //creates class
 
 
     public void starts(){
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
-        dep.setPosition(.52);
+        v4b1.setPosition(.18);
+        v4b2.setPosition(.18);
+        dep.setPosition(.63);
     }
 
     @Override
