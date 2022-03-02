@@ -47,8 +47,11 @@ public class RogueOp extends OpMode{
     double rot = .74;
     double tilt = .5;
     double extendD = 0;
+    double velo = .01;
+    boolean lock = false;
+    int duccDirection = -1;
     RevBlinkinLedDriver blinkinLedDriver;
-//thing
+    //thing
     @Override
     public void init() {
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
@@ -131,7 +134,7 @@ public class RogueOp extends OpMode{
     public void loop() {
         toggleUp.updateStart(gamepad2.dpad_up);
         toggleDown.updateStart(gamepad2.dpad_down);
-    //thanks jeff
+        //thanks jeff
 
 
         drive();
@@ -240,12 +243,18 @@ public class RogueOp extends OpMode{
         if(Math.abs(extendD) < .1)
             extendD = 0;
         if(Math.abs(gamepad2.right_stick_x) > .1)
-            rot += .005 * gamepad2.right_stick_x;
+            rot += velo * gamepad2.right_stick_x;
         if(Math.abs(gamepad2.right_stick_y) > .1)
-            tilt -= .005 * gamepad2.right_stick_y;
+            tilt -= velo * gamepad2.right_stick_y;
         duccEx.setPower(Range.clip(extendD, -1, 1));
         duccRot.setPosition(Range.clip(rot, -1, 1));
         duccTilt.setPosition(Range.clip(tilt, -1, 1));
+
+        if(gamepad2.left_stick_button)
+            velo = .005;
+        if(gamepad2.right_stick_button)
+            velo = .01;
+
     }
 
     public void macroLift() {
@@ -255,6 +264,7 @@ public class RogueOp extends OpMode{
             liftTargetPos = top;
             find = true;
             extend = true;
+            lock = true;
         } else if(toggleDown.nowTrue()) {
             extend = false;
             yellow = false;
@@ -265,6 +275,7 @@ public class RogueOp extends OpMode{
             find = false;
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
             liftB.setPower(lift.getPower());
+            lock = false;
         }
         if(find) {
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .9));
@@ -295,13 +306,19 @@ public class RogueOp extends OpMode{
     }
 
     public void duccSpin() {
-        if (gamepad2.a) {
-            duccL.setPower(-1);
+        if (gamepad1.right_bumper) {
+            duccL.setPower(duccDirection);
 
-            duccR.setPower(-1);
+            duccR.setPower(duccDirection);
         } else {
             duccL.setPower(0);
             duccR.setPower(0);
+        }
+        if(gamepad1.a){
+            duccDirection = 1;
+        }
+        if(gamepad1.b){
+            duccDirection = -1;
         }
     }
 
@@ -309,21 +326,24 @@ public class RogueOp extends OpMode{
         if (gamepad2.y && !succing) {
             v4b1.setPosition(.81);
             v4b2.setPosition(.81);
+            lock = true;
             //dep position
         } else if (gamepad2.x) {
             v4b1.setPosition(.18);
             v4b2.setPosition(.18);
+            lock = false;
             //in position
         } else if (gamepad2.b && !succing) {
             v4b1.setPosition(.5);
             v4b2.setPosition(.5);
+            lock = true;
             //vertical position for asserting dominance
         }
         //tiernan bad
 
         if (gamepad2.right_trigger > .5 && v4b1.getPosition() > .4) {
             dep.setPosition(.23);
-        } else if(reading < full){
+        } else if(lock){
             dep.setPosition(.46);
         } else {
             dep.setPosition(.63);
