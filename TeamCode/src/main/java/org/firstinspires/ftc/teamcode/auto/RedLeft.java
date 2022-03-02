@@ -187,7 +187,7 @@ public class RedLeft extends LinearOpMode //creates class
         telemetry.update();
         if(level == 1) {
             targetV4B = .81;
-            liftTargetPos=15;
+            liftTargetPos=10;
 
             targetDeposit = .3;
 
@@ -272,7 +272,7 @@ public class RedLeft extends LinearOpMode //creates class
     public void starts(){
         v4b1.setPosition(.19);
         v4b2.setPosition(.19);
-        dep.setPosition(.46);
+        dep.setPosition(.63);
     }
 
     @Override
@@ -292,10 +292,10 @@ public class RedLeft extends LinearOpMode //creates class
 
 
         if (isStopRequested()) return;
-        double y = -42.5;
-        level =2;
+        double y = -41;//42.5
+        level =3;
         if (level == 1) {
-            y = y - 1.3;}
+            y = y - 2.8;}
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
                 .setAccelConstraint((a,e,c,d)->25)
@@ -306,9 +306,7 @@ public class RedLeft extends LinearOpMode //creates class
         drive.turn(Math.toRadians(-195));
 
         liftAndDeposit();
-
-/*
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-34, -21, Math.toRadians(-180)))//
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-24, y, Math.toRadians(-105)))
                 .setAccelConstraint((a,e,c,d)->35)
                 .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))
 
@@ -316,7 +314,6 @@ public class RedLeft extends LinearOpMode //creates class
         drive.followTrajectorySequence(traj2);
         spinDuck();
 
-//spin duck
 
         TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
                 .strafeLeft(20)
@@ -325,20 +322,20 @@ public class RedLeft extends LinearOpMode //creates class
                 .lineTo(new Vector2d(-60,-62))
 
                 .build();
-        drive.followTrajectorySequenceAsync(traj3);
-        duckIntake();
+        drive.followTrajectorySequence(traj3);
+//        duckIntake();
 
 
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
                 .setReversed(true)
-                .setAccelConstraint((a,e,c,d)->25)
+                .setAccelConstraint((a,e,c,d)->30)
                 .splineTo(new Vector2d(-33, -26), Math.toRadians(0))
 
                 .build();
         drive.followTrajectorySequence(traj4);
         TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
 
-                .lineTo(new Vector2d(-63, -38))
+                .lineTo(new Vector2d(-63, -37))
 
                 .build();
         drive.followTrajectorySequence(traj5);
@@ -434,10 +431,10 @@ public class RedLeft extends LinearOpMode //creates class
         double power = .2;
         while(spinTime.milliseconds()<=3000){
             heartbeat();
-            duccR.setPower(power);
+            duccR.setPower(-power);
 
             duccL.setPower(-power);
-            power = power + .00015;
+            power = power + .0003;
             telemetry.addData("duck power: ",power);
             telemetry.update();
 
