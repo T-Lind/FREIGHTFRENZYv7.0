@@ -34,7 +34,7 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
         drive.followTrajectorySequence(traj1);
 
 
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-2, -42.5, Math.toRadians(-65)))
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-4, -46, Math.toRadians(-65)))
              //   .lineTo(new Vector2d(0,-53))
 
                // .lineTo(new Vector2d(51,-53))
