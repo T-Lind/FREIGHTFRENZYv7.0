@@ -293,7 +293,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         if (isStopRequested()) return;
         double y = -41;//42.5
-        level =3;
+       //level =3;
         if (level == 1) {
             y = y - 2.8;}
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));

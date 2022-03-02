@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TestClasses;
 
 import android.graphics.PostProcessor;
 
@@ -46,7 +46,7 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
         drive.followTrajectorySequence(traj2); //goes to warehouse
 
 
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(51, -53, Math.toRadians(0)))
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(54, -53, Math.toRadians(0)))
                 //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
                                                                         // wont ever be extremely accurate
                 .setReversed(true)
@@ -81,7 +81,7 @@ public class RoadRunnerAutoTesting extends LinearOpMode {
         //after repeating spline and going back and forth and whatnot,
         //  give a little bit room for error, we lose about 1-2 inches in localization in x and y
 
-        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(6.5, -33, Math.toRadians(-70)))
+        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(10, -37, Math.toRadians(-70)))
 
               //  .setAccelConstraint((a,e,c,d)->55)
                 .splineTo(new Vector2d(9, -53), Math.toRadians(0))

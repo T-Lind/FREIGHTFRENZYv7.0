@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
 import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 import org.firstinspires.ftc.teamcode.CameraPipelines.NewDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -288,154 +290,58 @@ public class BlueRight extends LinearOpMode //creates class
 
         if (isStopRequested()) return;
         drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(-36, 63, Math.toRadians(-90)))
-                .splineTo(new Vector2d(-32.5, 21), Math.toRadians(-90))
+        double y = 41;
+        if (level == 1) {
+            y = y + 2.8;}
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 63, Math.toRadians(-90)))
+                .setAccelConstraint((a,e,c,d)->25)
+                .lineTo(new Vector2d(-24, y))
+
+                .turn(Math.toRadians(195))
 
                 .build();
-        drive.followTrajectory(traj1);
-        drive.turn(Math.toRadians(-90));
+        drive.followTrajectorySequence(traj1);
+
 
         liftAndDeposit();
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-33, 21, Math.toRadians(-180)))//
-                .splineTo(new Vector2d(-63, 61), Math.toRadians(-180))
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-24, y, Math.toRadians(105)))
+                .splineTo(new Vector2d(-63, 58.5), Math.toRadians(90))
 
 
                 .build();
-        drive.followTrajectory(traj2);
+        drive.followTrajectorySequence(traj2);
 
-        spinDuck();
-/*
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-64, 61, Math.toRadians(180)),true)
-                .splineTo(new Vector2d(-55, 35),Math.toRadians(270))
-
-                .build();
-        drive.followTrajectory(traj3);
-
-
-        // code to intake duck - dx and dy might need to be swapped
-        // cause based on what I know, dx and dy should be right but in my testing it was not.
-        // also dy should be the right amount but we'll see, that's easy to adjust
-       // intake.setPower(-.7);
-       // intakeB.setPower(-.7);
-
-
-       // double dx = pipeline2.getDucc_x();
-       /* for(int i = 0;i<10;i++){
-            double dx_add = pipeline2.getDucc_x();
-            if(dx_add != Integer.MIN_VALUE)
-                dx+=dx_add;
-        }*/
-       // dx/=-10;
-
-       // double dy = 29;
-
-        //telemetry.addData("dx: ",dx);
-        //telemetry.update();
-
-       /* Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-55, 40, Math.toRadians(90)))
-                .lineTo(new Vector2d(-49-dx, 35+dy))
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(traj2.end())
+                .strafeRight(20)
+                .turn(Math.toRadians(15))
+                .setAccelConstraint((a,e,c,d)->5)
+                .lineTo(new Vector2d(-60,62))
 
                 .build();
-
-        drive.followTrajectory(traj4);
-
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-49+dx, 35+dy, Math.toRadians(90)),true)
-                .splineTo(new Vector2d(-31,24),Math.toRadians(0))
-
-                .build();
-        drive.followTrajectory(traj5);
-
-        intake.setPower(0);
-        intakeB.setPower(0);
-
-        liftAndDeposit();
-
-        // I turn off intake here instead of earlier so that if the duck gets yeeted there is a possibility this yoinks it up
-*/
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-63, 60, Math.toRadians(-180)))
-                .lineTo(new Vector2d(-70,39))
+        drive.followTrajectorySequence(traj3);
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
+                .setReversed(true)
+                .setAccelConstraint((a,e,c,d)->30)
+                .splineTo(new Vector2d(-33, 23), Math.toRadians(0))
 
                 .build();
-        drive.followTrajectory(traj6);
+        drive.followTrajectorySequence(traj4);
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
+                .lineTo(new Vector2d(-63, 37))
 
-        /*  CODE TO INTAKE DUCK - PLEASE READ THIS AND THE CODE
-            FIRST, I TURN THE INTAKE ON.
-            NEXT, I GET THE DISTANCE TO MOVE IN THE X AND Y DIRECTION
-            NOTE THAT THE X AND Y DISTANCE TO MOVE IS RELATIVE TO THE ROBOT
-            WHICH MEANS THAT THE X AND Y ARE SWITCHED IN ROADRUNNER.
-            MAKE SURE TO COPY THE METHODS AT THE END OF THE PROGRAM!
-            ALSO MAKE SURE THE PIPELINE SWITCH IS OCCURING AT THE END OF INIT.
-            AS WELL AS THAT THE PIPELINE2 OBJECT IS CREATED AT START OF THE PROGRAM.
-            MOVE THIS CODE WHERE YOU'D LIKE.
-                GOOD LUCK - TIERNAN
-
-        intake.setPower(-.75);
-        intakeB.setPower(-.75);
-
-
-        double dx = duccAttack();
-        double dy = pipeline2.getDucc_y();
-
-        Trajectory duccTraj = drive.trajectoryBuilder(new Pose2d(),true)
-                .lineTo(new Vector2d(dy, dx))
                 .build();
-
-        drive.followTrajectory(duccTraj);
-
-        intake.setPower(0);
-        intakeB.setPower(0);*/
-/*
-
-
-        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d())
-                .back(3)
-                .build();
-
-        drive.followTrajectory(traj3);
-
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-3,0))
-                .strafeLeft(21)
-                .build();
-
-        drive.followTrajectory(traj);
+        drive.followTrajectorySequence(traj4);
 
 
 
-        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-3, 21))
-                .back(16)
-                .build();
 
-        drive.followTrajectory(traj2);
 
-        liftAndDeposit();
 
-        Trajectory traj4 = drive.trajectoryBuilder(new Pose2d(-18.5,21))
-                .forward(14)
-                .build();
-
-        //DO NOT MESS WITH ANYTHING HERE AFTER
-        drive.followTrajectory(traj4);
-
-        Trajectory traj5 = drive.trajectoryBuilder(new Pose2d(-4,21))
-                .strafeRight(48.5)
-                .build();
-
-        drive.followTrajectory(traj5);
 
         spinDuck();
 
-        Trajectory traj6 = drive.trajectoryBuilder(new Pose2d(-7,-27.5))
-                .back(17)
-                .build();
 
-        drive.followTrajectory(traj6);
-
-        Trajectory traj7 = drive.trajectoryBuilder(new Pose2d(-24,-27))
-                .strafeRight(2)
-                .build();
-
-        drive.followTrajectory(traj7);*/
 
     }
 
