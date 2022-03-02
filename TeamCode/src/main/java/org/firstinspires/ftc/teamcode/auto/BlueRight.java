@@ -296,7 +296,7 @@ public class BlueRight extends LinearOpMode //creates class
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 63, Math.toRadians(-90)))
                 .setAccelConstraint((a,e,c,d)->25)
                 .lineTo(new Vector2d(-24, y))
-
+//test
                 .turn(Math.toRadians(195))
 
                 .build();
