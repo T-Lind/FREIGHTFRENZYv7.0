@@ -373,6 +373,8 @@ public class BlueLeft extends LinearOpMode //creates class
     public void fetchFreight() throws InterruptedException {
         if(cycles == 0) {
             TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, 19, Math.toRadians(0)))
+                    .setAccelConstraint((a,e,c,d)->30)
+                    .setVelConstraint((a,e,c,d)->30)
                     .lineTo(new Vector2d(0, 53.6))
                     .forward(51)
                     .build();
@@ -380,6 +382,8 @@ public class BlueLeft extends LinearOpMode //creates class
             drive.followTrajectorySequenceAsync(traj2); //goes to warehouse
         } else{
             TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-12, -42, Math.toRadians(90)))
+                    .setAccelConstraint((a,e,c,d)->30)
+                    .setVelConstraint((a,e,c,d)->30)
 
                     .splineTo(new Vector2d(1, 46), Math.toRadians(0))
                     .forward(59)
@@ -398,6 +402,8 @@ public class BlueLeft extends LinearOpMode //creates class
             traj3 = drive.trajectorySequenceBuilder(new Pose2d(51, 50, Math.toRadians(0)))
                     //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
                     // wont ever be extremely accurate
+                    .setAccelConstraint((a,e,c,d)->30)
+                    .setVelConstraint((a,e,c,d)->30)
                     .setReversed(true)
                     .back(55.5)
                     .splineTo(new Vector2d(-15, 33), Math.toRadians(-90))
@@ -407,6 +413,8 @@ public class BlueLeft extends LinearOpMode //creates class
             drive.followTrajectorySequenceAsync(traj3); //goes to deposit
         } else{
             traj5 = drive.trajectorySequenceBuilder(new Pose2d(58, 47, Math.toRadians(0)))
+                    .setAccelConstraint((a,e,c,d)->30)
+                    .setVelConstraint((a,e,c,d)->30)
                     .setReversed(true)
                     .back(63)
                     .splineTo(new Vector2d(-13, 31.5), Math.toRadians(-90))

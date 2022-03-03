@@ -53,7 +53,7 @@ public class BlueRight extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 650;
-    private final int med = 225;
+    private final int med = 200;
 
 
     private WebcamName weCam;
@@ -270,7 +270,7 @@ public class BlueRight extends LinearOpMode //creates class
     public void starts(){
         v4b1.setPosition(.18);
         v4b2.setPosition(.18);
-        dep.setPosition(.63);
+        dep.setPosition(.43);
     }
 
     @Override
@@ -293,7 +293,7 @@ public class BlueRight extends LinearOpMode //creates class
         double y = 41;
         if (level == 1) {
             y = y + 2.8;}
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 63, Math.toRadians(-90)))
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 61, Math.toRadians(-90)))
                 .setAccelConstraint((a,e,c,d)->25)
                 .lineTo(new Vector2d(-24, y))
 //test
@@ -305,33 +305,41 @@ public class BlueRight extends LinearOpMode //creates class
 
         liftAndDeposit();
 
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-24, y, Math.toRadians(105)))
-                .splineTo(new Vector2d(-63, 58.5), Math.toRadians(90))
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30, y, Math.toRadians(105)))
+                .splineTo(new Vector2d(-64, 62), Math.toRadians(90))
 
 
                 .build();
         drive.followTrajectorySequence(traj2);
+        spinDuck();
+        intake.setPower(-1);
+        intakeB.setPower(-1);
 
         TrajectorySequence traj3 = drive.trajectorySequenceBuilder(traj2.end())
                 .strafeRight(20)
                 .turn(Math.toRadians(15))
-                .setAccelConstraint((a,e,c,d)->5)
+                .setAccelConstraint((a,e,c,d)->7)
                 .lineTo(new Vector2d(-60,62))
 
                 .build();
         drive.followTrajectorySequence(traj3);
+        intake.setPower(0);
+        intakeB.setPower(0);
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
                 .setReversed(true)
-                .setAccelConstraint((a,e,c,d)->30)
-                .splineTo(new Vector2d(-33, 23), Math.toRadians(0))
+
+                .splineTo(new Vector2d(-37, 23), Math.toRadians(0))
 
                 .build();
+
         drive.followTrajectorySequence(traj4);
+        //level=3;
+        //liftAndDeposit();
         TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(new Vector2d(-63, 37))
+                .lineTo(new Vector2d(-63, 41.5))
 
                 .build();
-        drive.followTrajectorySequence(traj4);
+        drive.followTrajectorySequence(traj5);
 
 
 
@@ -339,7 +347,7 @@ public class BlueRight extends LinearOpMode //creates class
 
 
 
-        spinDuck();
+
 
 
 
@@ -348,14 +356,27 @@ public class BlueRight extends LinearOpMode //creates class
 
     public void spinDuck() throws InterruptedException{
         ElapsedTime spinTime = new ElapsedTime();
-        duccL.setPower(0.2);
-        duccR.setPower(0.2);
-        while (spinTime.milliseconds() <= 6000)
+       /* duccL.setPower(-.001);
+        duccR.setPower(-.001);
+        double power = .2;
+        while(spinTime.milliseconds()<=3000){
             heartbeat();
+            duccR.setPower(power);
+
+            duccL.setPower(power);
+            power = power + .006;
+            telemetry.addData("duck power: ",power);
+            telemetry.update();*/
+        duccL.setPower(.2);
+        duccR.setPower(.2);
+        while(spinTime.milliseconds()<=5000){
+            heartbeat();
+
+
+        }
         duccL.setPower(0);
         duccR.setPower(0);
-
-    }
+        /*
 
     public static double get_dist(DuckDetectionPipeline pipeline){
         int cnt = 0;
@@ -379,6 +400,6 @@ public class BlueRight extends LinearOpMode //creates class
             telemetry.update();
         }
         return dx;
-    }
-}
+    }*/
+}}
 

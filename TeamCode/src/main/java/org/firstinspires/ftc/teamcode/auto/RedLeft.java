@@ -298,7 +298,7 @@ public class RedLeft extends LinearOpMode //creates class
             y = y - 2.8;}
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .setAccelConstraint((a,e,c,d)->25)
+                .setAccelConstraint((a,e,c,d)->45)
                 .lineTo(new Vector2d(-24, y))
 
                 .build();
@@ -307,32 +307,37 @@ public class RedLeft extends LinearOpMode //creates class
 
         liftAndDeposit();
         TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-24, y, Math.toRadians(-105)))
-                .setAccelConstraint((a,e,c,d)->35)
+
                 .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))
 
                 .build();
         drive.followTrajectorySequence(traj2);
         spinDuck();
-
+        intake.setPower(-1);
+        intakeB.setPower(-1);
 
         TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
                 .strafeLeft(20)
                 .turn(Math.toRadians(-15))
-                .setAccelConstraint((a,e,c,d)->5)
+                .setAccelConstraint((a,e,c,d)->7)
                 .lineTo(new Vector2d(-60,-62))
 
                 .build();
         drive.followTrajectorySequence(traj3);
+        intake.setPower(0);
+        intakeB.setPower(0);
 //        duckIntake();
 
 
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
                 .setReversed(true)
-                .setAccelConstraint((a,e,c,d)->30)
-                .splineTo(new Vector2d(-33, -26), Math.toRadians(0))
+
+                .splineTo(new Vector2d(-34.5, -24), Math.toRadians(0))
 
                 .build();
         drive.followTrajectorySequence(traj4);
+        level=3;
+        liftAndDeposit();
         TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
 
                 .lineTo(new Vector2d(-63, -37))
@@ -434,7 +439,7 @@ public class RedLeft extends LinearOpMode //creates class
             duccR.setPower(-power);
 
             duccL.setPower(-power);
-            power = power + .0003;
+            power = power + .0006;
             telemetry.addData("duck power: ",power);
             telemetry.update();
 

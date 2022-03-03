@@ -226,6 +226,10 @@ public class RedRight extends LinearOpMode //creates class
                 .back(62)
                 .splineTo(new Vector2d(14, -33), Math.toRadians(110))
                 .build();
+        TrajectorySequence traj8 = drive.trajectorySequenceBuilder(traj7.end())
+
+                .splineTo(new Vector2d(74,-59), Math.toRadians(0))
+                .build();
 
 
 
@@ -236,6 +240,8 @@ public class RedRight extends LinearOpMode //creates class
         trajectories.add(traj5);
         trajectories.add(traj6);
         trajectories.add(traj7);
+        trajectories.add(traj8);
+
 
 
 
@@ -295,7 +301,7 @@ public class RedRight extends LinearOpMode //creates class
             telemetry.addLine("" + reading);
             telemetry.update();
 
-            if (reading < 100) {
+            if (reading < 50) { //100
                 intakePower = 0.5;
                 intake.setPower(intakePower);
                 intakeB.setPower(intakePower);
@@ -348,7 +354,7 @@ public class RedRight extends LinearOpMode //creates class
             //Goes to the warehouse, keeps the lift at the low position, and
             while(drive.isBusy()){
                 drive.update();
-                if(whenToTurn.milliseconds() > 700)
+                if(whenToTurn.milliseconds() > 900)
                     safeGuard();
                 keepLiftAlive(i);
             }
