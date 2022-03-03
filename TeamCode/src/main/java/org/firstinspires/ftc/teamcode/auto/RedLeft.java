@@ -431,7 +431,7 @@ public class RedLeft extends LinearOpMode //creates class
 
     public void spinDuck() throws InterruptedException{
         ElapsedTime spinTime = new ElapsedTime();
-        duccL.setPower(-.001);
+       /* duccL.setPower(-.001);
         duccR.setPower(-.001);
         double power = .2;
         while(spinTime.milliseconds()<=3000){
@@ -439,11 +439,18 @@ public class RedLeft extends LinearOpMode //creates class
             duccR.setPower(-power);
 
             duccL.setPower(-power);
-            power = power + .0006;
+            power = power + .006;
             telemetry.addData("duck power: ",power);
-            telemetry.update();
+            telemetry.update();*/
+        duccL.setPower(.2);
+        duccR.setPower(.2);
+        while(spinTime.milliseconds()<=5000){
+            heartbeat();
+
 
         }
+        duccL.setPower(0);
+        duccR.setPower(0);
 
 
       /*  while (spinTime.milliseconds() <= 2500)

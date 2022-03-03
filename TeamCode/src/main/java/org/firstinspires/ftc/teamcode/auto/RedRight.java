@@ -203,12 +203,12 @@ public class RedRight extends LinearOpMode //creates class
 
         //Going back to warehouse, second cycle (3)
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(2, -35, Math.toRadians(-70)))//new Pose2d(-12, -42, Math.toRadians(90)))
-                .splineTo(new Vector2d(8, -59), Math.toRadians(0))
+                .splineTo(new Vector2d(8, -62.5), Math.toRadians(0))
                 .forward(60)
                 .build();
 
         //Going to deposit freight, second cycle (4)
-        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(68, -58, Math.toRadians(0)))
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(68, -62.5, Math.toRadians(0)))
                 .setReversed(true)
                 .back(63)
                 .splineTo(new Vector2d(10, -34), Math.toRadians(110))
@@ -217,12 +217,12 @@ public class RedRight extends LinearOpMode //creates class
 
         //Going to warehouse, third cycle (5)
         TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(10, -34, Math.toRadians(-70)))
-                .splineTo(new Vector2d(9, -59), Math.toRadians(0))
+                .splineTo(new Vector2d(9, -63), Math.toRadians(0))
                 .forward(65)
                 .build();
 
         //Going to deposit freight, third cycle (6)
-        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(74, -59, Math.toRadians(0)))
+        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(74, -63, Math.toRadians(0)))
                 .back(62)
                 .splineTo(new Vector2d(14, -33), Math.toRadians(110))
                 .build();
