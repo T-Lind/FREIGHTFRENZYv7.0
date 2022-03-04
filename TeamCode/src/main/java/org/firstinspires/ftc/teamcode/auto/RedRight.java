@@ -193,8 +193,8 @@ public class RedRight extends LinearOpMode //creates class
 
         //Going back to the warehouse, first cycle (1)
         TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(0, y, Math.toRadians(-50)))
-                .setAccelConstraint((a,e,c,d)->30)
-                .setVelConstraint((a,e,c,d)->40)
+                /*.setAccelConstraint((a,e,c,d)->30)
+                .setVelConstraint((a,e,c,d)->40)*/
                 .splineTo(new Vector2d(9,-57), Math.toRadians(0))
 
                 .forward(47)
@@ -207,43 +207,43 @@ public class RedRight extends LinearOpMode //creates class
                 .back(47)
                 .setAccelConstraint((a,e,c,d)->30)
                 .setVelConstraint((a,e,c,d)->40)
-                .splineTo(new Vector2d(8, -37), Math.toRadians(110)) //10
+                .splineTo(new Vector2d(7, -37), Math.toRadians(110)) //10
                 .build();
 
 
         //Going back to warehouse, second cycle (3)
-        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(9, -35, Math.toRadians(-70)))//new Pose2d(-12, -42, Math.toRadians(90)))
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(7, -37, Math.toRadians(-70)))//new Pose2d(-12, -42, Math.toRadians(90)))
 
-                .splineTo(new Vector2d(8, -57), Math.toRadians(0))
+                .splineTo(new Vector2d(8, -53), Math.toRadians(0)) //-57
 
-                .forward(57)
+                .forward(58.5)
                 .build();
 
         //Going to deposit freight, second cycle (4)
-        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(65, -55, Math.toRadians(0)))
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(66.5, -54, Math.toRadians(0)))
                 .setReversed(true)
                 .back(59)
                 /*.setAccelConstraint((a,e,c,d)->30)
                 .setVelConstraint((a,e,c,d)->40)*/
-                .splineTo(new Vector2d(16, -37.5), Math.toRadians(110))
+                .splineTo(new Vector2d(16, -36.5), Math.toRadians(110))
                 .build();
 
 
         //Going to warehouse, third cycle (5)
         TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(16, -38, Math.toRadians(-70)))
-                .splineTo(new Vector2d(9, -59), Math.toRadians(0))
+                .splineTo(new Vector2d(9, -48), Math.toRadians(0)) //-59
                 .forward(64)
                 .build();
 
         //Going to deposit freight, third cycle (6)
-        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(73, -59, Math.toRadians(0)))
+        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(73, -48, Math.toRadians(0))) //-59
                 .back(54)
                 /*.setAccelConstraint((a,e,c,d)->30)
                 .setVelConstraint((a,e,c,d)->40)*/
-                .splineTo(new Vector2d(17, -41), Math.toRadians(110))
+                .splineTo(new Vector2d(15, -40.5), Math.toRadians(110))
                 .build();
-        TrajectorySequence traj8 = drive.trajectorySequenceBuilder(traj7.end())
 
+        TrajectorySequence traj8 = drive.trajectorySequenceBuilder(traj7.end())
                 .splineTo(new Vector2d(74,-59), Math.toRadians(0))
                 .build();
 
@@ -378,6 +378,9 @@ public class RedRight extends LinearOpMode //creates class
                 keepLiftAlive(i);
             }
 
+            dep.setPosition(.46);
+            sleep(150);
+
             liftTargetPos = top;
             level = 3;
             aman = true;
@@ -406,12 +409,13 @@ public class RedRight extends LinearOpMode //creates class
         level = 0;
         aman = false;
 
+        drive.followTrajectorySequenceAsync(trajectories.get(7));
        while(opModeIsActive()){
+           drive.update();
            keepLiftAlive(0);
        }
 
     }
-
 
 
 
