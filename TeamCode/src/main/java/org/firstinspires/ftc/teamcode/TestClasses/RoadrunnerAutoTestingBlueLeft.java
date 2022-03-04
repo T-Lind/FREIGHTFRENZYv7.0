@@ -30,7 +30,7 @@ public class RoadrunnerAutoTestingBlueLeft extends LinearOpMode {
        // if(levels == 1){
           //  y += 1.5;
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, 63, Math.toRadians(-90)))
-                .lineTo(new Vector2d(-4, y))
+                .lineTo(new Vector2d(0, y))
                 .turn(Math.toRadians(155))
 
 
@@ -39,6 +39,8 @@ public class RoadrunnerAutoTestingBlueLeft extends LinearOpMode {
         drive.followTrajectorySequence(traj1); //initial deposit
 
         TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-4, y, Math.toRadians(-205)))
+                .setAccelConstraint((a,e,c,d)->30)
+                .setVelConstraint((a,e,c,d)->40)
                 .splineTo(new Vector2d(9,57), Math.toRadians(0))
                 .forward(47)
 
@@ -54,7 +56,7 @@ public class RoadrunnerAutoTestingBlueLeft extends LinearOpMode {
                 .back(47)
                 .setAccelConstraint((a,e,c,d)->30)
                 .setVelConstraint((a,e,c,d)->40)
-                .splineTo(new Vector2d(8, 37), Math.toRadians(110)) //10
+                .splineTo(new Vector2d(8, 37), Math.toRadians(-110)) //10
                 .build();
 
 
