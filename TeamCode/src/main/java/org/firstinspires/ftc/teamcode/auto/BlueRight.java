@@ -168,6 +168,8 @@ public class BlueRight extends LinearOpMode //creates class
     }
 
     public void initializeTrajectories() throws InterruptedException{
+        trajectories = new ArrayList<TrajectorySequence>();
+
         double y = 41;
 
         if (level == 1)

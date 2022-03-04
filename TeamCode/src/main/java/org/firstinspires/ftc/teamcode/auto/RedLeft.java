@@ -168,6 +168,8 @@ public class RedLeft extends LinearOpMode //creates class
     }
 
     public void initializeTrajectories() throws InterruptedException{
+        trajectories = new ArrayList<TrajectorySequence>();
+
         double y = -41;
 
         if (level == 1)
@@ -231,19 +233,25 @@ public class RedLeft extends LinearOpMode //creates class
             liftB.setPower(lift.getPower());
 
             if(level == 1) {
-                targetV4B = .81;
+                v4b1.setPosition(.81);
+                v4b2.setPosition(.81);
+
                 liftTargetPos=10;
                 dep.setPosition(.46);
             }
 
             else if(level==2){
-                targetV4B=.7;
+                v4b1.setPosition(.7);
+                v4b2.setPosition(.7);
+
                 liftTargetPos=med;
                 dep.setPosition(.46);
             }
 
             else if(level==3) {
-                targetV4B = .81;
+                v4b1.setPosition(.81);
+                v4b2.setPosition(.81);
+
                 liftTargetPos=top;
                 dep.setPosition(.46);
             }
@@ -318,6 +326,9 @@ public class RedLeft extends LinearOpMode //creates class
                 keepLiftAlive();
             }
 
+            if(i == 1)
+                spinDuck();
+
             intake.setPower(0);
             intake.setPower(0);
         }
@@ -328,7 +339,7 @@ public class RedLeft extends LinearOpMode //creates class
 
 
         if (isStopRequested()) return;
-        double y = -41;//42.5
+        double y = -40.5;//42.5
        //level =3;
         if (level == 1) {
             y = y - 2.8;}
@@ -356,7 +367,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         //Sweep trajectory
         TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
-                .strafeLeft(20)
+                .lineTo(new Vector2d(-43,-57))
                 .turn(Math.toRadians(-15))
                 .setAccelConstraint((a,e,c,d)->7)
                 .lineTo(new Vector2d(-60,-62))
@@ -370,9 +381,11 @@ public class RedLeft extends LinearOpMode //creates class
 
         //Final duck deposit
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
-                .setReversed(true)
 
-                .splineTo(new Vector2d(-34.5, -24), Math.toRadians(0))
+                .setReversed(true)
+                .setAccelConstraint((a,e,c,d)->25)
+
+                .splineTo(new Vector2d(-33, -24), Math.toRadians(0))
 
                 .build();
         drive.followTrajectorySequence(traj4);
@@ -382,7 +395,7 @@ public class RedLeft extends LinearOpMode //creates class
         //Code to park
         TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
 
-                .lineTo(new Vector2d(-63, -37))
+                .lineTo(new Vector2d(-63, -40))
 
                 .build();
         drive.followTrajectorySequence(traj5);
@@ -484,8 +497,8 @@ public class RedLeft extends LinearOpMode //creates class
             power = power + .006;
             telemetry.addData("duck power: ",power);
             telemetry.update();*/
-        duccL.setPower(.2);
-        duccR.setPower(.2);
+        duccL.setPower(-.2);
+        duccR.setPower(-.2);
         while(spinTime.milliseconds()<=5000){
             heartbeat();
 

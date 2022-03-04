@@ -41,18 +41,19 @@ public class RedRight extends LinearOpMode //creates class
     BNO055IMU imu;
     //test
     private int level = 0;
+    private int timer = 1900;
     private boolean delay = false;
+    private ElapsedTime whenToTurn;
 
     private DcMotorEx lift, liftB , intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
+    private double targetV4B = 0.81;
+
 
     private ArrayList<TrajectorySequence> trajectories;
-    private double[] y_values;
-    private double[] x_values;
-
-    private double intakePower = -1;
+    private double intakePower = -0.8;
 
     private Rev2mDistanceSensor Distance;
 
@@ -69,7 +70,7 @@ public class RedRight extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 600;
-    private final int med = 130;
+    private final int med = 262;
 
 
     private WebcamName weCam;
@@ -178,53 +179,63 @@ public class RedRight extends LinearOpMode //creates class
 
     public void initializeTrajectories() throws InterruptedException{
         trajectories = new ArrayList<TrajectorySequence>();
-        y_values = new double[7];
         drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
         //Preload (0)
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
-                .lineTo(new Vector2d(0, -40))
-                .turn(Math.toRadians(-155))
+                .lineTo(new Vector2d(0, -39))
+                .turn(Math.toRadians(-145))
                 .build();
 
         //Going back to the warehouse, first cycle (1)
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(0, -40, Math.toRadians(-65)))
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(0, -39, Math.toRadians(-55)))
+                .setAccelConstraint((a,e,c,d)->30)
+                .setVelConstraint((a,e,c,d)->40)
                 .splineTo(new Vector2d(9,-57), Math.toRadians(0))
-                .forward(45)
+
+                .forward(47)
                 .build();
 
 
         //Going to deposit freight, first cycle (2)
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(53, -57, Math.toRadians(0)))
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(55, -57, Math.toRadians(0)))
                 .setReversed(true)
-                .back(57)
-                .splineTo(new Vector2d(3, -35), Math.toRadians(110))
+                .back(47)
+                .setAccelConstraint((a,e,c,d)->30)
+                .setVelConstraint((a,e,c,d)->40)
+                .splineTo(new Vector2d(8, -37), Math.toRadians(110)) //10
                 .build();
 
 
         //Going back to warehouse, second cycle (3)
-        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(2, -35, Math.toRadians(-70)))//new Pose2d(-12, -42, Math.toRadians(90)))
-                .splineTo(new Vector2d(8, -62.5), Math.toRadians(0))
-                .forward(60)
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(new Pose2d(9, -35, Math.toRadians(-70)))//new Pose2d(-12, -42, Math.toRadians(90)))
+
+                .splineTo(new Vector2d(8, -57), Math.toRadians(0))
+
+                .forward(52)
                 .build();
 
         //Going to deposit freight, second cycle (4)
-        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(68, -62.5, Math.toRadians(0)))
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(60, -55, Math.toRadians(0)))
                 .setReversed(true)
-                .back(63)
-                .splineTo(new Vector2d(10, -34), Math.toRadians(110))
+                .back(57)
+                /*.setAccelConstraint((a,e,c,d)->30)
+                .setVelConstraint((a,e,c,d)->40)*/
+                .splineTo(new Vector2d(16, -39), Math.toRadians(110))
                 .build();
 
 
         //Going to warehouse, third cycle (5)
-        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(10, -34, Math.toRadians(-70)))
-                .splineTo(new Vector2d(9, -63), Math.toRadians(0))
-                .forward(65)
+        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(16, -39, Math.toRadians(-70)))
+                .splineTo(new Vector2d(9, -59), Math.toRadians(0))
+                .forward(64)
                 .build();
 
         //Going to deposit freight, third cycle (6)
-        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(74, -63, Math.toRadians(0)))
-                .back(62)
-                .splineTo(new Vector2d(14, -33), Math.toRadians(110))
+        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(73, -59, Math.toRadians(0)))
+                .back(54)
+                /*.setAccelConstraint((a,e,c,d)->30)
+                .setVelConstraint((a,e,c,d)->40)*/
+                .splineTo(new Vector2d(17, -41), Math.toRadians(110))
                 .build();
         TrajectorySequence traj8 = drive.trajectorySequenceBuilder(traj7.end())
 
@@ -263,13 +274,21 @@ public class RedRight extends LinearOpMode //creates class
             liftB.setPower(lift.getPower());
 
             if(level != 0) {
-                v4b1.setPosition(.81);
-                v4b2.setPosition(.81);
+                if(level == 1)
+                    targetV4B = 0.5;
+
+                v4b1.setPosition(targetV4B);
+                v4b2.setPosition(targetV4B);
                 dep.setPosition(.46);
             }
 
 
             if (aman && !drive.isBusy()) {
+                    if(level == 1){
+                        v4b1.setPosition(.81);
+                        v4b2.setPosition(.81);
+                        sleep(150);
+                    }
                     dep.setPosition(.23);
 
                     sleep(450);
@@ -301,8 +320,9 @@ public class RedRight extends LinearOpMode //creates class
             telemetry.addLine("" + reading);
             telemetry.update();
 
-            if (reading < 50) { //100
-                intakePower = 0.5;
+            boolean timeKeeper = (whenToTurn.milliseconds() - timer) > 1300;
+            if (reading < 100 || timeKeeper) { //100
+                intakePower = 0.7;
                 intake.setPower(intakePower);
                 intakeB.setPower(intakePower);
             }
@@ -341,7 +361,7 @@ public class RedRight extends LinearOpMode //creates class
         starts();
 
         //Lets us know when to turn the intake on
-        ElapsedTime whenToTurn = new ElapsedTime();
+        whenToTurn = new ElapsedTime();
 
         for(int i = 1; i < 7; i+=2){
             drive.followTrajectorySequenceAsync(trajectories.get(i));
@@ -354,7 +374,7 @@ public class RedRight extends LinearOpMode //creates class
             //Goes to the warehouse, keeps the lift at the low position, and
             while(drive.isBusy()){
                 drive.update();
-                if(whenToTurn.milliseconds() > 900)
+                if(whenToTurn.milliseconds() > timer)
                     safeGuard();
                 keepLiftAlive(i);
             }
@@ -377,7 +397,8 @@ public class RedRight extends LinearOpMode //creates class
                 }
             }
             starts();
-            intakePower = -1;
+            intakePower = -0.8;
+            timer = 2600;
             }
 
 
