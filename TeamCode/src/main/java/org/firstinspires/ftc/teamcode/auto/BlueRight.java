@@ -168,12 +168,13 @@ public class BlueRight extends LinearOpMode //creates class
     }
 
     public void initializeTrajectories() throws InterruptedException{
+        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
         trajectories = new ArrayList<TrajectorySequence>();
 
-        double y = 41;
+        double y = 42;
 
         if (level == 1)
-            y = y + 2.8;
+            y = y + 1.8;
 
         //Initial deposit
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 61, Math.toRadians(-90)))
@@ -183,27 +184,29 @@ public class BlueRight extends LinearOpMode //creates class
                 .build();
 
         //Go to duck and begin spinning
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30, y, Math.toRadians(105)))
-                .splineTo(new Vector2d(-63, 58.5), Math.toRadians(90))
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-24, y, Math.toRadians(105)))
+                .splineTo(new Vector2d(-64.5, 60), Math.toRadians(90))
                 .build();
 
         //Sweep trajectory
         TrajectorySequence traj3 = drive.trajectorySequenceBuilder(traj2.end())
                 .strafeRight(20)
-                .turn(Math.toRadians(15))
+                .turn(Math.toRadians(17))
                 .setAccelConstraint((a,e,c,d)->7)
-                .lineTo(new Vector2d(-60,62))
+                .lineTo(new Vector2d(-63,63))
                 .build();
 
         //Final duck deposit
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
                 .setReversed(true)
-                .splineTo(new Vector2d(-34.5, 24), Math.toRadians(0))
+                .setAccelConstraint((a,e,c,d)->20)
+                .setVelConstraint((a,e,c,d)->40)
+                .splineTo(new Vector2d(-33.7, 25), Math.toRadians(0))
                 .build();
 
         //Code to park
         TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(new Vector2d(-63, 37))
+                .lineTo(new Vector2d(-65, 39))
                 .build();
 
         trajectories.add(traj1);
