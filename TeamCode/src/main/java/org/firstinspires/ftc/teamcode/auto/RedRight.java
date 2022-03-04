@@ -192,7 +192,7 @@ public class RedRight extends LinearOpMode //creates class
                 .build();
 
         //Going back to the warehouse, first cycle (1)
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(0, -39, Math.toRadians(-50)))
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(0, y, Math.toRadians(-50)))
                 .setAccelConstraint((a,e,c,d)->30)
                 .setVelConstraint((a,e,c,d)->40)
                 .splineTo(new Vector2d(9,-57), Math.toRadians(0))

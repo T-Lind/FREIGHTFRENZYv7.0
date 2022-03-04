@@ -184,7 +184,7 @@ public class BlueRight extends LinearOpMode //creates class
 
         //Go to duck and begin spinning
         TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30, y, Math.toRadians(105)))
-                .splineTo(new Vector2d(-64, 62), Math.toRadians(90))
+                .splineTo(new Vector2d(-63, 58.5), Math.toRadians(90))
                 .build();
 
         //Sweep trajectory
@@ -198,12 +198,12 @@ public class BlueRight extends LinearOpMode //creates class
         //Final duck deposit
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
                 .setReversed(true)
-                .splineTo(new Vector2d(-37, 23), Math.toRadians(0))
+                .splineTo(new Vector2d(-34.5, 24), Math.toRadians(0))
                 .build();
 
         //Code to park
         TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(new Vector2d(-63, 41.5))
+                .lineTo(new Vector2d(-63, 37))
                 .build();
 
         trajectories.add(traj1);
@@ -324,8 +324,8 @@ public class BlueRight extends LinearOpMode //creates class
         }
 
     }
-
-    public void redLeft() throws InterruptedException{
+/*
+    public void BlueRight() throws InterruptedException{
 
 
         if (isStopRequested()) return;
@@ -466,8 +466,8 @@ public class BlueRight extends LinearOpMode //creates class
         telemetry.update();
 
         */
-        // spinDuck();
-    }
+        // spinDuck();*/
+
 
 
 
