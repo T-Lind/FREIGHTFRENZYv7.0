@@ -132,8 +132,8 @@ public class RogueOp extends OpMode{
 
     @Override
     public void loop() {
-        toggleUp.updateStart(gamepad2.dpad_up);
-        toggleDown.updateStart(gamepad2.dpad_down);
+        toggleUp.updateStart(gamepad2.right_bumper/*gamepad2.dpad_up*/);
+        toggleDown.updateStart(gamepad2.left_bumper/*gamepad2.dpad_down*/);
         //thanks jeff
 
 
@@ -245,7 +245,7 @@ public class RogueOp extends OpMode{
         if(Math.abs(gamepad2.right_stick_x) > .1)
             rot += velo * gamepad2.right_stick_x;
         if(Math.abs(gamepad2.right_stick_y) > .1)
-            tilt -= velo * gamepad2.right_stick_y;
+            tilt += velo * gamepad2.right_stick_y;
         duccEx.setPower(Range.clip(extendD, -1, 1));
         duccRot.setPosition(Range.clip(rot, -1, 1));
         duccTilt.setPosition(Range.clip(tilt, -1, 1));
@@ -276,6 +276,7 @@ public class RogueOp extends OpMode{
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .2));
             liftB.setPower(lift.getPower());
             lock = false;
+            top = 250;
         }
         if(find) {
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, .9));
@@ -296,10 +297,10 @@ public class RogueOp extends OpMode{
             }
 
         }
-        if(gamepad2.left_bumper){
+        if(gamepad2.dpad_down/*gamepad2.left_bumper*/){
             top = 250;
         }
-        if(gamepad2.right_bumper){
+        if(gamepad2.dpad_up/*gamepad2.right_bumper*/){
             top = 550;
         }
 
@@ -328,12 +329,12 @@ public class RogueOp extends OpMode{
             v4b2.setPosition(.81);
             lock = true;
             //dep position
-        } else if (gamepad2.x) {
+        } else if (gamepad2.b /*gamepad2.x*/) {
             v4b1.setPosition(.18);
             v4b2.setPosition(.18);
             lock = false;
             //in position
-        } else if (gamepad2.b && !succing) {
+        } else if (gamepad2.x /*gamepad2.b*/ && !succing) {
             v4b1.setPosition(.5);
             v4b2.setPosition(.5);
             lock = true;

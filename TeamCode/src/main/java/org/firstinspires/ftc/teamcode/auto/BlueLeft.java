@@ -39,37 +39,29 @@ import java.util.Map;
 public class BlueLeft extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
-
+    //test
     private int level = 0;
+    private int timer = 1900;
     private boolean delay = false;
-    private double targetV4B;
-    private double depositTarget;
+    private ElapsedTime whenToTurn;
+
     private DcMotorEx lift, liftB , intake, intakeB;
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
-    private TrajectorySequence traj3;
-    private TrajectorySequence traj5;
-//uwu
+    private double targetV4B = 0.81;
 
-    private double intakePower = -0.70;
-    private int cycles = 0;
+
+    private ArrayList<TrajectorySequence> trajectories;
+    private double intakePower = -0.85;
 
     private Rev2mDistanceSensor Distance;
 
-    private double full = 0.0; //distance sensor reading for filled deposit
     private double reading;
 
 
-    //IMPORTANT BOOLEANS FOR STATE MACHINES
     private boolean aman = true;
-    private boolean runFetchFreight = false;
-    private boolean runAutoCall = true;
-    private boolean runDepositFreight = false;
 
-    private ElapsedTime extend = new ElapsedTime();
-    private ElapsedTime succ = new ElapsedTime();
-    private ElapsedTime test = new ElapsedTime();
 
 
     final int liftGrav = (int) (9.8 * 3);
@@ -78,7 +70,7 @@ public class BlueLeft extends LinearOpMode //creates class
     private int liftTargetPos = 0;
 
     private final int top = 600;
-    private final int med = 225;
+    private final int med = 262;
 
 
     private WebcamName weCam;
@@ -88,7 +80,7 @@ public class BlueLeft extends LinearOpMode //creates class
 
     private SampleMecanumDrive drive;
 
-    public void initialize() {
+    public void initialize() throws InterruptedException {
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
@@ -119,7 +111,7 @@ public class BlueLeft extends LinearOpMode //creates class
         intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(11, 63, Math.toRadians(-90)));
+
 
         duccL.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -142,10 +134,6 @@ public class BlueLeft extends LinearOpMode //creates class
             // @Override
             public void onOpened() {
                 telemetry.update();
-
-
-
-
                 camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -157,7 +145,6 @@ public class BlueLeft extends LinearOpMode //creates class
 
 
         starts();
-        //dep.setPosition(.52);
 
 
         while (!opModeIsActive()) {
@@ -166,14 +153,11 @@ public class BlueLeft extends LinearOpMode //creates class
             telemetry.addData("DETECTED LEVEL: ",level);
             if(gamepad1.a)
                 delay = true;
-
-
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
         }
 
 
-        targetV4B = 0;
         telemetry.addData("DETECTED LEVEL: ",level);
         telemetry.update();
 
@@ -182,6 +166,7 @@ public class BlueLeft extends LinearOpMode //creates class
 
         if(level == 0)
             level = 3;
+
         if(level == 1)
             liftTargetPos = 0;
         else if(level == 2)
@@ -189,62 +174,111 @@ public class BlueLeft extends LinearOpMode //creates class
         else
             liftTargetPos = top;
 
+        initializeTrajectories();
+
+    }
+
+    public void initializeTrajectories() throws InterruptedException{
+        trajectories = new ArrayList<TrajectorySequence>();
+        drive.setPoseEstimate(new Pose2d(11, 63, Math.toRadians(-90)));
+
+        double y = 41;
+        if (level == 1)
+            y += 1.5;
+
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, 63, Math.toRadians(-90)))
+                .lineTo(new Vector2d(0, y))
+                .turn(Math.toRadians(140))
+                .build();
+
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(traj1.end())
+                /*.setAccelConstraint((a, e, c, d) -> 30)
+                .setVelConstraint((a, e, c, d) -> 40)*/
+                .splineTo(new Vector2d(9, 60), Math.toRadians(0))
+                .forward(47)
+                .build();
+
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(55, 58, Math.toRadians(0)))
+                .setReversed(true)
+                .back(47)
+              /*  .setAccelConstraint((a, e, c, d) -> 30)
+                .setVelConstraint((a, e, c, d) -> 40)*/
+                .splineTo(new Vector2d(4, 42), Math.toRadians(-110)) //10
+                .build();
+
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-12, -42, Math.toRadians(90)))
+                .splineTo(new Vector2d(8, 62), Math.toRadians(0))
+                .forward(54)
+                .build();
 
 
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(new Pose2d(59, 62, Math.toRadians(0)))
+                .setReversed(true)
+                .back(59)
+                .splineTo(new Vector2d(6, 45), Math.toRadians(-110))
+                .build();
+
+
+        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(new Pose2d(6, 43, Math.toRadians(70)))
+                .splineTo(new Vector2d(9, 64), Math.toRadians(0))
+                .forward(62)
+                .build();
+
+        TrajectorySequence traj7 = drive.trajectorySequenceBuilder(new Pose2d(71, 63, Math.toRadians(0)))
+                .back(56)
+                .splineTo(new Vector2d(6, 50), Math.toRadians(-110))
+                .build();
+
+
+        TrajectorySequence traj8 = drive.trajectorySequenceBuilder(traj7.end())
+                .splineTo(new Vector2d(74, 59), Math.toRadians(0))
+                .build();
+
+
+        trajectories.add(traj1);
+        trajectories.add(traj2);
+        trajectories.add(traj3);
+        trajectories.add(traj4);
+        trajectories.add(traj5);
+        trajectories.add(traj6);
+        trajectories.add(traj7);
+        trajectories.add(traj8);
 
 
 
     }
 
     public void  heartbeat() throws InterruptedException {
-        //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone
         if (!opModeIsActive()) {
             throw new InterruptedException();
         }
         telemetry.update();
     }
 
-    public void keepLiftAlive() throws InterruptedException{
+    public void keepLiftAlive(int i) throws InterruptedException{
 
         if(true) {
 
-            if(level == 1) {
-                targetV4B = .55;
-                depositTarget = .23;
-
-            }
-            else if(level==2){
-                targetV4B = .68;
-                liftTargetPos=med;
-                depositTarget = .23;
-            }
-
-            else if(level == 3) {
-                targetV4B = .81;
-                liftTargetPos=top;
-                depositTarget = .23;
-            }
             liftError = liftTargetPos - lift.getCurrentPosition();
-
-            //Takes the lift up
-
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
 
             if(level != 0) {
-                v4b1.setPosition(targetV4B);
-                v4b2.setPosition(targetV4B);
+
+                v4b1.setPosition(0.81);
+                v4b2.setPosition(0.81);
                 dep.setPosition(.46);
             }
 
+
             if (aman && !drive.isBusy()) {
+
                 dep.setPosition(.23);
-                test.reset();
-                if(cycles != 1)
-                    sleep(550);
-                else
-                    sleep(450);
+
+                sleep(450);
+
                 starts();
+
                 liftTargetPos = 0;
                 liftError = liftTargetPos - lift.getCurrentPosition();
 
@@ -253,8 +287,6 @@ public class BlueLeft extends LinearOpMode //creates class
 
                 aman = false;
                 reading = Distance.getDistance(DistanceUnit.MM);
-                runFetchFreight = true;
-                runDepositFreight = false;
 
             }
 
@@ -269,12 +301,17 @@ public class BlueLeft extends LinearOpMode //creates class
 
         reading = Distance.getDistance(DistanceUnit.MM);
 
-        if (reading < 100) {
-            intakePower = 1.0;
+        telemetry.addLine("" + reading);
+        telemetry.update();
+
+        boolean timeKeeper = (whenToTurn.milliseconds() - timer) > 1300;
+        if (reading < 100 || timeKeeper) { //100
+            intakePower = 0.7;
             intake.setPower(intakePower);
             intakeB.setPower(intakePower);
         }
     }
+
 
 
 
@@ -296,44 +333,49 @@ public class BlueLeft extends LinearOpMode //creates class
 
         if (isStopRequested()) return;
 
+        //Preload deposit
+        drive.followTrajectorySequenceAsync(trajectories.get(0));
 
-        drive.setPoseEstimate(new Pose2d(11, 63, Math.toRadians(-90)));
-
-        BlueLeft(); //Initial predeposit
-
+        //Runs the lift while going to the desired preload position
         while(aman){
             drive.update();
-            keepLiftAlive();
+            keepLiftAlive(0);
         }
 
         starts();
-        ElapsedTime whenToTurn = new ElapsedTime();
-        int timer = 2750;
 
-        for(int i = 0; i < 2; i++){
-            fetchFreight();
+        //Lets us know when to turn the intake on
+        whenToTurn = new ElapsedTime();
+
+        for(int i = 1; i < 7; i+=2){
+            drive.followTrajectorySequenceAsync(trajectories.get(i));
+
             liftTargetPos = 0;
             level = 0;
 
             whenToTurn.reset();
+
+            //Goes to the warehouse, keeps the lift at the low position, and
             while(drive.isBusy()){
                 drive.update();
                 if(whenToTurn.milliseconds() > timer)
                     safeGuard();
-                keepLiftAlive();
-
+                keepLiftAlive(i);
             }
+
+            dep.setPosition(.46);
+            sleep(150);
 
             liftTargetPos = top;
             level = 3;
             aman = true;
 
-            depositCycledFreight();
+            drive.followTrajectorySequenceAsync(trajectories.get(i + 1));
 
             ElapsedTime turnOffIntake = new ElapsedTime();
             while(drive.isBusy()){
                 drive.update();
-                keepLiftAlive();
+                keepLiftAlive(i + 1);
                 intakePower = 0;
 
                 if(turnOffIntake.milliseconds() > 2250){
@@ -342,18 +384,9 @@ public class BlueLeft extends LinearOpMode //creates class
                 }
             }
             starts();
-            intakePower = -0.70;
-            cycles++;
-
-            timer = 1500;
+            intakePower = -0.85;
+            timer = 2600;
         }
-
-        TrajectorySequence traj6 = drive.trajectorySequenceBuilder(traj5.end())
-                .splineTo(new Vector2d(55, 50),Math.toRadians(0))
-
-                .build();
-
-        drive.followTrajectorySequenceAsync(traj6);
 
 
 
@@ -361,78 +394,17 @@ public class BlueLeft extends LinearOpMode //creates class
         level = 0;
         aman = false;
 
-        while(opModeIsActive()) {
+        drive.followTrajectorySequenceAsync(trajectories.get(7));
+        while(opModeIsActive()){
             drive.update();
-            keepLiftAlive();
+            keepLiftAlive(0);
         }
 
     }
 
 
 
-    public void fetchFreight() throws InterruptedException {
-        if(cycles == 0) {
-            TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(10, 19, Math.toRadians(0)))
-                    .setAccelConstraint((a,e,c,d)->30)
-                    .setVelConstraint((a,e,c,d)->30)
-                    .lineTo(new Vector2d(0, 53.6))
-                    .forward(51)
-                    .build();
 
-            drive.followTrajectorySequenceAsync(traj2); //goes to warehouse
-        } else{
-            TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())//new Pose2d(-12, -42, Math.toRadians(90)))
-                    .setAccelConstraint((a,e,c,d)->30)
-                    .setVelConstraint((a,e,c,d)->30)
-
-                    .splineTo(new Vector2d(1, 46), Math.toRadians(0))
-                    .forward(59)
-                    .build();
-
-            drive.followTrajectorySequenceAsync(traj4); //goes back to warehouse, should have enough room to go forward
-            // and accelerate over obstacle
-        }
-
-    }
-
-
-
-    public void depositCycledFreight() throws InterruptedException{
-        if(cycles == 0) {
-            traj3 = drive.trajectorySequenceBuilder(new Pose2d(51, 50, Math.toRadians(0)))
-                    //notice how y value on pose2d is -50 rather than -53.6, thats because strafing isn't and
-                    // wont ever be extremely accurate
-                    .setAccelConstraint((a,e,c,d)->30)
-                    .setVelConstraint((a,e,c,d)->30)
-                    .setReversed(true)
-                    .back(55.5)
-                    .splineTo(new Vector2d(-15, 33), Math.toRadians(-90))
-
-
-                    .build();
-            drive.followTrajectorySequenceAsync(traj3); //goes to deposit
-        } else{
-            traj5 = drive.trajectorySequenceBuilder(new Pose2d(58, 47, Math.toRadians(0)))
-                    .setAccelConstraint((a,e,c,d)->30)
-                    .setVelConstraint((a,e,c,d)->30)
-                    .setReversed(true)
-                    .back(63)
-                    .splineTo(new Vector2d(-13, 31.5), Math.toRadians(-90))
-
-
-                    .build();
-            drive.followTrajectorySequenceAsync(traj5); //goes back to deposit
-        }
-    }
-
-    public void BlueLeft() throws InterruptedException{
-
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, 63, Math.toRadians(-90)))
-                .splineTo(new Vector2d(8.5, 16.75), Math.toRadians(-90))
-                .turn(Math.toRadians(90))
-                .build();
-        drive.followTrajectorySequenceAsync(traj1); //initial deposit
-    }
 
 }
 

@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -16,6 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.CameraPipelines.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.CameraPipelines.DuckDetectionPipeline;
 import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
 import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
@@ -26,8 +26,12 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuild
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Autonomous(name = "BlueRight")
 public class BlueRight extends LinearOpMode //creates class
@@ -35,15 +39,16 @@ public class BlueRight extends LinearOpMode //creates class
     BNO055IMU imu;
     //test
     private int level = 0;
-    private double targetDeposit;
+    private boolean aman = true;
+    private double targetV4B;
+    private ArrayList<TrajectorySequence> trajectories;
+
     private DcMotorEx lift, liftB, intake, intakeB;
     private Servo v4b1, v4b2, dep;
+    private double targetDeposit;
     private CRServo duccL, duccR;
     private boolean delay = false;
 
-
-    RevBlinkinLedDriver blinkinLedDriver;
-    RevBlinkinLedDriver.BlinkinPattern pattern;
 
     private ElapsedTime extend = new ElapsedTime();
 
@@ -52,8 +57,8 @@ public class BlueRight extends LinearOpMode //creates class
     private int liftError = 0;
     private int liftTargetPos = 0;
 
-    private final int top = 650;
-    private final int med = 200;
+    private final int top = 620;
+    private final int med = 130;
 
 
     private WebcamName weCam;
@@ -61,12 +66,12 @@ public class BlueRight extends LinearOpMode //creates class
     private TSEDetectionPipeline pipeline;
     private DuckDetectionPipeline pipeline2 = new DuckDetectionPipeline();
 
-    private SampleMecanumDrive drive;
+    private SampleMecanumDrive drive; //d
 
     public void initialize() throws InterruptedException {
 
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
+        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(90)));
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
@@ -94,7 +99,6 @@ public class BlueRight extends LinearOpMode //creates class
         v4b1 = hardwareMap.servo.get("v4b1");
         v4b2 = hardwareMap.servo.get("v4b2");
         dep = hardwareMap.servo.get("dep");
-
         duccL = hardwareMap.crservo.get("DL");
         duccR = hardwareMap.crservo.get("DR");
 
@@ -105,14 +109,15 @@ public class BlueRight extends LinearOpMode //creates class
 
         v4b1.setDirection(Servo.Direction.REVERSE);
 
-        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
 
         weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
+
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
 
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
+
 
         pipeline = new TSEDetectionPipeline();
         camera.setPipeline(pipeline);
@@ -133,7 +138,6 @@ public class BlueRight extends LinearOpMode //creates class
         });
 
         while (!opModeIsActive()) {
-            //get the level, either 0, 1, or 2 (0 if not detected) - TO USE CHANGE PIPELINE
             level = pipeline.getLevel();
             telemetry.addData("DETECTED LEVEL: ",level);
 
@@ -144,7 +148,7 @@ public class BlueRight extends LinearOpMode //creates class
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
         }
-
+        dep.setPosition(.63);
         // if the latest level was 0 then it must be in the 3 position.
         if(level == 0)
             level = 3;
@@ -153,8 +157,63 @@ public class BlueRight extends LinearOpMode //creates class
         telemetry.update();
 
         camera.setPipeline(pipeline2);
+
+        initializeTrajectories();
+
         liftError = liftTargetPos - lift.getCurrentPosition();
 
+
+
+
+    }
+
+    public void initializeTrajectories() throws InterruptedException{
+        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
+        trajectories = new ArrayList<TrajectorySequence>();
+
+        double y = 42;
+
+        if (level == 1)
+            y = y + 1.8;
+
+        //Initial deposit
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 61, Math.toRadians(-90)))
+                .setAccelConstraint((a,e,c,d)->25)
+                .lineTo(new Vector2d(-24, y))
+                .turn(Math.toRadians(195))
+                .build();
+
+        //Go to duck and begin spinning
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-24, y, Math.toRadians(105)))
+                .splineTo(new Vector2d(-64.5, 60), Math.toRadians(90))
+                .build();
+
+        //Sweep trajectory
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(traj2.end())
+                .strafeRight(20)
+                .turn(Math.toRadians(17))
+                .setAccelConstraint((a,e,c,d)->7)
+                .lineTo(new Vector2d(-63,63))
+                .build();
+
+        //Final duck deposit
+        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
+                .setReversed(true)
+                .setAccelConstraint((a,e,c,d)->20)
+                .setVelConstraint((a,e,c,d)->40)
+                .splineTo(new Vector2d(-33.7, 25), Math.toRadians(0))
+                .build();
+
+        //Code to park
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
+                .lineTo(new Vector2d(-65, 39))
+                .build();
+
+        trajectories.add(traj1);
+        trajectories.add(traj2);
+        trajectories.add(traj3);
+        trajectories.add(traj4);
+        trajectories.add(traj5);
     }
 
 
@@ -166,148 +225,132 @@ public class BlueRight extends LinearOpMode //creates class
         telemetry.update();
     }
 
-    public void keepLiftAlive(){
+
+
+    public void keepLiftAlive() throws InterruptedException{
+
         if(true) {
+
             liftError = liftTargetPos - lift.getCurrentPosition();
-
-            //Takes the lift up
-
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
             liftB.setPower(lift.getPower());
-            telemetry.addData("Target Position", liftTargetPos);
-            telemetry.addData("Current position", lift.getCurrentPosition());
-            telemetry.update();
-        }
-    }
 
-
-    public void liftAndDeposit() throws InterruptedException{
-        double targetV4B = 0;
-        telemetry.addLine("enteredLift");
-        telemetry.update();
-        if(level == 1) {
-            targetV4B = .595;
-            targetDeposit = .23;
-
-        }
-        else if(level==2){
-            targetV4B=.675;
-            liftTargetPos=med;
-            targetDeposit = .23;
-        }
-
-        else if(level==3) {
-            targetV4B = .81;
-            liftTargetPos=top;
-            targetDeposit = .23;
-        }
-
-        liftError = liftTargetPos - lift.getCurrentPosition();
-
-        boolean depositRun = true;
-
-        while(liftError > 50){
-            liftError = liftTargetPos - lift.getCurrentPosition();
-
-            //Takes the lift up
-            lift.setPower(Range.clip(liftPID.getCorrection(liftError), -1, 1));
-            liftB.setPower(lift.getPower());
-
-        }
-
-        extend.reset();
-
-        while(depositRun){
-            telemetry.addData("time", extend.milliseconds());
-            telemetry.update();
-            keepLiftAlive();
-            //while(!die) {
-            if (extend.milliseconds() < 2000) {
-                keepLiftAlive();
-
-                //Moves the virtual bars forward
-                v4b1.setPosition(targetV4B);
-                v4b2.setPosition(targetV4B);
+            if(level == 1) {
+                targetV4B = .81;
+                liftTargetPos=10;
+                dep.setPosition(.46);
             }
 
-            if (extend.milliseconds() > 2000 && extend.milliseconds() < 3000) {
-                keepLiftAlive();
-
-                //Opens the deposit
-                dep.setPosition(targetDeposit);
+            else if(level==2){
+                targetV4B=.7;
+                liftTargetPos=med;
+                dep.setPosition(.46);
             }
-            if (extend.milliseconds() > 3000 && extend.milliseconds() < 4000) {
-                keepLiftAlive();
 
-                //Closes the deposit
-                // keepLiftAlive();
-
-                dep.setPosition(.63);
+            else if(level==3) {
+                targetV4B = .81;
+                liftTargetPos=top;
+                dep.setPosition(.46);
             }
-            if (extend.milliseconds() > 4000 && extend.milliseconds() < 5000) {
-                keepLiftAlive();
 
-                //Moves the virtual bars backward
-                v4b1.setPosition(.19);
-                v4b2.setPosition(.19);
-            }
-            if (extend.milliseconds() > 5000 && extend.milliseconds() < 6500) {
 
-                //Gravity pulls the lift down
+            if (aman && !drive.isBusy()) {
+                dep.setPosition(.23);
+
+                sleep(450);
+
+                starts();
+
                 liftTargetPos = 0;
-                keepLiftAlive();
+                liftError = liftTargetPos - lift.getCurrentPosition();
 
+                lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+                liftB.setPower(lift.getPower());
 
+                aman = false;
 
             }
-            if(extend.milliseconds() > 6500){
-                depositRun = false;
-            }
+
         }
+
     }
 
 
     public void starts(){
         v4b1.setPosition(.18);
         v4b2.setPosition(.18);
-        dep.setPosition(.43);
+        dep.setPosition(.63);
+        intake.setPower(0);
+        intakeB.setPower(0);
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         initialize();
-
         if(delay){
             sleep(5000);
         }
         starts();
-        blueRight();
-    }
+        //redLeft();
+        drive.followTrajectorySequenceAsync(trajectories.get(0));
 
-    public void blueRight() throws InterruptedException{
-        waitForStart();
+        while(aman){
+            drive.update();
+            keepLiftAlive();
+        }
+
+        for(int i = 1; i < trajectories.size(); i++){
+            drive.followTrajectorySequenceAsync(trajectories.get(i));
+
+            level = 0;
+            aman = false;
+
+            if(i == 2){
+                intake.setPower(-1);
+                intakeB.setPower(-1);
+            }
+
+            if(i == 3){
+                level = 3;
+                liftTargetPos = top;
+                aman = true;
+            }
+
+            while(drive.isBusy()){
+                drive.update();
+                keepLiftAlive();
+            }
+
+            intake.setPower(0);
+            intake.setPower(0);
+        }
+
+    }
+/*
+    public void BlueRight() throws InterruptedException{
+
 
         if (isStopRequested()) return;
-        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(-90)));
-        double y = 41;
+        double y = -41;//42.5
+        //level =3;
         if (level == 1) {
-            y = y + 2.8;}
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, 61, Math.toRadians(-90)))
-                .setAccelConstraint((a,e,c,d)->25)
+            y = y - 2.8;}
+        drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
+        //Initial deposit
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+                .setAccelConstraint((a,e,c,d)->45)
                 .lineTo(new Vector2d(-24, y))
-//test
-                .turn(Math.toRadians(195))
-
+                .turn(Math.toRadians(-195))
                 .build();
         drive.followTrajectorySequence(traj1);
 
+        // liftAndDeposit();
 
-        liftAndDeposit();
+        //Go to duck and begin spinning
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-24, y, Math.toRadians(-105)))
 
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-30, y, Math.toRadians(105)))
-                .splineTo(new Vector2d(-64, 62), Math.toRadians(90))
-
+                .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))
 
                 .build();
         drive.followTrajectorySequence(traj2);
@@ -315,43 +358,121 @@ public class BlueRight extends LinearOpMode //creates class
         intake.setPower(-1);
         intakeB.setPower(-1);
 
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(traj2.end())
-                .strafeRight(20)
-                .turn(Math.toRadians(15))
+        //Sweep trajectory
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
+                .strafeLeft(20)
+                .turn(Math.toRadians(-15))
                 .setAccelConstraint((a,e,c,d)->7)
-                .lineTo(new Vector2d(-60,62))
+                .lineTo(new Vector2d(-60,-62))
 
                 .build();
         drive.followTrajectorySequence(traj3);
         intake.setPower(0);
         intakeB.setPower(0);
+//        duckIntake();
+
+
+        //Final duck deposit
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
                 .setReversed(true)
 
-                .splineTo(new Vector2d(-37, 23), Math.toRadians(0))
+                .splineTo(new Vector2d(-34.5, -24), Math.toRadians(0))
 
                 .build();
-
         drive.followTrajectorySequence(traj4);
-        //level=3;
-        //liftAndDeposit();
+        level=3;
+        // liftAndDeposit();
+
+        //Code to park
         TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(new Vector2d(-63, 41.5))
+
+                .lineTo(new Vector2d(-63, -37))
 
                 .build();
         drive.followTrajectorySequence(traj5);
 
 
+        /*
+        double x = -33;
+        level=2;
+
+        if(level==1){
+             x = -33-2.3;
+        }
+
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+                .setAccelConstraint((a,e,c,d)->25)
+                .splineTo(new Vector2d(x, -21), Math.toRadians(90))
+
+                .build();
+        drive.followTrajectorySequence(traj1);
+        drive.turn(Math.toRadians(90));
+        telemetry.addData("x value", drive.getPoseEstimate().getX());
+
+       level=2;
+        liftAndDeposit();
+/*
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d(-34, -21, Math.toRadians(-180)))//
+                .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))
+
+                .build();
+        drive.followTrajectory(traj2);
+        spinDuck();
+
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
+                .splineTo(new Vector2d(-50,-33.5), Math.toRadians(-90))
+
+                .build();
+        drive.followTrajectory(traj3);
+
+        double strafe_amount = pipeline2.getDucc_x();
+        for(int i=0;i<10;i++) {
+            strafe_amount = pipeline2.getDucc_x();
+            if(strafe_amount == Integer.MIN_VALUE)
+                i--;
+        }
+        telemetry.addData("sa: ",strafe_amount);
+        telemetry.update();
+        Trajectory traj23 = drive.trajectoryBuilder(new Pose2d(-50,-33.5),Math.toRadians(-90))
+                .splineTo(new Vector2d(-50+strafe_amount,-50), Math.toRadians(-90))
+
+                .build();
+        drive.followTrajectory(traj23);
+
+        /*
+        Trajectory traj3 = drive.trajectoryBuilder(new Pose2d(-64, -60, Math.toRadians(-90)),true)
+                .splineTo(new Vector2d(-49, -35),Math.toRadians(-270))
+
+                .build();
+        drive.followTrajectory(traj3);
+
+
+        // code to intake duck - dx and dy might need to be swapped
+        // cause based on what I know, dx and dy should be right but in my testing it was not.
+        // also dy should be the right amount but we'll see, that's easy to adjust
+    //    intake.setPower(-.7);
+     //   intakeB.setPower(-.7);
+
+
+        double dx = pipeline2.getDucc_x();
+        for(int i = 0;i<35;i++){
+            double dx_add = pipeline2.getDucc_x();
+            if(dx_add != Integer.MIN_VALUE)
+                dx+=dx_add;
+        }
+        dx/=10;
+        dx*=-1;
+
+        double dy = -25;
+
+        telemetry.addData("dx: ",dx);
+        telemetry.update();
+
+        */
+        // spinDuck();*/
 
 
 
-
-
-
-
-
-
-    }
 
 
     public void spinDuck() throws InterruptedException{
@@ -361,9 +482,9 @@ public class BlueRight extends LinearOpMode //creates class
         double power = .2;
         while(spinTime.milliseconds()<=3000){
             heartbeat();
-            duccR.setPower(power);
+            duccR.setPower(-power);
 
-            duccL.setPower(power);
+            duccL.setPower(-power);
             power = power + .006;
             telemetry.addData("duck power: ",power);
             telemetry.update();*/
@@ -376,8 +497,39 @@ public class BlueRight extends LinearOpMode //creates class
         }
         duccL.setPower(0);
         duccR.setPower(0);
-        /*
 
+
+      /*  while (spinTime.milliseconds() <= 2500)
+            heartbeat();
+        duccL.setPower(0);
+        duccR.setPower(0);
+        while (spinTime.milliseconds() <= 4000) {
+
+            heartbeat();
+            duccL.setPower(-.7);
+            duccR.setPower(-.7);
+        }
+        duccL.setPower(0);
+        duccR.setPower(0);
+*/
+
+        // duckIntake();
+
+
+
+    }
+    public void duckIntake() throws InterruptedException{
+
+        ElapsedTime spinTime = new ElapsedTime();
+        intake.setPower(1);
+        intakeB.setPower(1);
+
+
+        while (spinTime.milliseconds() <= 2000)
+            heartbeat();
+        intake.setPower(0);
+        intakeB.setPower(0);
+    }
     public static double get_dist(DuckDetectionPipeline pipeline){
         int cnt = 0;
         double mean = 0;
@@ -392,14 +544,5 @@ public class BlueRight extends LinearOpMode //creates class
         return mean;
     }
 
-    public double duccAttack(){
-        double dx = get_dist(pipeline2);
-        while(dx < -100) {
-            dx = get_dist(pipeline2);//pipeline2.getDucc_x();
-            telemetry.addData("DX: ,", dx);
-            telemetry.update();
-        }
-        return dx;
-    }*/
-}}
+}
 
