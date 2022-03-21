@@ -26,16 +26,14 @@ import org.firstinspires.ftc.teamcode.EasyToggle;
 @TeleOp(name="TestOp")
 public class TestOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, intakeB, lift, liftB;
-    private Servo v4b1, v4b2, dep;
-    private CRServo duccL, duccR;
+    private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, ducc;
+    private Servo arm1, arm2, dep, fold;
     private boolean direction, togglePrecision;
     Orientation angles;
 
     private double factor;
     //test
     boolean reverse;
-    private Rev2mDistanceSensor Distance;
     BNO055IMU imu;
 
     EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
@@ -43,10 +41,10 @@ public class TestOp extends OpMode {
 
     @Override
     public void init() {
-        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
-        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
-        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
-        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
+        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
+        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
+        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
+        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
 
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -61,8 +59,6 @@ public class TestOp extends OpMode {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
@@ -75,30 +71,21 @@ public class TestOp extends OpMode {
 
         lift.setDirection(DcMotor.Direction.REVERSE);
 
-        liftB = (DcMotorEx) hardwareMap.dcMotor.get("LIB");
-        liftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        ducc = (DcMotorEx) hardwareMap.dcMotor.get("DU");
+        ducc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ducc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ducc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        liftB.setDirection(DcMotor.Direction.REVERSE);
 
-        intakeB = (DcMotorEx) hardwareMap.dcMotor.get("INB");
-        intakeB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        v4b1 = hardwareMap.servo.get("v4b1");
-        v4b2 = hardwareMap.servo.get("v4b2");
+        arm1 = hardwareMap.servo.get("arm1");
+        arm2 = hardwareMap.servo.get("arm2");
         dep = hardwareMap.servo.get("dep");
+        fold = hardwareMap.servo.get("fold");
 
-        duccL = hardwareMap.crservo.get("DL");
-        duccR = hardwareMap.crservo.get("DR");
 
-        duccL.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        v4b1.setDirection(Servo.Direction.REVERSE);
+        arm1.setDirection(Servo.Direction.REVERSE);
 
-        Distance = (Rev2mDistanceSensor) hardwareMap.get(DistanceSensor.class, "detect");
 
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -110,9 +97,7 @@ public class TestOp extends OpMode {
         parameters.loggingTag = "IMU";
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        v4b1.setPosition(.19);
-        v4b2.setPosition(.19);
-        dep.setPosition(.52);
+        fold.setPosition(.5);
 
 
     }
@@ -126,118 +111,79 @@ public class TestOp extends OpMode {
     public void loop() {
         toggleA.updateStart(gamepad1.a);
         //toggles precision mode if the right stick button is pressed
-        if (gamepad1.left_stick_button)
-            togglePrecision = true;
-        else if (gamepad1.right_stick_button)
-            togglePrecision = false;
+        drive();
+        intake();
+        duck();
 
-        //sets the factor multiplied to the power of the motors
-        factor = togglePrecision ? .3 : 1; //the power is 1/5th of its normal value while in precision mode
-
-        // Do not mess with this, if it works, it works
-        double x = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        double stickAngle = Math.atan2(direction ? -gamepad1.left_stick_y : gamepad1.left_stick_y, direction ? gamepad1.left_stick_x : -gamepad1.left_stick_x); // desired robot angle from the angle of stick
-        double powerAngle = stickAngle - (Math.PI / 4); // conversion for correct power values
-        double rightX = -gamepad1.right_stick_x; // right stick x axis controls turning
-        final double leftFrontPower = Range.clip(x * Math.cos(powerAngle) - rightX, -1.0, 1.0);
-        final double leftRearPower = Range.clip(x * Math.sin(powerAngle) - rightX, -1.0, 1.0);
-        final double rightFrontPower = Range.clip(x * Math.sin(powerAngle) + rightX, -1.0, 1.0);
-        final double rightRearPower = Range.clip(x * Math.cos(powerAngle) + rightX, -1.0, 1.0);
-
-        //leftFront.setDirection(DcMotor.Direction.FORWARD);
-        //leftBack.setDirection(DcMotor.Direction.FORWARD);
-        //rightFront.setDirection(DcMotor.Direction.REVERSE);
-        //rightBack.setDirection(DcMotor.Direction.REVERSE);
-        leftFront.setPower(leftFrontPower * factor);
-        leftBack.setPower(leftRearPower * factor);
-        rightFront.setPower(rightFrontPower * factor);
-        rightBack.setPower(rightRearPower * factor);
-
-        speak();
-        lift();
-        succ();
-        duccSpin();
-        deposit();
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
 
-        telemetry.addData("lift", lift.getCurrentPosition());
-        telemetry.addData("Angle", angles.firstAngle);
-        telemetry.addData("distance", Distance.getDistance(DistanceUnit.MM));
+
         telemetry.update();
         toggleA.updateEnd();
 
         //deadwheel time
         // deadwheels were a lie :(
     }
+    public void drive(){
+        if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1  || Math.abs(gamepad1.right_stick_x) > 0.1) {
+            double FLP = gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
+            double FRP = -gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
+            double BLP = gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
+            double BRP = -gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
+            double max = Math.max(Math.max(Math.abs(FLP), Math.abs(FRP)), Math.max(Math.abs(BLP), Math.abs(BRP)));
+            if (max > 1) {
+                FLP /= max;
+                FRP /= max;
+                BLP /= max;
+                BRP /= max;
+            }
+            if (gamepad1.right_trigger > 0.5) {
+                leftFront.setPower(FLP * 0.35);
+                rightFront.setPower(FRP * 0.35);
+                leftBack.setPower(BLP * 0.35);
+                rightBack.setPower(BRP * 0.35);
+                telemetry.addData("FrontLeftPow:", FLP * 0.35);
+                telemetry.addData("FrontRightPow:", FRP * 0.35);
+                telemetry.addData("BackLeftPow:", BLP * 0.35);
+                telemetry.addData("BackRightPow:", BRP * 0.35);
+            } else {
+                leftFront.setPower(FLP);
+                rightFront.setPower(FRP);
+                leftBack.setPower(BLP);
+                rightBack.setPower(BRP);
+            }
+        } else {
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+        }
+    }
 
-    public void succ() {
-        if (gamepad1.left_trigger > .5) {
-            intake.setPower(-.95);
-            intakeB.setPower(-.95);
-        } else if (gamepad1.left_bumper) {
-            intake.setPower(.95);
-            intakeB.setPower(.95);
+    public void intake(){
+        if(gamepad1.left_trigger > .5){
+            intake.setPower(1);
+            fold.setPosition(.27);
+        } else if (gamepad1.left_bumper){
+            intake.setPower(-1);
+            fold.setPosition(.27);
         } else {
             intake.setPower(0);
-            intakeB.setPower(0);
+            fold.setPosition(.5);
         }
 
-    }
 
-    public void speak() {
-        if (gamepad1.dpad_left) {
-            telemetry.speak("FOR JON IN JON ON JON");
-        }
     }
-
-    public void lift() {
-        if (gamepad1.dpad_up) {
-            lift.setPower(.9);
-            liftB.setPower(.9);
-        } else if (gamepad1.dpad_down) {
-            lift.setPower(.01);
-            liftB.setPower(.01);
+    public void duck(){
+        if(gamepad1.right_bumper && gamepad1.a) {
+            ducc.setPower(1);
+        } else if(gamepad1.right_bumper) {
+            ducc.setPower(.5);
         } else {
-            lift.setPower(0);
-            liftB.setPower(0);
+            ducc.setPower(0);
         }
     }
 
-    public void duccSpin() {
-        if (gamepad1.a) {
-            duccL.setPower(1);
-            duccR.setPower(1);
-        } else {
-            duccL.setPower(0);
-            duccR.setPower(0);
-        }
     }
-
-    public void deposit() {
-        if (gamepad1.x) {
-            v4b1.setPosition(.19);
-            v4b2.setPosition(.19);
-            //intake position
-        } else if (gamepad1.y) {
-            v4b1.setPosition(.81);
-            v4b2.setPosition(.81);
-            //deposit position
-        } else if (gamepad1.b) {
-            v4b1.setPosition(.5);
-            v4b2.setPosition(.5);
-            //vertical position for asserting dominance
-        }
-
-        if (gamepad1.right_trigger > .4) {
-            dep.setPosition(.3);
-        } else {
-            dep.setPosition(.52);
-        }
-        telemetry.addData("intake current", intake.getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("intakeB current", intakeB.getCurrent(CurrentUnit.AMPS));
-    }
-
-
-}
