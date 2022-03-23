@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.EasyToggle;
+import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 //not paying attention in CS2 pog
 
 // this is a test teleop class for testing. Do not use in competition. - Seb on may 7th, 2021.
@@ -30,12 +31,19 @@ public class TestOp extends OpMode {
     private Servo arm1, arm2, dep, fold;
     private boolean direction, togglePrecision;
     Orientation angles;
+    EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
+    EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
+    EasyToggle toggleIn = new EasyToggle("in", false, 1, false, false);
+    EasyToggle toggleOut = new EasyToggle("out", false, 1, false, false);
 
     private double factor;
     //test
     boolean reverse;
     BNO055IMU imu;
-
+    private LiftPID liftPID = new LiftPID(.025, 0, 0);
+    int top = 1000;
+    int liftError = 0;
+    int liftTargetPos = 0;
     EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
 
 
@@ -64,6 +72,7 @@ public class TestOp extends OpMode {
         lift = (DcMotorEx) hardwareMap.dcMotor.get("LI");
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -98,6 +107,9 @@ public class TestOp extends OpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         fold.setPosition(.5);
+        dep.setPosition(.57);
+        arm1.setPosition(.5);
+        arm2.setPosition(.5);
         //color sensor is named color
 
     }
@@ -109,19 +121,31 @@ public class TestOp extends OpMode {
 
     @Override
     public void loop() {
+        toggleUp.updateStart(gamepad1.dpad_up/*gamepad2.dpad_up*/);
+        toggleDown.updateStart(gamepad1.dpad_down/*gamepad2.dpad_down*/);
+        toggleIn.updateStart(gamepad1.left_trigger>.5/*gamepad2.dpad_up*/);
+        toggleOut.updateStart(gamepad1.left_bumper/*gamepad2.dpad_down*/);
+
         toggleA.updateStart(gamepad1.a);
         //toggles precision mode if the right stick button is pressed
         drive();
         intake();
         duck();
         arm();
+        macroLift();
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
 
-
+        telemetry.addData("lift", lift.getCurrentPosition());
+        telemetry.addData("lift Power", lift.getPower());
+        telemetry.addData("liftTargetPos", liftTargetPos);
         telemetry.update();
         toggleA.updateEnd();
+        toggleUp.updateEnd();
+        toggleDown.updateEnd();
+        toggleIn.updateEnd();
+        toggleOut.updateEnd();
 
         //deadwheel time
         // deadwheels were a lie :(
@@ -163,15 +187,24 @@ public class TestOp extends OpMode {
     }
 
     public void intake(){
-        if(gamepad1.left_trigger > .5){
+        if(toggleIn.nowTrue()){
             intake.setPower(1);
             fold.setPosition(.27);
-        } else if (gamepad1.left_bumper){
+            arm1.setPosition(.2);
+            arm2.setPosition(.2);
+        } else if (toggleOut.nowTrue()){
             intake.setPower(-1);
             fold.setPosition(.27);
-        } else {
+            arm1.setPosition(.2);
+            arm2.setPosition(.2);
+        } else if(toggleOut.nowFalse() || toggleIn.nowFalse()) {
             intake.setPower(0);
             fold.setPosition(.5);
+            arm1.setPosition(.2);
+            arm2.setPosition(.2);
+            arm1.setPosition(.5);
+            arm2.setPosition(.5);
+
         }
 
 
@@ -188,8 +221,8 @@ public class TestOp extends OpMode {
 
     public void arm(){
         if(gamepad1.x){
-            arm1.setPosition(.18);
-            arm2.setPosition(.18);
+            arm1.setPosition(.20);
+            arm2.setPosition(.20);
         } else if (gamepad1.b){
             arm1.setPosition(.5);
             arm2.setPosition(.5);
@@ -200,4 +233,14 @@ public class TestOp extends OpMode {
         }
     }
 
+    public void macroLift(){
+        liftError = liftTargetPos - lift.getCurrentPosition();
+        lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+        if(toggleUp.nowTrue() && arm1.getPosition() > .4){
+            liftTargetPos = top;
+        }
+        if(toggleDown.nowTrue()){
+            liftTargetPos = 0;
+        }
+    }
     }
