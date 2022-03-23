@@ -1,8 +1,5 @@
-package org.firstinspires.ftc.teamcode.auto;
+/*package org.firstinspires.ftc.teamcode.auto;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,30 +8,22 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.CameraPipelines.CubeDetectionPipeline;
 import org.firstinspires.ftc.teamcode.CameraPipelines.DuckDetectionPipeline;
-import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 import org.firstinspires.ftc.teamcode.CameraPipelines.NewDetectionPipeline;
+import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
+import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-
-@Autonomous(name = "duckTest")
-public class duckTest extends LinearOpMode //creates class
+@Autonomous(name = "TSETest")
+public class TSETest extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
     //test
@@ -77,7 +66,7 @@ public class duckTest extends LinearOpMode //creates class
 
     private WebcamName weCam;
     private OpenCvCamera camera;
-    private DuckDetectionPipeline pipeline;
+    private TSEDetectionPipeline pipeline;
 
     private SampleMecanumDrive drive;
 
@@ -128,7 +117,7 @@ public class duckTest extends LinearOpMode //creates class
         camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
 
 
-        pipeline = new DuckDetectionPipeline();
+        pipeline = new TSEDetectionPipeline();
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -147,7 +136,7 @@ public class duckTest extends LinearOpMode //creates class
         });
 
         while (!opModeIsActive()) {
-            telemetry.addData("ducc x ", pipeline.getDucc_x());
+            telemetry.addData("level: ", pipeline.getLevel());
             telemetry.update();
         }
 
@@ -174,5 +163,5 @@ public class duckTest extends LinearOpMode //creates class
 
     }
 
-}
+}*/
 
