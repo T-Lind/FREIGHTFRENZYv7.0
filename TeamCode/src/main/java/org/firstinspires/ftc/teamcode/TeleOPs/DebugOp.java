@@ -28,7 +28,7 @@ public class DebugOp extends OpMode{
     private Servo arm1, arm2, dep, fold;
     private boolean direction, togglePrecision;
     Orientation angles;
-    double foldI = .5;
+    double foldI = .83;
     private double factor;
     //test
     boolean reverse;
@@ -131,14 +131,13 @@ public class DebugOp extends OpMode{
             foldI -= .01;
         }
 
-        fold.setPosition(foldI);
-
+        dep.setPosition(foldI);
 
         telemetry.addData("RF", rightFront.getCurrentPosition());
         telemetry.addData("RB", rightBack.getCurrentPosition());
         telemetry.addData("LF", leftFront.getCurrentPosition());
         telemetry.addData("LB", leftBack.getCurrentPosition());
-        telemetry.addData("fold", fold.getPosition());
+        telemetry.addData("arm", dep.getPosition());
         telemetry.update();
 
 

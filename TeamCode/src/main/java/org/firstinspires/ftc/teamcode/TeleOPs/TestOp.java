@@ -98,7 +98,7 @@ public class TestOp extends OpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         fold.setPosition(.5);
-
+        //color sensor is named color
 
     }
 
@@ -114,7 +114,7 @@ public class TestOp extends OpMode {
         drive();
         intake();
         duck();
-
+        arm();
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
@@ -183,6 +183,20 @@ public class TestOp extends OpMode {
             ducc.setPower(.5);
         } else {
             ducc.setPower(0);
+        }
+    }
+
+    public void arm(){
+        if(gamepad1.x){
+            arm1.setPosition(.18);
+            arm2.setPosition(.18);
+        } else if (gamepad1.b){
+            arm1.setPosition(.5);
+            arm2.setPosition(.5);
+        } else if (gamepad1.y){
+            arm1.setPosition(.83);
+            arm2.setPosition(.83);
+
         }
     }
 
