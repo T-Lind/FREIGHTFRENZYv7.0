@@ -21,6 +21,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.EasyToggle;
 import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
+//import rev color sensor stuff
+import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
 //not paying attention in CS2 pog
 
 // this is a test teleop class for testing. Do not use in competition. - Seb on may 7th, 2021.
@@ -28,6 +32,7 @@ import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 public class TestOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, ducc;
+
     private Servo arm1, arm2, dep, fold;
     private boolean direction, togglePrecision;
     Orientation angles;
@@ -36,16 +41,22 @@ public class TestOp extends OpMode {
     EasyToggle toggleIn = new EasyToggle("in", false, 1, false, false);
     EasyToggle toggleOut = new EasyToggle("out", false, 1, false, false);
 
+
     private double factor;
     //test
     boolean reverse;
     BNO055IMU imu;
-    private LiftPID liftPID = new LiftPID(.025, 0, 0);
+    private LiftPID liftPID = new LiftPID(.02, 0, 0);
     int top = 1000;
     int liftError = 0;
     int liftTargetPos = 0;
     EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
-
+    //declare a rev color sensor v3 called color
+    private RevColorSensorV3 color;
+    boolean intook = false;
+    // initialize an elapsed time named test
+    ElapsedTime test = new ElapsedTime();
+    int element = 0;
 
     @Override
     public void init() {
@@ -66,6 +77,7 @@ public class TestOp extends OpMode {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
 
         intake = (DcMotorEx) hardwareMap.dcMotor.get("IN");
@@ -90,11 +102,12 @@ public class TestOp extends OpMode {
         arm2 = hardwareMap.servo.get("arm2");
         dep = hardwareMap.servo.get("dep");
         fold = hardwareMap.servo.get("fold");
+        //initialize the color sensor
+        color = hardwareMap.get(RevColorSensorV3.class, "color");
 
 
 
         arm1.setDirection(Servo.Direction.REVERSE);
-
 
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -123,7 +136,7 @@ public class TestOp extends OpMode {
     public void loop() {
         toggleUp.updateStart(gamepad1.dpad_up/*gamepad2.dpad_up*/);
         toggleDown.updateStart(gamepad1.dpad_down/*gamepad2.dpad_down*/);
-        toggleIn.updateStart(gamepad1.left_trigger>.5/*gamepad2.dpad_up*/);
+        toggleIn.updateStart(gamepad1.left_trigger > .5/*gamepad2.dpad_up*/);
         toggleOut.updateStart(gamepad1.left_bumper/*gamepad2.dpad_down*/);
 
         toggleA.updateStart(gamepad1.a);
@@ -133,9 +146,19 @@ public class TestOp extends OpMode {
         duck();
         arm();
         macroLift();
+        deposit();
+        check();
+
+
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
+        //add the color sensor information to telemetry
+        telemetry.addData("Red", color.red());
+        telemetry.addData("Blue", color.blue());
+        telemetry.addData("Green", color.green());
+
+        telemetry.addData("Alpha", color.alpha());
 
         telemetry.addData("lift", lift.getCurrentPosition());
         telemetry.addData("lift Power", lift.getPower());
@@ -150,8 +173,9 @@ public class TestOp extends OpMode {
         //deadwheel time
         // deadwheels were a lie :(
     }
-    public void drive(){
-        if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1  || Math.abs(gamepad1.right_stick_x) > 0.1) {
+
+    public void drive() {
+        if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1) {
             double FLP = gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
             double FRP = -gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
             double BLP = gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
@@ -186,61 +210,86 @@ public class TestOp extends OpMode {
         }
     }
 
-    public void intake(){
-        if(toggleIn.nowTrue()){
+    public void intake() {
+        if (toggleIn.nowTrue()) {
             intake.setPower(1);
             fold.setPosition(.27);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
-        } else if (toggleOut.nowTrue()){
+        } else if (toggleOut.nowTrue()) {
             intake.setPower(-1);
             fold.setPosition(.27);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
-        } else if(toggleOut.nowFalse() || toggleIn.nowFalse()) {
+        } else if (toggleOut.nowFalse() || toggleIn.nowFalse()) {
             intake.setPower(0);
             fold.setPosition(.5);
-            arm1.setPosition(.2);
-            arm2.setPosition(.2);
             arm1.setPosition(.5);
             arm2.setPosition(.5);
 
         }
-
+        if(!(element == 0) && gamepad1.left_trigger > .5){
+            intake.setPower(-1);
+        }
 
     }
-    public void duck(){
-        if(gamepad1.right_bumper && gamepad1.a) {
+
+    //create a function that sets dep position to .57 if gamepad 1 right trigger is greater than .5, and if not, set dep to .4 if the color alpha is greater than 2000.
+    public void deposit() {
+        if (gamepad1.right_trigger > .5) {
+            dep.setPosition(.6);
+        } else if (element == 2) {
+            dep.setPosition(.45);
+        } else if(element == 1){
+            dep.setPosition(.4);
+        } else if(element == 0){
+            dep.setPosition(.57);
+        }
+    }
+
+    public void check(){
+        if(color.alpha() > 7500) {
+            element = 2;
+        } else if (color.alpha() > 1000){
+            element = 1;
+        }else{
+            element = 0;
+        }
+    }
+
+    public void duck() {
+        if (gamepad1.right_bumper && gamepad1.a) {
             ducc.setPower(1);
-        } else if(gamepad1.right_bumper) {
+        } else if (gamepad1.right_bumper) {
             ducc.setPower(.5);
         } else {
             ducc.setPower(0);
         }
     }
 
-    public void arm(){
-        if(gamepad1.x){
-            arm1.setPosition(.20);
-            arm2.setPosition(.20);
-        } else if (gamepad1.b){
+    public void arm() {
+        if (gamepad1.x) {
             arm1.setPosition(.5);
             arm2.setPosition(.5);
-        } else if (gamepad1.y){
+        } else if (gamepad1.y) {
             arm1.setPosition(.83);
             arm2.setPosition(.83);
 
         }
     }
 
-    public void macroLift(){
+    public void macroLift() {
         liftError = liftTargetPos - lift.getCurrentPosition();
         lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
-        if(toggleUp.nowTrue() && arm1.getPosition() > .4){
+        if (toggleUp.nowTrue() && arm1.getPosition() > .4) {
             liftTargetPos = top;
+            arm1.setPosition(.83);
+            arm2.setPosition(.83);
         }
-        if(toggleDown.nowTrue()){
+        if (toggleDown.nowTrue()) {
             liftTargetPos = 0;
+            arm1.setPosition(.5);
+            arm2.setPosition(.5);
         }
     }
-    }
+}
