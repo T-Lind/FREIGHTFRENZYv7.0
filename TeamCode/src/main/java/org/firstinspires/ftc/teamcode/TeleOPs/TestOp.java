@@ -46,7 +46,7 @@ public class TestOp extends OpMode {
     //test
     boolean reverse;
     BNO055IMU imu;
-    private LiftPID liftPID = new LiftPID(.02, 0, 0);
+    private LiftPID liftPID = new LiftPID(.02, 0, .01);
     int top = 1000;
     int liftError = 0;
     int liftTargetPos = 0;

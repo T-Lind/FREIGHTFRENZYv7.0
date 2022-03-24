@@ -47,10 +47,10 @@ public class RogueOp extends OpMode {
     //test
     boolean reverse;
     BNO055IMU imu;
-    private LiftPID liftPID = new LiftPID(.02, 0, 0);
+    private LiftPID liftPID = new LiftPID(.02, 0, .01);
     int top = 1000;
     int mid = 500;
-    int shared = 100;
+    int shared = 200;
     int setPos = top;
     int liftError = 0;
     int liftTargetPos = 0;
@@ -61,7 +61,7 @@ public class RogueOp extends OpMode {
     // initialize an elapsed time named test
     ElapsedTime test = new ElapsedTime();
     int element = 0;
-
+    boolean liftTime = false;
     @Override
     public void init() {
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
@@ -170,7 +170,7 @@ public class RogueOp extends OpMode {
         telemetry.addData("Alpha", color.alpha());
 
         telemetry.addData("lift", lift.getCurrentPosition());
-        telemetry.addData("lift Power", lift.getPower());
+        telemetry.addData("setPos", setPos);
         telemetry.addData("liftTargetPos", liftTargetPos);
         telemetry.update();
         toggleA.updateEnd();
@@ -295,11 +295,16 @@ public class RogueOp extends OpMode {
             liftTargetPos = setPos;
             arm1.setPosition(.83);
             arm2.setPosition(.83);
+            liftTime = true;
         }
         if (toggleDown.nowTrue()) {
             liftTargetPos = 0;
             arm1.setPosition(.5);
             arm2.setPosition(.5);
+            liftTime = false;
+        }
+        if(liftTime){
+            liftTargetPos = setPos;
         }
     }
 

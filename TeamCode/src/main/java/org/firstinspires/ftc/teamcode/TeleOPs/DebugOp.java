@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.EasyToggle;
+import org.firstinspires.ftc.teamcode.PIDS.LiftPID;
 
 // this is a test teleop class for testing. Do not use in competition. - Seb on may 7th, 2021.
 @TeleOp(name="DebugOp")
@@ -27,14 +28,25 @@ public class DebugOp extends OpMode{
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, ducc;
     private Servo arm1, arm2, dep, fold;
     private boolean direction, togglePrecision;
+    double p = .02;
+    double d = .01;
+    private double targetV4B = 0.81;
+    private LiftPID liftPID = new LiftPID(p, 0, d);
     Orientation angles;
     double foldI = .83;
     private double factor;
     //test
     boolean reverse;
     BNO055IMU imu;
+    int liftError = 0;
+    int liftTargetPos = 1000;
 
     EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
+    EasyToggle toggleB = new EasyToggle("b", false, 1, false, false);
+    EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
+    EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
+    EasyToggle levelUp = new EasyToggle("lu", false, 1, false, false);
+    EasyToggle levelDown = new EasyToggle("ld", false, 1, false, false);
 
 
     @Override
@@ -98,49 +110,60 @@ public class DebugOp extends OpMode{
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-
+        arm1.setPosition(.5);
+        arm2.setPosition(.5);
 
     }
 
     @Override
     public void loop() {
-        if(gamepad1.a) {
-            leftBack.setPower(.1);
-        } else {
-            leftBack.setPower(0);
+        toggleUp.updateStart(gamepad1.right_bumper/*gamepad2.dpad_up*/);
+        toggleDown.updateStart(gamepad1.left_bumper/*gamepad2.dpad_down*/);
+        levelUp.updateStart(gamepad1.dpad_up/*gamepad2.dpad_up*/);
+        levelDown.updateStart(gamepad1.dpad_down/*gamepad2.dpad_down*/);
+        toggleA.updateStart(gamepad1.a);
+        toggleB.updateStart(gamepad1.b);
+        if(levelUp.nowTrue()){
+            p += .005;
+        } else if (levelDown.nowTrue()){
+            p -= .005;
         }
-        if(gamepad1.b) {
-            rightBack.setPower(.1);
-        }else {
-            rightBack.setPower(0);
+        if(toggleB.nowTrue()){
+            d += .005;
+        } else if(toggleA.nowTrue()){
+            d -= .005;
         }
-        if(gamepad1.x) {
-            leftFront.setPower(.1);
-        }else {
-            leftFront.setPower(0);
-        }
-        if(gamepad1.y) {
-            rightFront.setPower(.1);
-        }else {
-            rightFront.setPower(0);
-        }
-        if(gamepad1.dpad_up){
-            foldI += .01;
-        }
-        if(gamepad1.dpad_down){
-            foldI -= .01;
-        }
+        liftPID.setPD(p,d);
+        macroLift();
 
-        dep.setPosition(foldI);
-
-        telemetry.addData("RF", rightFront.getCurrentPosition());
-        telemetry.addData("RB", rightBack.getCurrentPosition());
-        telemetry.addData("LF", leftFront.getCurrentPosition());
-        telemetry.addData("LB", leftBack.getCurrentPosition());
-        telemetry.addData("arm", dep.getPosition());
+        telemetry.addData("p", p);
+        telemetry.addData("d", d);
+        telemetry.addData("lift position", lift.getCurrentPosition());
         telemetry.update();
 
 
+        toggleUp.updateEnd();
+        toggleDown.updateEnd();
+        levelUp.updateEnd();
+        levelDown.updateEnd();
+        toggleA.updateEnd();
+        toggleB.updateEnd();
+    }
+
+    public void macroLift() {
+        liftError = liftTargetPos - lift.getCurrentPosition();
+        lift.setPower(Range.clip(liftPID.getCorrection(liftError), -.02, 1));
+        if (toggleUp.nowTrue()) {
+            liftTargetPos = 1000;
+            arm1.setPosition(.83);
+            arm2.setPosition(.83);
+
+        }
+        if (toggleDown.nowTrue()) {
+            liftTargetPos = 0;
+            arm1.setPosition(.5);
+            arm2.setPosition(.5);
+        }
 
     }
 }
