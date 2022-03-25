@@ -49,8 +49,10 @@ public class BlueLeft extends LinearOpMode //creates class
     private Servo v4b1, v4b2, dep;
     private CRServo duccL, duccR;
 
+    double p = .02;
+    double d = .01;
     private double targetV4B = 0.81;
-
+    private LiftPID liftPID = new LiftPID(p, 0, d);
 
     private ArrayList<TrajectorySequence> trajectories;
     private double intakePower = -0.85;
@@ -65,7 +67,6 @@ public class BlueLeft extends LinearOpMode //creates class
 
 
     final int liftGrav = (int) (9.8 * 3);
-    private LiftPID liftPID = new LiftPID(.05, 0, 0);
     private int liftError = 0;
     private int liftTargetPos = 0;
 
