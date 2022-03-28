@@ -62,6 +62,7 @@ public class RogueOp extends OpMode {
     ElapsedTime test = new ElapsedTime();
     int element = 0;
     boolean liftTime = false;
+    boolean checkTime = true;
     @Override
     public void init() {
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
@@ -226,17 +227,25 @@ public class RogueOp extends OpMode {
             fold.setPosition(.29);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
+            checkTime = true;
+            liftTargetPos = 0;
+            liftTime = false;
+
         } else if (toggleOut.nowTrue()) {
             intake.setPower(-1);
             fold.setPosition(.29);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
+            checkTime = true;
+            liftTargetPos = 0;
+            liftTime = false;
+
         } else if (toggleOut.nowFalse() || toggleIn.nowFalse()) {
             intake.setPower(0);
             fold.setPosition(.5);
             arm1.setPosition(.5);
             arm2.setPosition(.5);
-
+            checkTime = false;
         }
         if(!(element == 0) && gamepad1.left_trigger > .5){
             intake.setPower(-1);
@@ -258,12 +267,14 @@ public class RogueOp extends OpMode {
     }
 
     public void check(){
-        if(color.alpha() > 7500) {
-            element = 2;
-        } else if (color.alpha() > 1000){
-            element = 1;
-        }else{
-            element = 0;
+        if(arm1.getPosition() <= .5) {
+            if (color.alpha() > 7500) {
+                element = 2;
+            } else if (color.alpha() > 1000) {
+                element = 1;
+            } else {
+                element = 0;
+            }
         }
     }
 
@@ -278,13 +289,15 @@ public class RogueOp extends OpMode {
     }
 
     public void arm() {
-        if (gamepad2.x) {
-            arm1.setPosition(.5);
-            arm2.setPosition(.5);
-        } else if (gamepad2.y) {
-            arm1.setPosition(.83);
-            arm2.setPosition(.83);
+        if(intake.getPower() == 0) {
+            if (gamepad2.x) {
+                arm1.setPosition(.5);
+                arm2.setPosition(.5);
+            } else if (gamepad2.y) {
+                arm1.setPosition(.83);
+                arm2.setPosition(.83);
 
+            }
         }
     }
 
