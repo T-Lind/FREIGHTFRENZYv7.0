@@ -47,10 +47,10 @@ public class RogueOp extends OpMode {
     //test
     boolean reverse;
     BNO055IMU imu;
-    private LiftPID liftPID = new LiftPID(.02, 0, .01);
+    private LiftPID liftPID = new LiftPID(.0075, 0, .003);
     int top = 1000;
     int mid = 500;
-    int shared = 200;
+    int shared = 250;
     int setPos = top;
     int liftError = 0;
     int liftTargetPos = 0;
@@ -223,12 +223,12 @@ public class RogueOp extends OpMode {
     public void intake() {
         if (toggleIn.nowTrue()) {
             intake.setPower(1);
-            fold.setPosition(.27);
+            fold.setPosition(.29);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
         } else if (toggleOut.nowTrue()) {
             intake.setPower(-1);
-            fold.setPosition(.27);
+            fold.setPosition(.29);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
         } else if (toggleOut.nowFalse() || toggleIn.nowFalse()) {
@@ -290,7 +290,7 @@ public class RogueOp extends OpMode {
 
     public void macroLift() {
         liftError = liftTargetPos - lift.getCurrentPosition();
-        lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+        lift.setPower(Range.clip(liftPID.getCorrection(liftError), -.7, 1));
         if (toggleUp.nowTrue() && arm1.getPosition() > .4) {
             liftTargetPos = setPos;
             arm1.setPosition(.83);

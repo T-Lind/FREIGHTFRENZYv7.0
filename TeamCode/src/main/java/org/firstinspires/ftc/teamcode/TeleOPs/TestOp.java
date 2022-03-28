@@ -46,7 +46,7 @@ public class TestOp extends OpMode {
     //test
     boolean reverse;
     BNO055IMU imu;
-    private LiftPID liftPID = new LiftPID(.02, 0, .01);
+    private LiftPID liftPID = new LiftPID(.0075, 0, .002);
     int top = 1000;
     int liftError = 0;
     int liftTargetPos = 0;
@@ -86,7 +86,7 @@ public class TestOp extends OpMode {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -280,7 +280,7 @@ public class TestOp extends OpMode {
 
     public void macroLift() {
         liftError = liftTargetPos - lift.getCurrentPosition();
-        lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
+        lift.setPower(Range.clip(liftPID.getCorrection(liftError), -.7, 1));
         if (toggleUp.nowTrue() && arm1.getPosition() > .4) {
             liftTargetPos = top;
             arm1.setPosition(.83);
