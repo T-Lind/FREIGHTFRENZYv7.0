@@ -144,8 +144,8 @@ public class RogueOp extends OpMode {
         toggleDown.updateStart(gamepad2.left_bumper/*gamepad2.dpad_down*/);
         toggleIn.updateStart(gamepad1.left_trigger > .5/*gamepad2.dpad_up*/);
         toggleOut.updateStart(gamepad1.left_bumper/*gamepad2.dpad_down*/);
-        levelUp.updateStart(gamepad2.dpad_up/*gamepad2.dpad_up*/);
-        levelDown.updateStart(gamepad2.dpad_down/*gamepad2.dpad_down*/);
+        levelUp.updateStart(gamepad2.y/*gamepad2.dpad_up*/);
+        levelDown.updateStart(gamepad2.x/*gamepad2.dpad_down*/);
 
 
         toggleA.updateStart(gamepad1.a);
@@ -255,7 +255,7 @@ public class RogueOp extends OpMode {
 
     //create a function that sets dep position to .57 if gamepad 1 right trigger is greater than .5, and if not, set dep to .4 if the color alpha is greater than 2000.
     public void deposit() {
-        if (gamepad2.right_trigger > .5) {
+        if (gamepad2.dpad_up /*gamepad2.right_trigger > .5*/) {
             dep.setPosition(.6);
         } else if (element == 2) {
             dep.setPosition(.45);
@@ -288,11 +288,11 @@ public class RogueOp extends OpMode {
         }
     }
 
-    public void arm() {
+    public void arm() {0
         if(intake.getPower() == 0) {
             if (gamepad2.x) {
-                arm1.setPosition(.5);
-                arm2.setPosition(.5);
+                //arm1.setPosition(.5);
+                //arm2.setPosition(.5);
             } else if (gamepad2.y) {
                 arm1.setPosition(.83);
                 arm2.setPosition(.83);
