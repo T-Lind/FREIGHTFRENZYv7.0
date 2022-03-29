@@ -366,15 +366,16 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
         drive.followTrajectorySequence(traj2);
 
 */
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11,-63, Math.toRadians(90)))
                 .splineTo(new Vector2d(2,-36), Math.toRadians(130))
                 .setReversed(true)
                 .splineTo(new Vector2d(14,-64), Math.toRadians(0))
                 .strafeLeft(4.3)
                 .setReversed(false)
                 .back(35)
-                .forward(40)
-                .splineTo(new Vector2d(4,-41), Math.toRadians(135))
+                .forward(30)
+                .splineTo(new Vector2d(-3,-42), Math.toRadians(118))
+
                 .build();
         drive.followTrajectorySequence(traj1);
   }
