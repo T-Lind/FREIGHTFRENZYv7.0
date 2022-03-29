@@ -345,7 +345,7 @@ public class AutoDuccTest extends LinearOpMode //creates class
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
         Vector2d hub = new Vector2d(-23,-35);
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .splineTo(new Vector2d(-32,-24), Math.toRadians(0))
+                .splineTo(new Vector2d(-28,-24), Math.toRadians(0))
                 //.turn(Math.toRadians(-45))
                 .setReversed(true)
                 .splineTo(new Vector2d(-60, -60),Math.toRadians(215))//go to ducc

@@ -142,8 +142,8 @@ public class RogueOp extends OpMode {
     public void loop() {
         toggleUp.updateStart(gamepad2.right_bumper/*gamepad2.dpad_up*/);
         toggleDown.updateStart(gamepad2.left_bumper/*gamepad2.dpad_down*/);
-        toggleIn.updateStart(gamepad1.left_trigger > .5/*gamepad2.dpad_up*/);
-        toggleOut.updateStart(gamepad1.left_bumper/*gamepad2.dpad_down*/);
+        toggleIn.updateStart(gamepad1.right_trigger > .5/*gamepad2.dpad_up*/);
+        toggleOut.updateStart(gamepad1.right_bumper/*gamepad2.dpad_down*/);
         levelUp.updateStart(gamepad2.y/*gamepad2.dpad_up*/);
         levelDown.updateStart(gamepad2.x/*gamepad2.dpad_down*/);
 
@@ -198,7 +198,7 @@ public class RogueOp extends OpMode {
                 BLP /= max;
                 BRP /= max;
             }
-            if (gamepad1.right_trigger > 0.5) {
+            if (gamepad1.y) {
                 leftFront.setPower(FLP * 0.35);
                 rightFront.setPower(FRP * 0.35);
                 leftBack.setPower(BLP * 0.35);
@@ -224,7 +224,7 @@ public class RogueOp extends OpMode {
     public void intake() {
         if (toggleIn.nowTrue()) {
             intake.setPower(1);
-            fold.setPosition(.29);
+            fold.setPosition(.28);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
             checkTime = true;
@@ -233,7 +233,7 @@ public class RogueOp extends OpMode {
 
         } else if (toggleOut.nowTrue()) {
             intake.setPower(-1);
-            fold.setPosition(.29);
+            fold.setPosition(.28);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
             checkTime = true;
@@ -247,7 +247,7 @@ public class RogueOp extends OpMode {
             arm2.setPosition(.5);
             checkTime = false;
         }
-        if(!(element == 0) && gamepad1.left_trigger > .5){
+        if(!(element == 0) && gamepad1.right_trigger > .5){
             intake.setPower(-1);
         }
 
@@ -279,23 +279,23 @@ public class RogueOp extends OpMode {
     }
 
     public void duck() {
-        if (gamepad1.right_bumper && gamepad1.a) {
+        if (gamepad1.left_bumper && gamepad1.a) {
             ducc.setPower(1);
-        } else if (gamepad1.right_bumper) {
+        } else if (gamepad1.left_bumper) {
             ducc.setPower(.5);
         } else {
             ducc.setPower(0);
         }
     }
 
-    public void arm() {0
+    public void arm() {
         if(intake.getPower() == 0) {
             if (gamepad2.x) {
                 //arm1.setPosition(.5);
                 //arm2.setPosition(.5);
             } else if (gamepad2.y) {
-                arm1.setPosition(.83);
-                arm2.setPosition(.83);
+                //arm1.setPosition(.83);
+                //arm2.setPosition(.83);
 
             }
         }

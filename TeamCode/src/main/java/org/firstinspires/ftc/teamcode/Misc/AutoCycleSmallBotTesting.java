@@ -344,7 +344,7 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
         if (isStopRequested()) return;
         drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
         //Initial deposit
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
+  /*      TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
                 .splineTo(new Vector2d(7,-24), Math.toRadians(90))
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(9, -67))
@@ -354,7 +354,7 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
                 .splineTo(new Vector2d(5,-42), Math.toRadians(130))
                 .build();
         drive.followTrajectorySequence(traj1);
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(traj1.end())
+        /*TrajectorySequence traj2 = drive.trajectorySequenceBuilder(traj1.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(3,-70), Math.toRadians(0))
                 .setReversed(false)
@@ -365,7 +365,18 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
                  .build();
         drive.followTrajectorySequence(traj2);
 
-
+*/
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11, -63, Math.toRadians(90)))
+                .splineTo(new Vector2d(2,-36), Math.toRadians(130))
+                .setReversed(true)
+                .splineTo(new Vector2d(14,-64), Math.toRadians(0))
+                .strafeLeft(4.3)
+                .setReversed(false)
+                .back(35)
+                .forward(40)
+                .splineTo(new Vector2d(4,-41), Math.toRadians(135))
+                .build();
+        drive.followTrajectorySequence(traj1);
   }
 
 
