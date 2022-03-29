@@ -298,7 +298,7 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
         }
       //  starts();
         drive.setPoseEstimate(new Pose2d(11, -63, Math.toRadians(90)));
-        redRight();
+        tryPath();
         /*drive.followTrajectorySequenceAsync(trajectories.get(0));
 
         while(aman){
@@ -338,7 +338,7 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
 */
     }
 
-    public void redRight() throws InterruptedException{
+    public void tryPath() throws InterruptedException{
 
 
         if (isStopRequested()) return;
@@ -366,7 +366,7 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
         drive.followTrajectorySequence(traj2);
 
 */
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(11,-63, Math.toRadians(90)))
+        TrajectorySequence redWarehouse = drive.trajectorySequenceBuilder(new Pose2d(11,-63, Math.toRadians(90)))
                 .splineTo(new Vector2d(2,-36), Math.toRadians(130))
                 .setReversed(true)
                 .splineTo(new Vector2d(14,-64), Math.toRadians(0))
@@ -374,10 +374,21 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
                 .setReversed(false)
                 .back(35)
                 .forward(30)
-                .splineTo(new Vector2d(-3,-42), Math.toRadians(118))
+                .splineTo(new Vector2d(-1,-45), Math.toRadians(115))
 
                 .build();
-        drive.followTrajectorySequence(traj1);
+        TrajectorySequence blueWarehouse = drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
+                .splineTo(new Vector2d(2,36), Math.toRadians(-130))
+                .setReversed(true)
+                .splineTo(new Vector2d(14,64), Math.toRadians(0))
+                .strafeRight(4.3)
+                .setReversed(false)
+                .back(35)
+                .forward(30)
+                .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
+
+                .build();
+        drive.followTrajectorySequence(redWarehouse);
   }
 
 
