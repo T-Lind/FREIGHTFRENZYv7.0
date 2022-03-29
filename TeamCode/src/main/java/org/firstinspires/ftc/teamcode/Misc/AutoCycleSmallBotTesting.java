@@ -367,7 +367,7 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
 
 */
         TrajectorySequence redWarehouse = drive.trajectorySequenceBuilder(new Pose2d(11,-63, Math.toRadians(90)))
-                .splineTo(new Vector2d(2,-36), Math.toRadians(130))
+                .splineTo(new Vector2d(2,-36), Math.toRadians(125))
                 .setReversed(true)
                 .splineTo(new Vector2d(14,-64), Math.toRadians(0))
                 .strafeLeft(4.3)
@@ -378,7 +378,7 @@ public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
 
                 .build();
         TrajectorySequence blueWarehouse = drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
-                .splineTo(new Vector2d(2,36), Math.toRadians(-130))
+                .splineTo(new Vector2d(2,36), Math.toRadians(-125))
                 .setReversed(true)
                 .splineTo(new Vector2d(14,64), Math.toRadians(0))
                 .strafeRight(4.3)
