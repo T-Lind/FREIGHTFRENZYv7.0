@@ -55,7 +55,7 @@ public class BlueRight extends LinearOpMode //creates class
     private ElapsedTime extend = new ElapsedTime();
 
     final int liftGrav = (int) (9.8 * 3);
-    private LiftPID liftPID = new LiftPID(.05, 0, 0);
+    private LiftPID liftPID = new LiftPID(.0075, 0, .003);
     private int liftError = 0;
     private int liftTargetPos = 0;
 
@@ -167,7 +167,7 @@ public class BlueRight extends LinearOpMode //creates class
 
 
 
-
+        test();
     }
 
     public void initializeTrajectories() throws InterruptedException{
@@ -301,8 +301,8 @@ public class BlueRight extends LinearOpMode //creates class
             sleep(5000);
         }
         starts();
-        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(90)));
-        test();
+        //drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(90)));
+
 /*        drive.followTrajectorySequenceAsync(trajectories.get(0));
 
         while(aman){
@@ -338,7 +338,10 @@ public class BlueRight extends LinearOpMode //creates class
             intake.setPower(0);
             intake.setPower(0);
         }
-*/
+*/      while(drive.isBusy()) {
+            drive.update();
+            updateLift();
+        }
     }
     public void updateLift(){
         liftError = liftTargetPos - lift.getCurrentPosition();
@@ -351,8 +354,7 @@ public class BlueRight extends LinearOpMode //creates class
         TrajectorySequence circleTest = drive.trajectorySequenceBuilder(new Pose2d(0,0,Math.toRadians(90)))
                 .setVelConstraint((a,e,c,d)->20)
                 .addTemporalMarker(2,()->{
-                    liftTargetPos= 100;
-                    updateLift();
+                    liftTargetPos= 1000;
                     arm1.setPosition(.83);
                     arm2.setPosition(.83);
                 })
@@ -361,7 +363,6 @@ public class BlueRight extends LinearOpMode //creates class
                     arm1.setPosition(.5);
                     arm2.setPosition(.5);
                     liftTargetPos = 0;
-                    updateLift();
                 })
                 .splineTo(new Vector2d(-23,23),Math.toRadians(180))
                 .splineTo(new Vector2d(-46,0),Math.toRadians(270))
@@ -369,8 +370,8 @@ public class BlueRight extends LinearOpMode //creates class
                 .splineTo(new Vector2d(0,0),Math.toRadians(90))
 
                 .build();
-        for(int i = 0;i<2;i++)
-            drive.followTrajectorySequence(circleTest);
+        drive.followTrajectorySequenceAsync(circleTest);
+
     }
 
     public void blueRight() throws InterruptedException{
