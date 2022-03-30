@@ -1,5 +1,5 @@
-/*package org.firstinspires.ftc.teamcode.auto;
-
+package org.firstinspires.ftc.teamcode.auto;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -39,6 +39,7 @@ public class RedLeft extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
     //test
+    private RevColorSensorV3 color;
     private int level = 0;
     private boolean aman = true;
     private double targetV4B;
@@ -160,7 +161,7 @@ public class RedLeft extends LinearOpMode //creates class
 
         camera.setPipeline(pipeline2);
 
-        initializeTrajectories();
+        //initializeTrajectories();
 
         liftError = liftTargetPos - lift.getCurrentPosition();
 
@@ -234,27 +235,26 @@ public class RedLeft extends LinearOpMode //creates class
 
             liftError = liftTargetPos - lift.getCurrentPosition();
             lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
-            liftB.setPower(lift.getPower());
 
             if(level == 1) {
-                v4b1.setPosition(.81);
-                v4b2.setPosition(.81);
+               // v4b1.setPosition(.81);
+                //v4b2.setPosition(.81);
 
                 liftTargetPos=10;
                 dep.setPosition(.46);
             }
 
             else if(level==2){
-                v4b1.setPosition(.7);
-                v4b2.setPosition(.7);
+                //v4b1.setPosition(.7);
+                //v4b2.setPosition(.7);
 
                 liftTargetPos=med;
                 dep.setPosition(.46);
             }
 
             else if(level==3) {
-                v4b1.setPosition(.81);
-                v4b2.setPosition(.81);
+                //v4b1.setPosition(.81);
+//                v4b2.setPosition(.81);
 
                 liftTargetPos=top;
                 dep.setPosition(.46);
@@ -272,7 +272,7 @@ public class RedLeft extends LinearOpMode //creates class
                 liftError = liftTargetPos - lift.getCurrentPosition();
 
                 lift.setPower(Range.clip(liftPID.getCorrection(liftError), 0, 1));
-                liftB.setPower(lift.getPower());
+
 
                 aman = false;
 
@@ -302,8 +302,8 @@ public class RedLeft extends LinearOpMode //creates class
         }
         starts();
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
-        //redLeft();
-        drive.followTrajectorySequenceAsync(trajectories.get(0));
+        redLeft();
+/*        drive.followTrajectorySequenceAsync(trajectories.get(0));
 
         while(aman){
             drive.update();
@@ -338,125 +338,54 @@ public class RedLeft extends LinearOpMode //creates class
             intake.setPower(0);
             intake.setPower(0);
         }
-
+*/
     }
 
     public void redLeft() throws InterruptedException{
 
 
         if (isStopRequested()) return;
-        double y = -40.5;//42.5
-       //level =3;
-        if (level == 1) {
-            y = y - 2;}
-        drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
-        //Initial deposit
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .setAccelConstraint((a,e,c,d)->45)
-                .lineTo(new Vector2d(-24, y))
-                .turn(Math.toRadians(-195))
+                .splineTo(new Vector2d(-29.5,-25.5), Math.toRadians(0))
+                //.turn(Math.toRadians(-45))
+                .setReversed(true)
+                .splineTo(new Vector2d(-60, -59),Math.toRadians(215))//go to ducc
+                .setReversed(false)
+                //.turn(Math.toRadians(-10))//get better angle to ducc
+
                 .build();
         drive.followTrajectorySequence(traj1);
-
-       // liftAndDeposit();
-
-        //Go to duck and begin spinning
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(new Pose2d(-24, y, Math.toRadians(-105)))
-
-                .splineTo(new Vector2d(-63, -58.5), Math.toRadians(-90))
-
+        spinDuck();
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(traj1.end())
+                .turn(Math.toRadians(55))
+                //.turn(Math.toRadians(-10))//get better angle to ducc
+                // .turn(Math.toRadians(0))
+                // .lineTo(new Vector2d(-40, -62))//strafe ducc
+                .strafeRight(20)
+                .turn(Math.toRadians(-17))
+                // .setAccelConstraint((a,e,c,d)->7)
+                .lineTo(new Vector2d(-60,-62))
+                .turn(Math.toRadians(17))
+                .splineTo(new Vector2d(-33, -24), Math.toRadians(0))
+                .setReversed(true)
+                .splineTo(new Vector2d(-65,-37),Math.toRadians(180))
                 .build();
         drive.followTrajectorySequence(traj2);
-        spinDuck();
-        intake.setPower(-1);
-
-        //Sweep trajectory
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(new Pose2d(-63, -58.5, Math.toRadians(-90)))
-                .lineTo(new Vector2d(-43,-57))
-                .turn(Math.toRadians(-15))
-                .setAccelConstraint((a,e,c,d)->7)
-                .lineTo(new Vector2d(-60,-62))
-
-                .build();
-        drive.followTrajectorySequence(traj3);
-        intake.setPower(0);
-
-
-        //Final duck deposit
-        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
-
-                .setReversed(true)
-                .setAccelConstraint((a,e,c,d)->20)
-                .setVelConstraint((a,e,c,d)->40)
-
-                .splineTo(new Vector2d(-31, -24), Math.toRadians(0))
-
-                .build();
-        drive.followTrajectorySequence(traj4);
-        level=3;
-       // liftAndDeposit();
-
-        //Code to park
-        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj4.end())
-
-                .lineTo(new Vector2d(-63, -40.7))
-
-                .build();
-        drive.followTrajectorySequence(traj5);
-
-
     }
 
 
 
 
-    public void spinDuck() throws InterruptedException{
+    public void spinDuck() throws InterruptedException {
         ElapsedTime spinTime = new ElapsedTime();
-       /* duccL.setPower(-.001);
-        duccR.setPower(-.001);
-        double power = .2;
+        ducc.setPower(-.3);
         while(spinTime.milliseconds()<=3000){
             heartbeat();
-            duccR.setPower(-power);
-
-            duccL.setPower(-power);
-            power = power + .006;
-            telemetry.addData("duck power: ",power);
-            telemetry.update();
-        ducc.setPower(-.2);
-        while(spinTime.milliseconds()<=5000){
-            heartbeat();
-
-
         }
         ducc.setPower(0);
 
 
 
-    }
-    public void duckIntake() throws InterruptedException{
-
-        ElapsedTime spinTime = new ElapsedTime();
-intake.setPower(1);
-
-
-        while (spinTime.milliseconds() <= 2000)
-            heartbeat();
-        intake.setPower(0);
-    }
-    public static double get_dist(DuckDetectionPipeline pipeline){
-        int cnt = 0;
-        double mean = 0;
-        while(10 > cnt){
-            double dist_x = pipeline.getDucc_x();
-            if(dist_x != Integer.MIN_VALUE) {
-                cnt++;
-                mean += dist_x;
-            }
-        }
-        mean /= cnt;
-        return mean;
-    }
-
-}*/
+}
+}
 

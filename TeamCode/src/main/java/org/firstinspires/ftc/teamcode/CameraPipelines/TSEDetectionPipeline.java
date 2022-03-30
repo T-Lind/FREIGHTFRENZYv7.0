@@ -18,7 +18,7 @@ import java.util.List;
 public class TSEDetectionPipeline extends OpenCvPipeline{
     int level = 0;
     Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
-
+    int line = 245;
 
     static final int CB_CHAN_IDX = 0;
 
@@ -39,18 +39,18 @@ public class TSEDetectionPipeline extends OpenCvPipeline{
        // Core.extractChannel(input, copy, CB_CHAN_IDX);
         Imgproc.threshold(copy, input, 199, 200, Imgproc.THRESH_BINARY);
     try {
-        for(int x=0;x<100;x++)
-            if ((int) input.get(150, 280+x)[0]  > 0) {
+        for(int x=0;x<90;x++)
+            if ((int) input.get(line, 250+x)[0]  > 0) {
                 level = 2;
                 x = 100;
             }
         for(int x=0;x<100;x++)
-            if ((int) input.get(150, 1+x)[0] > 0) {
+            if ((int) input.get(line, 1+x)[0] > 0) {
                 level = 1;
                 x = 100;
             }
         for(int x=0;x<100;x++)
-            if ((int) input.get(150, 539+x)[0] > 0) {
+            if ((int) input.get(line, 539+x)[0] > 0) {
                 level = 3;
                 x=100;
             }
@@ -58,8 +58,8 @@ public class TSEDetectionPipeline extends OpenCvPipeline{
     catch(Exception e){
         level = -1;
     }
-        Imgproc.line(input, new Point(0, 140), new Point(640, 140), new Scalar(100,50,150), 4);
-        Imgproc.line(input, new Point(0, 140+20), new Point(640, 140+20), new Scalar(100,50,150), 4);
+        Imgproc.line(input, new Point(0, line), new Point(640, line), new Scalar(100,50,150), 4);
+        Imgproc.line(input, new Point(0, line+20), new Point(640, line+20), new Scalar(100,50,150), 4);
         return input;
     }
 
