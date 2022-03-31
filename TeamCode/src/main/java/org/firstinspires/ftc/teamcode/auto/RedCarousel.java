@@ -40,19 +40,22 @@ public class RedCarousel extends LinearOpMode {
     private SampleMecanumDrive drive;
 
     public void initialize() {
-        bot = new Bot(this, drive = new SampleMecanumDrive(hardwareMap), new Pose2d(0, 0, Math.toRadians(90)));
+        bot = new Bot(this, drive = new SampleMecanumDrive(hardwareMap), new Pose2d(-36, -63, Math.toRadians(90)));
         bot.start();
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
+        bot.start();
         bot.setTrajectory(drive.trajectorySequenceBuilder(bot.getStartingPos())
                 .addTemporalMarker(2, () -> {
                     bot.liftTo(3);
                 })
-                .addTemporalMarker(4, () -> {
+                .addTemporalMarker(2.2, () -> {
                     bot.deposit();
+                })
+                .addTemporalMarker(2.4, () -> {
                     bot.liftDown();
                 })
                 .splineTo(new Vector2d(-29.5, -25.5), Math.toRadians(0))
@@ -66,7 +69,7 @@ public class RedCarousel extends LinearOpMode {
 
         bot.spinDuck();
 
-        bot.setTrajectory(drive.trajectorySequenceBuilder(bot.getTrajectory().end())
+        /*bot.setTrajectory(drive.trajectorySequenceBuilder(bot.getTrajectory().end())
                 .addTemporalMarker(0, () -> {
                     bot.turnOnIntake();
                 })
@@ -83,7 +86,7 @@ public class RedCarousel extends LinearOpMode {
                 .setReversed(true)
                 .splineTo(new Vector2d(-65, -37), Math.toRadians(180))
                 .build()
-        );
+        );*/
 
 
     }

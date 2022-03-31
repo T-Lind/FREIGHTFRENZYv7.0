@@ -42,29 +42,28 @@ public class BlueLeft extends LinearOpMode //creates class
     private SampleMecanumDrive drive;
     public void initialize() throws InterruptedException{
         bot = new Bot(this, drive = new SampleMecanumDrive(hardwareMap),new Pose2d(0,0,Math.toRadians(90)));
-        bot.start();
-
     }
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
+        initialize();
+        bot.start();
         bot.setTrajectory(
                 drive.trajectorySequenceBuilder(bot.getStartingPos())
-                .setVelConstraint((a,e,c,d)->20)
-                .addTemporalMarker(2,()->{
-                    bot.liftTo(3);
-                })
-                .addTemporalMarker(4,()->{
-                    bot.liftDown();
-                })
-                .splineTo(new Vector2d(-23,23),Math.toRadians(180))//Part 1
-                .splineTo(new Vector2d(-46,0),Math.toRadians(270))//Part 2
-                .splineTo(new Vector2d(-23,-23),Math.toRadians(0))//Part 3
-                .splineTo(new Vector2d(0,0),Math.toRadians(90))//Part 4
+                        .setVelConstraint((a,e,c,d)->20)
+                        .addTemporalMarker(2,()->{
+                            bot.liftTo(3);
+                        })
+                        .addTemporalMarker(4,()->{
+                            bot.liftDown();
+                        })
+                        .splineTo(new Vector2d(-23,23),Math.toRadians(180))//Part 1
+                        .splineTo(new Vector2d(-46,0),Math.toRadians(270))//Part 2
+                        .splineTo(new Vector2d(-23,-23),Math.toRadians(0))//Part 3
+                        .splineTo(new Vector2d(0,0),Math.toRadians(90))//Part 4
 
-                .build()
+                        .build()
         );
         bot.followTrajectory();
     }
 }
-
