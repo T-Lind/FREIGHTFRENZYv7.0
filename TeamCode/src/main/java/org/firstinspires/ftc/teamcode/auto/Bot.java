@@ -68,7 +68,6 @@ public class Bot {
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        lift.setDirection(DcMotor.Direction.REVERSE);
         ducc = (DcMotorEx) hardwareMap.dcMotor.get("DU");
         ducc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ducc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -127,7 +126,7 @@ public class Bot {
     }
 
     public void start(){
-        depPos = .45;
+        depPos = .4;
         fold.setPosition(.5);
         armsPos = .5;
         intake.setPower(0);

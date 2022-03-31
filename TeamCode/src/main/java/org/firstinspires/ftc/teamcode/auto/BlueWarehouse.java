@@ -48,10 +48,10 @@ public class BlueWarehouse extends LinearOpMode //creates class
     public void runOpMode() throws InterruptedException {
         initialize();
         bot.setTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
-                .addTemporalMarker(1.1,() ->{
+                .addTemporalMarker(.5,() ->{
                     bot.liftTo(bot.getDepLevel());
                 })
-                .addTemporalMarker(1.6,() ->{
+                .addTemporalMarker(1.5,() ->{
                     bot.deposit();
                 })
                 .addTemporalMarker(2,() ->{
