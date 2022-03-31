@@ -38,43 +38,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Bot {
-    Telemetry telemetry;
-    Gamepad gamepad1,gamepad2;
-    LinearOpMode self;
-    TrajectorySequence trajectory;
+    private Telemetry telemetry;
+    private Gamepad gamepad1,gamepad2;
+    private LinearOpMode self;
+    private TrajectorySequence trajectory;
 
-    BNO055IMU imu;
-    //test
     private RevColorSensorV3 color;
     private int level = 0;
-    private boolean aman = true;
-    private double targetV4B;
-    private ArrayList<TrajectorySequence> trajectories;
     private DcMotorEx intake, lift, ducc;
 
     private Servo arm1, arm2, dep, fold;
 
-    private double targetDeposit;
     private boolean delay = false;
 
-
-    private ElapsedTime extend = new ElapsedTime();
-
-    final int liftGrav = (int) (9.8 * 3);
-    private LiftPID liftPID = new LiftPID(.05, 0, 0);
+    private LiftPID liftPID = new LiftPID(.0075, 0, .003);
     private int liftError = 0;
     private int liftTargetPos = 0;
-
-    private final int top = 620;
-    private final int med = 130;
-
 
     private WebcamName weCam;
     private OpenCvCamera camera;
     private TSEDetectionPipeline pipeline;
     private DuckDetectionPipeline pipeline2 = new DuckDetectionPipeline();
 
-    private SampleMecanumDrive drive; //d
+    private SampleMecanumDrive drive;
 
     Bot(LinearOpMode s, SampleMecanumDrive dr, Pose2d startingPos){
         self = s;
@@ -170,12 +156,11 @@ public class Bot {
         telemetry.update();
     }
 
-    public void starts(){
+    public void start(){
         fold.setPosition(.5);
         dep.setPosition(.57);
         arm1.setPosition(.5);
         arm2.setPosition(.5);
-
 
         intake.setPower(0);
     }
