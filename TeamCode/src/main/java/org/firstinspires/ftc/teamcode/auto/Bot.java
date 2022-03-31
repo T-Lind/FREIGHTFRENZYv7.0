@@ -101,7 +101,6 @@ public class Bot {
             telemetry.addData("Is delay turned on?", delay);
             telemetry.update();
         }
-        dep.setPosition(.63);
         // if the latest level was 0 then it must be in the 3 position.
         if(depLevel == 0)
             depLevel = 3;
@@ -157,13 +156,13 @@ public class Bot {
         }
     }
     public void liftTo(int level){
+        arm1.setPosition(.83);
+        arm2.setPosition(.83);
         switch(level){
             case 1: liftTargetPos = 250;break;//bottom tier
             case 2: liftTargetPos = 500;break;//mid tier
             case 3: liftTargetPos = 1000;//top tier
         }
-        arm1.setPosition(.83);
-        arm2.setPosition(.83);
     }
     public void deposit(){
         dep.setPosition(.6);
