@@ -39,7 +39,7 @@ public class BlueCarousel extends LinearOpMode //creates class
 {
     private Bot bot;
     private SampleMecanumDrive drive;
-    public void initialize() {
+    public void initialize() throws InterruptedException{
         bot = new Bot(this, drive = new SampleMecanumDrive(hardwareMap),new Pose2d(-36,63,Math.toRadians(-90)));
     }
 

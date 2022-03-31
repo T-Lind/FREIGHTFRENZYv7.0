@@ -41,7 +41,7 @@ public class RedWarehouse extends LinearOpMode //creates class
 {
     private Bot bot;
     private SampleMecanumDrive drive;
-    public void initialize(){
+    public void initialize() throws InterruptedException{
         bot = new Bot(this, drive = new SampleMecanumDrive(hardwareMap), new Pose2d(11,-63,Math.toRadians(90)));
     }
 

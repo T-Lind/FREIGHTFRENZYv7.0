@@ -46,6 +46,7 @@ public class Bot {
     private LiftPID liftPID = new LiftPID(.0075, 0, .003);
     private int liftError = 0;
     private int liftTargetPos = 0;
+    private double armsPos,depPos;
     private WebcamName weCam;
     private OpenCvCamera camera;
     private TSEDetectionPipeline pipeline;
@@ -111,6 +112,9 @@ public class Bot {
         start();
     }
     public void updateLift(){
+        arm1.setPosition(armsPos);
+        arm2.setPosition(armsPos);
+        dep.setPosition(depPos);
         liftError = liftTargetPos - lift.getCurrentPosition();
         lift.setPower(Range.clip(liftPID.getCorrection(liftError),-.7,1));
     }
@@ -123,10 +127,9 @@ public class Bot {
     }
 
     public void start(){
-        dep.setPosition(.45);
+        depPos = .45;
         fold.setPosition(.5);
-        arm1.setPosition(.5);
-        arm2.setPosition(.5);
+        armsPos = .5;
         intake.setPower(0);
     }
 
@@ -140,11 +143,11 @@ public class Bot {
     public void setTrajectory(TrajectorySequence ts){
         trajectory=ts;
     }
-    public void followTrajectory(){
+    public void followTrajectory() throws InterruptedException {
         drive.followTrajectorySequenceAsync(trajectory);
         while(drive.isBusy()){
+            heartbeat();
             drive.update();
-
             /*
             checkColorSensor();
             switch(intake)
@@ -156,8 +159,7 @@ public class Bot {
         }
     }
     public void liftTo(int level){
-        arm1.setPosition(.83);
-        arm2.setPosition(.83);
+        armsPos = .83;
         switch(level){
             case 1: liftTargetPos = 250;break;//bottom tier
             case 2: liftTargetPos = 500;break;//mid tier
@@ -165,11 +167,10 @@ public class Bot {
         }
     }
     public void deposit(){
-        dep.setPosition(.6);
+        depPos=.6;
     }
     public void liftDown(){
-        arm1.setPosition(.5);
-        arm2.setPosition(.5);
+        armsPos = .5;
         liftTargetPos = 0;
     }
     public void spinDuck() throws InterruptedException {
