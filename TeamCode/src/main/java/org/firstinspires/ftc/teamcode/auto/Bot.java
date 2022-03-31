@@ -175,6 +175,9 @@ public class Bot {
         trajectory=ts;
     }
 
+    public TrajectorySequence getTrajectory(){
+        return trajectory;
+    }
     public void followTrajectory(){
         drive.followTrajectorySequenceAsync(trajectory);
         while(drive.isBusy()){
@@ -190,13 +193,17 @@ public class Bot {
         }
     }
 
+    public void turnOnIntake(){
+        fold.setPosition(.28);
+        intake.setPower(1);
+    }
     public void liftTo(int level){
         switch(level){
             case 1: liftTargetPos = 250;break;//bottom tier
             case 2: liftTargetPos = 500;break;//mid tier
             case 3: liftTargetPos = 1000;//top tier
         }
-        arm1.setPosition(.83);
+        arm1.setPosition(.83); //extends the arm out
         arm2.setPosition(.83);
     }
 
@@ -208,6 +215,13 @@ public class Bot {
         arm1.setPosition(.5);
         arm2.setPosition(.5);
         liftTargetPos = 0;
+    }
+
+    public void depositElement(){
+        dep.setPosition(0.6); //deposit
+        ElapsedTime keepDepOpen = new ElapsedTime();
+        while (keepDepOpen.milliseconds() < 2000){}
+
     }
 
     public void spinDuck() throws InterruptedException {

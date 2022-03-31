@@ -42,11 +42,12 @@ public class BlueLeft extends LinearOpMode //creates class
     private SampleMecanumDrive drive;
     public void initialize() throws InterruptedException{
         bot = new Bot(this, drive = new SampleMecanumDrive(hardwareMap),new Pose2d(0,0,Math.toRadians(90)));
+        bot.start();
+
     }
 
     @Override
     public void runOpMode() {
-        bot.start();
         bot.setTrajectory(
                 drive.trajectorySequenceBuilder(bot.getStartingPos())
                 .setVelConstraint((a,e,c,d)->20)
