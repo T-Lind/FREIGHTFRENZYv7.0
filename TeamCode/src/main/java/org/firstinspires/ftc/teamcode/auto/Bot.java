@@ -109,6 +109,7 @@ public class Bot {
         telemetry.update();
         camera.setPipeline(pipeline2);
         liftError = liftTargetPos - lift.getCurrentPosition();
+        start();
     }
     public void updateLift(){
         liftError = liftTargetPos - lift.getCurrentPosition();
@@ -121,19 +122,22 @@ public class Bot {
         }
         telemetry.update();
     }
+
     public void start(){
-        fold.setPosition(.5);
         dep.setPosition(.45);
+        fold.setPosition(.5);
         arm1.setPosition(.5);
         arm2.setPosition(.5);
         intake.setPower(0);
     }
+
     public Pose2d getStartingPos(){
         return drive.getPoseEstimate();
     }
     public int getDepLevel(){
         return depLevel;
     }
+    public TrajectorySequence getCurrentTrajectory() { return trajectory; }
     public void setTrajectory(TrajectorySequence ts){
         trajectory=ts;
     }
