@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Bot {
-    LinearOpMode opMode;
     Telemetry telemetry;
     Gamepad gamepad1,gamepad2;
     LinearOpMode self;
