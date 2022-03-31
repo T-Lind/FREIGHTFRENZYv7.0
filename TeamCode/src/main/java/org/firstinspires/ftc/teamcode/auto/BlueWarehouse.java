@@ -57,13 +57,20 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .addTemporalMarker(2,() ->{
                     bot.liftDown();
                 })
-                .addTemporalMarker(9.5,() ->{
+                .addTemporalMarker(8.5,() ->{
                     bot.liftTo(3);
                 })
-                .addTemporalMarker(9.8,() ->{
+                .addTemporalMarker(9.5,() ->{
                     bot.deposit();
                 })
                 .splineTo(new Vector2d(2,36), Math.toRadians(-135))
+                .setReversed(true)
+                .splineTo(new Vector2d(14,64), Math.toRadians(0))
+                .strafeRight(3.5)
+                .setReversed(false)
+                .back(35)
+                .forward(30)
+                .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
                 .setReversed(true)
                 .splineTo(new Vector2d(14,64), Math.toRadians(0))
                 .strafeRight(3.5)
