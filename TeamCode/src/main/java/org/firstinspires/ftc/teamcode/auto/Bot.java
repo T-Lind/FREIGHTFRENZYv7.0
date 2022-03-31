@@ -44,7 +44,7 @@ public class Bot {
     private TrajectorySequence trajectory;
 
     private RevColorSensorV3 color;
-    private int level = 0;
+    private int depLevel = 0;
     private DcMotorEx intake, lift, ducc;
 
     private Servo arm1, arm2, dep, fold;
@@ -119,8 +119,8 @@ public class Bot {
             }
         });
         while (!self.opModeIsActive()) {
-            level = pipeline.getLevel();
-            telemetry.addData("DETECTED LEVEL: ",level);
+            depLevel = pipeline.getLevel();
+            telemetry.addData("DETECTED LEVEL: ",depLevel);
 
             if(gamepad1.a)
                 delay = true;
@@ -132,10 +132,10 @@ public class Bot {
 
         dep.setPosition(.63);
         // if the latest level was 0 then it must be in the 3 position.
-        if(level == 0)
-            level = 3;
+        if(depLevel == 0)
+            depLevel = 3;
 
-        telemetry.addData("DETECTED LEVEL: ",level);
+        telemetry.addData("DETECTED LEVEL: ",depLevel);
         telemetry.update();
 
         camera.setPipeline(pipeline2);
@@ -167,6 +167,9 @@ public class Bot {
     public Pose2d getStartingPos(){
         return drive.getPoseEstimate();
     }
+    public int getDepLevel(){
+        return depLevel;
+    }
 
     public void setTrajectory(TrajectorySequence ts){
         trajectory=ts;
@@ -183,9 +186,9 @@ public class Bot {
 
     public void liftTo(int level){
         switch(level){
-            case 1: liftTargetPos = 250;break;
-            case 2: liftTargetPos = 500;break;
-            case 3: liftTargetPos = 1000;
+            case 1: liftTargetPos = 250;break;//bottom tier
+            case 2: liftTargetPos = 500;break;//mid tier
+            case 3: liftTargetPos = 1000;//top tier
         }
         arm1.setPosition(.83);
         arm2.setPosition(.83);
