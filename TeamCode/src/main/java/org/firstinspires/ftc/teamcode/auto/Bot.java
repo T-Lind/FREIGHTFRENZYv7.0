@@ -179,7 +179,13 @@ public class Bot {
         drive.followTrajectorySequenceAsync(trajectory);
         while(drive.isBusy()){
             drive.update();
-
+            /*
+            checkColorSensor();
+            switch(intake)
+                case 0: off
+                case 1: intakeOn
+                case 2: extake
+            */
             updateLift();
         }
     }
