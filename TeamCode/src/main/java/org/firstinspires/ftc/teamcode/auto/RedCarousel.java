@@ -49,7 +49,7 @@ public class RedCarousel extends LinearOpMode {
         initialize();
         bot.setTrajectory(drive.trajectorySequenceBuilder(bot.getStartingPos())
                 .addTemporalMarker(2, () -> {
-                    bot.liftTo(3);
+                    bot.liftTo(bot.getDepLevel());
                 })
                 .addTemporalMarker(2.2, () -> {
                     bot.deposit();

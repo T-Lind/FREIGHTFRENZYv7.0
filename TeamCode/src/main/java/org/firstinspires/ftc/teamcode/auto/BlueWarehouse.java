@@ -47,7 +47,31 @@ public class BlueWarehouse extends LinearOpMode //creates class
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        bot.setTrajectory(drive.trajectorySequenceBuilder(bot.getStartingPos())
+        bot.setTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
+                .addTemporalMarker(1.1,() ->{
+                    bot.liftTo(bot.getDepLevel());
+                })
+                .addTemporalMarker(1.8,() ->{
+                    bot.deposit();
+                })
+                .addTemporalMarker(2.5,() ->{
+                    bot.liftDown();
+                })
+                .addTemporalMarker(9.8,() ->{
+                    bot.liftTo(3);
+                })
+                .addTemporalMarker(10.4,() ->{
+                    bot.liftTo(3);
+                })
+                .splineTo(new Vector2d(2,36), Math.toRadians(-125))
+                .setReversed(true)
+                .splineTo(new Vector2d(14,64), Math.toRadians(0))
+                .strafeRight(4.3)
+                .setReversed(false)
+                .back(35)
+                .forward(30)
+                .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
+
                 .build()
         );
         bot.followTrajectory();

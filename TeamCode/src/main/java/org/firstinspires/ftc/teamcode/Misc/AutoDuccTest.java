@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@Autonomous(name = "AutoDuccTest")
+//@Autonomous(name = "AutoDuccTest")
 public class AutoDuccTest extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;

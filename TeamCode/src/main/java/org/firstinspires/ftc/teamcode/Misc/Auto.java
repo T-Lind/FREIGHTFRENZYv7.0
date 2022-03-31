@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //import org.firstinspires.ftc.teamcode.Camera;
 
 
-@Autonomous
+//@Autonomous
 public abstract class Auto extends LinearOpMode {
     //test pushing
     private ElapsedTime runtime;

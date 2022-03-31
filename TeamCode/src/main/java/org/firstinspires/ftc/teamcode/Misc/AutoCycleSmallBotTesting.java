@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@Autonomous(name = "AutoCycleSmallBotTesting")
+//@Autonomous(name = "AutoCycleSmallBotTesting")
 public class AutoCycleSmallBotTesting extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
