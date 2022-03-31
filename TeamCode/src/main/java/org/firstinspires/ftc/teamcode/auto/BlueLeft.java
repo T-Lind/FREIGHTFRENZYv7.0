@@ -62,7 +62,7 @@ public class BlueLeft extends LinearOpMode //creates class
 
                 .build()
         );
-        bot.followTraj();
+        bot.followTrajectory();
     }
 }
 

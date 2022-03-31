@@ -188,7 +188,7 @@ public class Bot {
         trajectory=ts;
     }
 
-    public void followTraj(){
+    public void followTrajectory(){
         drive.followTrajectorySequenceAsync(trajectory);
         while(drive.isBusy()){
             drive.update();
