@@ -199,9 +199,9 @@ public class Bot {
     }
 
     public void liftDown(){
-        liftTargetPos = 0;
         arm1.setPosition(.5);
         arm2.setPosition(.5);
+        liftTargetPos = 0;
     }
 
     public void spinDuck() throws InterruptedException {
