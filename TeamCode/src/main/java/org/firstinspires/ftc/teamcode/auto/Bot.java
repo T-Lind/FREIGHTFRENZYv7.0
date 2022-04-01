@@ -153,21 +153,21 @@ public class Bot {
                 switch(checkColorSensor()) {
                     case 1:
                         fold.setPosition(.28);
-                        depPos = .5;
-                        armsPos = .2;
+                        depPos = .6; // Leave the deposit open
+                        armsPos = .2; //Laying flat on the ground
                         intake.setPower(.7);
                         break;
                     case 2:
                         fold.setPosition(.28);
-                        depPos=.4;
+                        depPos=.4; //Shut the deposit
                         armsPos = .2;
                         intake.setPower(-.7);
                 }
             else {
+                intake.setPower(0);
                 fold.setPosition(.5);
                 if (!lifting)
-                    armsPos = .5;
-                intake.setPower(0);
+                    armsPos = .5; //Set the arm horizontal
             }
             updateLift();
         }
@@ -190,11 +190,11 @@ public class Bot {
         while(time.milliseconds() < 10) { updateLift();heartbeat();dep.setPosition(depPos); }
     }
     public int checkColorSensor(){
-        if(color.alpha()>7000) {
+        if(color.alpha()>7000) { //If this is a freight or a duck
             dep.setPosition(.4);
             return 2;
         }
-        if(color.alpha()>1000) {
+        if(color.alpha()>1000) { //If this is a ball
             dep.setPosition(.45);
             return 2;
         }
