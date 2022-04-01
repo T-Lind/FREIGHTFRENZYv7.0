@@ -153,23 +153,34 @@ public class Bot {
             if(intakeGo)
                 switch(checkColorSensor()) {
                     case 1:
-                        fold.setPosition(.28);
-                        depPos = .6; // Leave the deposit open
-                        armsPos = .2; //Laying flat on the ground
+                        fold.setPosition(.275);
+                        depPos = .5; // Leave the deposit open
+                        if(isDuck) {
+                            intake.setPower(.2);
+                        }
+                        else{
+                            intake.setPower(.7);
+                        }
+                        armsPos = .205; //Laying flat on the ground
                         intake.setPower(.7);
                         break;
                     case 2:
-                        fold.setPosition(.28);
-                        depPos=.4; //Shut the deposit
-                        armsPos = .2;
-                        if(isDuck)
-                            intake.setPower(.7);
-                        else
+                         //Shut the deposit
+                        armsPos = .205;
+                        fold.setPosition(.275);
+                        if(isDuck) {
+                            intake.setPower(.2);
+                            depPos = .35;
+                        }
+                        else{
                             intake.setPower(-.7);
+                            depPos=.4;
+                        }
                 }
             else {
                 intake.setPower(0);
                 fold.setPosition(.5);
+                depPos=.4;
                 if (!lifting)
                     armsPos = .5; //Set the arm horizontal
             }
@@ -191,15 +202,13 @@ public class Bot {
     public void depositAsync() throws InterruptedException {;
         depPos=.66;
         ElapsedTime time = new ElapsedTime();
-        while(time.milliseconds() < 10) { updateLift();heartbeat();dep.setPosition(depPos); }
+        while(time.milliseconds() < 300) { updateLift();heartbeat();dep.setPosition(depPos); }
     }
     public int checkColorSensor(){
         if(color.alpha()>7000) { //If this is a freight or a duck
-            dep.setPosition(.4);
             return 2;
         }
         if(color.alpha()>1000) { //If this is a ball
-            dep.setPosition(.45);
             return 2;
         }
         return 1;
@@ -213,12 +222,15 @@ public class Bot {
         armsPos = .5;
         liftTargetPos = 0;
     }
-    public void spinDuck() throws InterruptedException {
+    public void spinDuck(boolean clock) throws InterruptedException {
         ElapsedTime spinTime = new ElapsedTime();
-        ducc.setPower(-.3);
-        while (spinTime.milliseconds() <= 3000) {
-            heartbeat();
-        }
+        int consta = 1;
+        if(clock)
+            consta*=-1;
+        ducc.setPower(.3*consta);
+        while (spinTime.milliseconds() <= 1500) { updateLift();heartbeat(); }
+        ducc.setPower(.24*consta);
+        while(spinTime.milliseconds()<=3000) { updateLift();heartbeat(); }
         ducc.setPower(0);
     }
 }
