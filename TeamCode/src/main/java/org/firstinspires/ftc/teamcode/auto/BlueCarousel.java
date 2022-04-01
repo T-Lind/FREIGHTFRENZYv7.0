@@ -46,10 +46,9 @@ public class BlueCarousel extends LinearOpMode //creates class
     @Override
     public void runOpMode() throws InterruptedException{
         initialize();
-        bot.setTrajectory(drive.trajectorySequenceBuilder(bot.getStartingPos())
+        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getStartingPos())
                 .build()
         );
-        bot.followTrajectory();
     }
 }
 

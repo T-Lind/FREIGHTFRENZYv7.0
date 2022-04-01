@@ -47,7 +47,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        bot.setTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
+        bot.followTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
                 .addTemporalMarker(.05,() ->{
                     bot.liftTo(bot.getDepLevel());
                 })/*
@@ -104,46 +104,40 @@ public class BlueWarehouse extends LinearOpMode //creates class
 */
                 .build()
         );
-        bot.followTrajectory();
-        bot.deposit();
-        bot.setTrajectory(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        bot.depositAsync();
+        for(int i = 0;i<2;i++) {
+            bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
 
-                .addTemporalMarker(.05,() ->{
-                    bot.liftDown();
-                })
-                .setReversed(true)
-                .splineTo(new Vector2d(14,64), Math.toRadians(0))
-                .strafeRight(3.5)
-                .setReversed(false)
-                .addTemporalMarker(1,() ->{
-                    bot.setIntakeGo(true);
-                })
-                .back(35)
-
-
-                .build()
-        );
-        bot.followTrajectory();
-        bot.setTrajectory(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-
-                .addTemporalMarker(.5,() ->{
-                    bot.liftTo(3);
-
-                })
-                .forward(30)
-                .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
+                    .addTemporalMarker(.05, () -> {
+                        bot.liftDown();
+                    })
+                    .setReversed(true)
+                    .splineTo(new Vector2d(14, 64), Math.toRadians(0))
+                    .strafeRight(3.5)
+                    .setReversed(false)
+                    .addTemporalMarker(3, () -> {
+                        bot.setIntakeGo(true);
+                    })
+                    .back(35)
 
 
-                .build()
-        );
-        bot.followTrajectory();
-        bot.deposit();
+                    .build()
+            );
+            bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
+                    .addTemporalMarker(.5,() ->{
+                        bot.setIntakeGo(false);
+                    })
+                    .addTemporalMarker(.5, () -> {
+                        bot.liftTo(3);
+
+                    })
+                    .forward(30)
+                    .splineTo(new Vector2d(-1, 45), Math.toRadians(-115))
 
 
-
-
-
-
+                    .build()
+            );
+            bot.depositAsync();
+        }
     }
-
 }

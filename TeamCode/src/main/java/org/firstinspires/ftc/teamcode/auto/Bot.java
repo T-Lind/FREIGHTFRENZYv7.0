@@ -43,7 +43,7 @@ public class Bot {
     private DcMotorEx intake, lift, ducc;
     private Servo arm1, arm2, dep, fold;
     private boolean delay = false;
-    private boolean intakeGo;
+    private boolean intakeGo,lifting;
     private LiftPID liftPID = new LiftPID(.0075, 0, .003);
     private int liftError = 0;
     private int liftTargetPos = 0;
@@ -56,6 +56,7 @@ public class Bot {
     Bot(LinearOpMode s, SampleMecanumDrive dr, Pose2d startingPos){
         self = s;
         intakeGo = false;
+        lifting = false;
         telemetry = self.telemetry;
         gamepad1 = self.gamepad1;
         gamepad2 = self.gamepad2;
@@ -139,14 +140,11 @@ public class Bot {
         return drive.getPoseEstimate();
     }
     public int getDepLevel(){
-        depLevel=2;
         return depLevel;
     }
     public TrajectorySequence getCurrentTrajectory() { return trajectory; }
-    public void setTrajectory(TrajectorySequence ts){
-        trajectory=ts;
-    }
-    public void followTrajectory() throws InterruptedException {
+    public void followTrajectory(TrajectorySequence ts) throws InterruptedException {
+        trajectory = ts;
         drive.followTrajectorySequenceAsync(trajectory);
         while(drive.isBusy()){
             heartbeat();
@@ -155,20 +153,20 @@ public class Bot {
                 switch(checkColorSensor()) {
                     case 1:
                         fold.setPosition(.28);
-                        arm1.setPosition(.2);
-                        arm2.setPosition(.2);
+                        depPos = .5;
+                        armsPos = .2;
                         intake.setPower(.7);
                         break;
                     case 2:
                         fold.setPosition(.28);
-                        arm1.setPosition(.2);
-                        arm2.setPosition(.2);
+                        depPos=.4;
+                        armsPos = .2;
                         intake.setPower(-.7);
                 }
             else {
                 fold.setPosition(.5);
-                arm1.setPosition(.5);
-                arm2.setPosition(.5);
+                if (!lifting)
+                    armsPos = .5;
                 intake.setPower(0);
             }
             updateLift();
@@ -176,6 +174,7 @@ public class Bot {
     }
     public void liftTo(int level){
         armsPos = .83;
+        lifting = true;
         switch(level){
             case 1: liftTargetPos = 250;break;//bottom tier
             case 2: liftTargetPos = 600;break;//mid tier
@@ -184,6 +183,11 @@ public class Bot {
     }
     public void deposit(){
         depPos=.66;
+    }
+    public void depositAsync() throws InterruptedException {;
+        depPos=.66;
+        ElapsedTime time = new ElapsedTime();
+        while(time.milliseconds() < 10) { updateLift();heartbeat();dep.setPosition(depPos); }
     }
     public int checkColorSensor(){
         if(color.alpha()>7000) {
@@ -200,6 +204,7 @@ public class Bot {
         intakeGo = b;
     }
     public void liftDown(){
+        lifting = false;
         armsPos = .5;
         liftTargetPos = 0;
     }
