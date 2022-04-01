@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -30,7 +31,7 @@ public class FollowerPIDTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
+        Pose2d startPose = new Pose2d(11,63, Math.toRadians(-90));/*(-DISTANCE / 2, -DISTANCE / 2, 0);*/
 
         drive.setPoseEstimate(startPose);
 
@@ -40,14 +41,29 @@ public class FollowerPIDTuner extends LinearOpMode {
 
         while (!isStopRequested()) {
             TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
+                    .splineTo(new Vector2d(1.15,35.5), Math.toRadians(-135))
+
+                    .setReversed(true)
+                    .splineTo(new Vector2d(14,64), Math.toRadians(0))
+                    .strafeRight(3.5)
+                    .setReversed(false)
+                    .back(35)
+                    .forward(30)
+                    .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
+                    .setReversed(true)
+                    .splineTo(new Vector2d(14,64), Math.toRadians(0))
+                    .strafeRight(3.5)
+                    .setReversed(false)
+                    .back(35)
+                    .forward(30)
+                    .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
+                    .setReversed(true)
+                    .splineTo(new Vector2d(14,64), Math.toRadians(0))
+                    .strafeRight(3.5)
+                    .setReversed(false)
+                    .back(35)
+                    .forward(30)
+                    .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
                     .build();
             drive.followTrajectorySequence(trajSeq);
         }

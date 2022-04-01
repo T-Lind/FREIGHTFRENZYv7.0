@@ -65,13 +65,14 @@ public class Bot {
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         ducc = (DcMotorEx) hardwareMap.dcMotor.get("DU");
         ducc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ducc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ducc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setDirection(DcMotor.Direction.REVERSE);
         arm1 = hardwareMap.servo.get("arm1");
         arm2 = hardwareMap.servo.get("arm2");
         dep = hardwareMap.servo.get("dep");
@@ -136,6 +137,7 @@ public class Bot {
         return drive.getPoseEstimate();
     }
     public int getDepLevel(){
+        depLevel=2;
         return depLevel;
     }
     public TrajectorySequence getCurrentTrajectory() { return trajectory; }
@@ -161,12 +163,12 @@ public class Bot {
         armsPos = .83;
         switch(level){
             case 1: liftTargetPos = 250;break;//bottom tier
-            case 2: liftTargetPos = 500;break;//mid tier
-            case 3: liftTargetPos = 1000;//top tier
+            case 2: liftTargetPos = 600;break;//mid tier
+            case 3: liftTargetPos = 1200;//top tier
         }
     }
     public void deposit(){
-        depPos=.6;
+        depPos=.66;
     }
     public void liftDown(){
         armsPos = .5;

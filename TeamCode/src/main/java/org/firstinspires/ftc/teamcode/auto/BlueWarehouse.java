@@ -48,22 +48,45 @@ public class BlueWarehouse extends LinearOpMode //creates class
     public void runOpMode() throws InterruptedException {
         initialize();
         bot.setTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
-                .addTemporalMarker(.5,() ->{
+                .addTemporalMarker(.05,() ->{
                     bot.liftTo(bot.getDepLevel());
-                })
-                .addTemporalMarker(1.5,() ->{
+                })/*
+                .addTemporalMarker(1.33,() ->{ //1.5 for top
                     bot.deposit();
                 })
+
                 .addTemporalMarker(2,() ->{
                     bot.liftDown();
                 })
-                .addTemporalMarker(8.5,() ->{
+                .addTemporalMarker(6.5,() ->{
                     bot.liftTo(3);
                 })
-                .addTemporalMarker(9.5,() ->{
+                .addTemporalMarker(7.5,() ->{
                     bot.deposit();
                 })
-                .splineTo(new Vector2d(2,36), Math.toRadians(-135))
+                .addTemporalMarker(8,() ->{
+                    bot.liftDown();
+                })
+                .addTemporalMarker(12.5,() ->{
+                    bot.liftTo(3);
+                })
+                .addTemporalMarker(13.5,() ->{
+                    bot.deposit();
+                })
+                .addTemporalMarker(14,() ->{
+                    bot.liftDown();
+                })*/
+                .splineTo(new Vector2d(1.15,35), Math.toRadians(-135))
+                .addDisplacementMarker(() -> {
+                    bot.deposit();
+                })
+                .setReversed(true)
+                .splineTo(new Vector2d(14,64), Math.toRadians(0))
+                .strafeRight(3.5)
+                .setReversed(false)
+                .back(35)
+                .forward(30)
+                .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
                 .setReversed(true)
                 .splineTo(new Vector2d(14,64), Math.toRadians(0))
                 .strafeRight(3.5)
