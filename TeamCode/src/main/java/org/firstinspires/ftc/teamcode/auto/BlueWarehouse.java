@@ -47,7 +47,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        bot.followTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
+        /*bot.followTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
                 .addTemporalMarker(.05,() ->{
                     bot.liftTo(bot.getDepLevel());
                 })/*
@@ -76,41 +76,62 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .addTemporalMarker(14,() ->{
                     bot.liftDown();
                 })*/
-                .splineTo(new Vector2d(1.15,35), Math.toRadians(-135))
+                //.splineTo(new Vector2d(1.15,35), Math.toRadians(-135))
                 /*.addDisplacementMarker(() -> {
                     bot.deposit();
                 })
                 .setReversed(true)
+                //GET THE FREIGHT PART 1
                 .splineTo(new Vector2d(14,64), Math.toRadians(0))
                 .strafeRight(3.5)
                 .setReversed(false)
                 .back(35)
+
+                //DEPOSIT THE FREIGHT PART 1
                 .forward(30)
                 .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
                 .setReversed(true)
+
+                //GET THE FREIGHT PART 2
                 .splineTo(new Vector2d(14,64), Math.toRadians(0))
                 .strafeRight(3.5)
                 .setReversed(false)
                 .back(35)
+
+                //DEPOSIT THE FREIGHT PART 2
                 .forward(30)
                 .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
                 .setReversed(true)
+
+                //GET THE FREIGHT PART 3
                 .splineTo(new Vector2d(14,64), Math.toRadians(0))
                 .strafeRight(3.5)
                 .setReversed(false)
                 .back(35)
+
+                //DEPOSIT THE FREIGHT PART 3
                 .forward(30)
                 .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
-*/
+
+                .build()
+        ); */
+
+        //PRELOAD
+        bot.followTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
+                .addTemporalMarker(.05,() ->{
+                    bot.liftTo(bot.getDepLevel());
+                })
+                .splineTo(new Vector2d(1.15,35), Math.toRadians(-135))
                 .build()
         );
         bot.depositAsync();
+
         for(int i = 0;i<2;i++) {
             bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
-
                     .addTemporalMarker(.05, () -> {
-                        bot.liftDown();
+                        bot.liftDown(); //Lift down
                     })
+                    //Go to the freights
                     .setReversed(true)
                     .splineTo(new Vector2d(14, 64), Math.toRadians(0))
                     .strafeRight(3.5)
@@ -119,8 +140,6 @@ public class BlueWarehouse extends LinearOpMode //creates class
                         bot.setIntakeGo(true);
                     })
                     .back(35)
-
-
                     .build()
             );
             bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())

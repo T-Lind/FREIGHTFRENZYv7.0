@@ -43,7 +43,7 @@ public class Bot {
     private DcMotorEx intake, lift, ducc;
     private Servo arm1, arm2, dep, fold;
     private boolean delay = false;
-    private boolean intakeGo,lifting;
+    private boolean intakeGo,lifting, isDuck;
     private LiftPID liftPID = new LiftPID(.0075, 0, .003);
     private int liftError = 0;
     private int liftTargetPos = 0;
@@ -56,6 +56,7 @@ public class Bot {
     Bot(LinearOpMode s, SampleMecanumDrive dr, Pose2d startingPos){
         self = s;
         intakeGo = false;
+        isDuck = false;
         lifting = false;
         telemetry = self.telemetry;
         gamepad1 = self.gamepad1;
@@ -161,7 +162,10 @@ public class Bot {
                         fold.setPosition(.28);
                         depPos=.4; //Shut the deposit
                         armsPos = .2;
-                        intake.setPower(-.7);
+                        if(isDuck)
+                            intake.setPower(.7);
+                        else
+                            intake.setPower(-.7);
                 }
             else {
                 intake.setPower(0);
@@ -203,6 +207,7 @@ public class Bot {
     public void setIntakeGo(boolean b){
         intakeGo = b;
     }
+    public void isDuck(boolean b) {isDuck = b;}
     public void liftDown(){
         lifting = false;
         armsPos = .5;

@@ -46,6 +46,7 @@ public class RedCarousel extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
+        bot.isDuck(true);
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getStartingPos())
                 .addTemporalMarker(2, () -> {
                     bot.liftTo(bot.getDepLevel());
