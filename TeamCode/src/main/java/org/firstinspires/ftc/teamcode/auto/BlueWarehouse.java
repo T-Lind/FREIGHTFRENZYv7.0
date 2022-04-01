@@ -77,7 +77,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                     bot.liftDown();
                 })*/
                 .splineTo(new Vector2d(1.15,35), Math.toRadians(-135))
-                .addDisplacementMarker(() -> {
+                /*.addDisplacementMarker(() -> {
                     bot.deposit();
                 })
                 .setReversed(true)
@@ -101,9 +101,49 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .back(35)
                 .forward(30)
                 .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
+*/
+                .build()
+        );
+        bot.followTrajectory();
+        bot.deposit();
+        bot.setTrajectory(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+
+                .addTemporalMarker(.05,() ->{
+                    bot.liftDown();
+                })
+                .setReversed(true)
+                .splineTo(new Vector2d(14,64), Math.toRadians(0))
+                .strafeRight(3.5)
+                .setReversed(false)
+                .addTemporalMarker(1,() ->{
+                    bot.setIntakeGo(true);
+                })
+                .back(35)
+
 
                 .build()
         );
         bot.followTrajectory();
+        bot.setTrajectory(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+
+                .addTemporalMarker(.5,() ->{
+                    bot.liftTo(3);
+
+                })
+                .forward(30)
+                .splineTo(new Vector2d(-1,45), Math.toRadians(-115))
+
+
+                .build()
+        );
+        bot.followTrajectory();
+        bot.deposit();
+
+
+
+
+
+
     }
+
 }

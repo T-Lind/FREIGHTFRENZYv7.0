@@ -43,6 +43,7 @@ public class Bot {
     private DcMotorEx intake, lift, ducc;
     private Servo arm1, arm2, dep, fold;
     private boolean delay = false;
+    private boolean intakeGo;
     private LiftPID liftPID = new LiftPID(.0075, 0, .003);
     private int liftError = 0;
     private int liftTargetPos = 0;
@@ -54,6 +55,7 @@ public class Bot {
     private SampleMecanumDrive drive;
     Bot(LinearOpMode s, SampleMecanumDrive dr, Pose2d startingPos){
         self = s;
+        intakeGo = false;
         telemetry = self.telemetry;
         gamepad1 = self.gamepad1;
         gamepad2 = self.gamepad2;
@@ -149,13 +151,26 @@ public class Bot {
         while(drive.isBusy()){
             heartbeat();
             drive.update();
-            /*
-            checkColorSensor();
-            switch(intake)
-                case 0: off
-                case 1: intakeOn
-                case 2: extake
-            */
+            if(intakeGo)
+                switch(checkColorSensor()) {
+                    case 1:
+                        fold.setPosition(.28);
+                        arm1.setPosition(.2);
+                        arm2.setPosition(.2);
+                        intake.setPower(.7);
+                        break;
+                    case 2:
+                        fold.setPosition(.28);
+                        arm1.setPosition(.2);
+                        arm2.setPosition(.2);
+                        intake.setPower(-.7);
+                }
+            else {
+                fold.setPosition(.5);
+                arm1.setPosition(.5);
+                arm2.setPosition(.5);
+                intake.setPower(0);
+            }
             updateLift();
         }
     }
@@ -169,6 +184,20 @@ public class Bot {
     }
     public void deposit(){
         depPos=.66;
+    }
+    public int checkColorSensor(){
+        if(color.alpha()>7000) {
+            dep.setPosition(.4);
+            return 2;
+        }
+        if(color.alpha()>1000) {
+            dep.setPosition(.45);
+            return 2;
+        }
+        return 1;
+    }
+    public void setIntakeGo(boolean b){
+        intakeGo = b;
     }
     public void liftDown(){
         armsPos = .5;
