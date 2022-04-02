@@ -122,6 +122,10 @@ public class Bot {
         liftError = liftTargetPos - lift.getCurrentPosition();
         lift.setPower(Range.clip(liftPID.getCorrection(liftError),-.7,1));
     }
+
+    public void keepLiftIntact(){
+        lift.setPower(.15);
+    }
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone
         if (!self.opModeIsActive()) {
@@ -156,24 +160,23 @@ public class Bot {
                         fold.setPosition(.275);
                         depPos = .55; // Leave the deposit open
                         if(isDuck) {
-                            intake.setPower(.2);
+                            intake.setPower(.35);
                         }
                         else{
-                            intake.setPower(.7);
+                            intake.setPower(.58);
                         }
                         armsPos = .205; //Laying flat on the ground
-                        intake.setPower(.7);
                         break;
                     case 2:
                          //Shut the deposit
                         armsPos = .205;
                         fold.setPosition(.275);
                         if(isDuck) {
-                            intake.setPower(.2);
+                            intake.setPower(.35);
                             depPos = .35;
                         }
                         else{
-                            intake.setPower(-.7);
+                            intake.setPower(-.52);
                             depPos=.4;
                         }
                 }
@@ -228,7 +231,7 @@ public class Bot {
         if(clock)
             consta*=-1;
         ducc.setPower(.3*consta);
-        while (spinTime.milliseconds() <= 1500) { updateLift();heartbeat(); }
+        while (spinTime.milliseconds() <= 1650) { updateLift();heartbeat(); }
         ducc.setPower(.24*consta);
         while(spinTime.milliseconds()<=3000) { updateLift();heartbeat(); }
         ducc.setPower(0);

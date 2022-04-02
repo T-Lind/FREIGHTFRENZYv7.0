@@ -117,16 +117,34 @@ public class BlueWarehouse extends LinearOpMode //creates class
         ); */
 
         //PRELOAD
+        /*
+        bot.followTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
+               .splineTo(new Vector2d(0, 36), Math.toRadians(-120))
+                .setReversed(true)
+                .splineToSplineHeading(new Pose2d(18.5, 65, Math.toRadians(180)), Math.toRadians(60))
+                .setReversed(false)
+                .back(35)
+                .forward(30)
+                .splineToConstantHeading(new Vector2d(18.5, 58), Math.toRadians(180))
+                .splineTo(new Vector2d(-1, 45), Math.toRadians(245))
+                .build()
+        );
+
+         */
+        //bot.depositAsync();
+
+
+
         bot.followTrajectory(drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
                 .addTemporalMarker(.05,() ->{
                     bot.liftTo(bot.getDepLevel());
                 })
-                .splineTo(new Vector2d(1.15,35), Math.toRadians(-135))
+                .splineTo(new Vector2d(1.15,34), Math.toRadians(-135))
                 .build()
         );
         bot.depositAsync();
 
-        for(int i = 0;i<2;i++) {
+        for(int i = 0;i<3;i++) {
             bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
                     .addTemporalMarker(.05, () -> {
                         bot.liftDown(); //Lift down
@@ -136,27 +154,47 @@ public class BlueWarehouse extends LinearOpMode //creates class
                     .splineTo(new Vector2d(14, 64), Math.toRadians(0))
                     .strafeRight(3.5)
                     .setReversed(false)
-                    .addTemporalMarker(3, () -> {
+                    .addTemporalMarker(2, () -> {
                         bot.setIntakeGo(true);
                     })
-                    .back(35)
+                    .back(35 + (i * 1.4))
                     .build()
             );
             bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
-                    .addTemporalMarker(.5,() ->{
+                    .addTemporalMarker(.75,() ->{
                         bot.setIntakeGo(false);
                     })
-                    .addTemporalMarker(.5, () -> {
+                    .addTemporalMarker(1, () -> {
                         bot.liftTo(3);
 
                     })
-                    .forward(30)
-                    .splineTo(new Vector2d(-1, 45), Math.toRadians(-115))
-
-
+                    .forward(30 + (i * 1.4))
+                    .splineTo(new Vector2d(-4.5, 43.5), Math.toRadians(-100))
                     .build()
             );
             bot.depositAsync();
         }
+
+        //Park
+        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
+                .addTemporalMarker(.05, () -> {
+                    bot.liftDown(); //Lift down
+                })
+
+                .addTemporalMarker(.2, () -> {
+                    bot.keepLiftIntact();
+                })
+
+                //Go to the freights
+                .setReversed(true)
+                .splineToSplineHeading(new Pose2d(14, 70, Math.toRadians(180)), Math.toRadians(60))
+                .setReversed(false)
+                .setAccelConstraint((a,e,c,d)->55)
+                .setVelConstraint((a,e,c,d)->80)
+                .back(35)
+                .build()
+        );
+
+
     }
 }
