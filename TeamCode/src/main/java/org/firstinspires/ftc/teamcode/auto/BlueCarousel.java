@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 
-@Autonomous(name = "BlueCarousel")
+@Autonomous(name = "Blue Carousel")
 public class BlueCarousel extends LinearOpMode {
     private Bot bot;
     private SampleMecanumDrive drive;
@@ -21,12 +21,10 @@ public class BlueCarousel extends LinearOpMode {
         initialize();
         bot.isDuck(true);
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getStartingPos())
-                .addTemporalMarker(2, () -> {
+                .addTemporalMarker(.5, () -> {
                     bot.liftTo(bot.getDepLevel());
                 })
-
                 .splineTo(new Vector2d(-29.5, 25.5), Math.toRadians(0))
-
                 .build()
         );
 
@@ -37,37 +35,39 @@ public class BlueCarousel extends LinearOpMode {
                     bot.liftDown();
                 })
                 .setReversed(true)
-                .splineTo(new Vector2d(-60, 59), Math.toRadians(-215))//go to ducc
+                .splineTo(new Vector2d(-59, 60.5), Math.toRadians(-235))//go to ducc
                 .setReversed(false)
                 .build()
         );
 
-        bot.spinDuck(false);
+        bot.spinDuck(true);
 
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     bot.setIntakeGo(true);
                 })
-                .turn(Math.toRadians(-55))
+                .turn(Math.toRadians(-35))
                 //.turn(Math.toRadians(-10))//get better angle to ducc
                 // .turn(Math.toRadians(0))
                 // .lineTo(new Vector2d(-40, -62))//strafe ducc
-                .strafeLeft(20)
-                .turn(Math.toRadians(17))
-                // .setAccelConstraint((a,e,c,d)->7)
-                .lineTo(new Vector2d(-60, 62))
-                .turn(Math.toRadians(-17))
-                .build()
-        );
+                .setAccelConstraint((a,e,c,d)->7)
+                .setVelConstraint((a,e,c,d)->20)
 
-        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
+                .strafeLeft(36)
+                .turn(Math.toRadians(21.8))
+                .lineTo(new Vector2d(-24, 60.25))
+                .lineTo(new Vector2d(-60.5, 61.75))
+                .turn(Math.toRadians(-21.8))
+
+                .setAccelConstraint((a,e,c,d)->25)
+                .setVelConstraint((a,e,c,d)->25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     bot.setIntakeGo(false);
                 })
-                .addTemporalMarker(2, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
                     bot.liftTo(3);
                 })
-                .splineTo(new Vector2d(-33, 24), Math.toRadians(0))
+                .splineTo(new Vector2d(-32, 24), Math.toRadians(0))
                 .build()
         );
 
@@ -78,30 +78,8 @@ public class BlueCarousel extends LinearOpMode {
                     bot.liftDown();
                 })
                 .setReversed(true)
-                .splineTo(new Vector2d(-65, 37), Math.toRadians(-180))
-                .build()
-        );
-
-
-        /*bot.setTrajectory(drive.trajectorySequenceBuilder(bot.getTrajectory().end())
-                .addTemporalMarker(0, () -> {
-                    bot.turnOnIntake();
-                })
-                .turn(Math.toRadians(55))
-                //.turn(Math.toRadians(-10))//get better angle to ducc
-                // .turn(Math.toRadians(0))
-                // .lineTo(new Vector2d(-40, -62))//strafe ducc
-                .strafeRight(20)
-                .turn(Math.toRadians(-17))
-                // .setAccelConstraint((a,e,c,d)->7)
-                .lineTo(new Vector2d(-60, -62))
-                .turn(Math.toRadians(17))
-                .splineTo(new Vector2d(-33, -24), Math.toRadians(0))
-                .setReversed(true)
                 .splineTo(new Vector2d(-65, -37), Math.toRadians(180))
                 .build()
-        );*/
-
-
+        );
     }
 }
