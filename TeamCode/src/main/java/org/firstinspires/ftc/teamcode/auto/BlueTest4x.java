@@ -22,7 +22,7 @@ public class BlueTest4x extends LinearOpMode{
                 drive.trajectorySequenceBuilder(new Pose2d(11,63, Math.toRadians(-90)))
 
                         //Initial deposit
-                        .addTemporalMarker(.5,() -> {
+                        .addTemporalMarker(0,() -> {
                             bot.liftTo(bot.getDepLevel());
                         })
                         .lineTo(new Vector2d(-11,42))
@@ -38,8 +38,8 @@ public class BlueTest4x extends LinearOpMode{
                         })
                         .splineTo(new Vector2d(50,64.2), Math.toRadians(0))
                         .setReversed(false)
-                        .UNSTABLE_addTemporalMarkerOffset(.5,() -> {
-                            bot.liftTo(bot.getDepLevel());
+                        .UNSTABLE_addTemporalMarkerOffset(0,() -> {
+                            bot.liftTo(3);
                         })
                         .UNSTABLE_addTemporalMarkerOffset(1,()->{
                             bot.setIntakeGo(false);
@@ -61,8 +61,8 @@ public class BlueTest4x extends LinearOpMode{
                         .splineTo(new Vector2d(50,64.2), Math.toRadians(0))
                         .setReversed(false)
 
-                        .UNSTABLE_addTemporalMarkerOffset(.5,() -> {
-                            bot.liftTo(bot.getDepLevel());
+                        .UNSTABLE_addTemporalMarkerOffset(0,() -> {
+                            bot.liftTo(3);
                         })
                         .UNSTABLE_addTemporalMarkerOffset(1,()->{
                             bot.setIntakeGo(false);
@@ -84,8 +84,8 @@ public class BlueTest4x extends LinearOpMode{
                         .splineTo(new Vector2d(50,64.2), Math.toRadians(0))
                         .setReversed(false)
 
-                        .UNSTABLE_addTemporalMarkerOffset(.5,() -> {
-                            bot.liftTo(bot.getDepLevel());
+                        .UNSTABLE_addTemporalMarkerOffset(0,() -> {
+                            bot.liftTo(3);
                         })
                         .UNSTABLE_addTemporalMarkerOffset(1,()->{
                             bot.setIntakeGo(false);
@@ -105,8 +105,8 @@ public class BlueTest4x extends LinearOpMode{
                         })
                         .splineTo(new Vector2d(50,64.2), Math.toRadians(0))
                         .setReversed(false)
-                        .UNSTABLE_addTemporalMarkerOffset(.5,() -> {
-                            bot.liftTo(bot.getDepLevel());
+                        .UNSTABLE_addTemporalMarkerOffset(0,() -> {
+                            bot.liftTo(3);
                         })
                         .UNSTABLE_addTemporalMarkerOffset(1,()->{
                             bot.setIntakeGo(false);

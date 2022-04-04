@@ -123,9 +123,9 @@ public class Bot {
         lift.setPower(Range.clip(liftPID.getCorrection(liftError),-.7,1));
     }
 
-    public void keepLiftIntact(){
+    /*public void keepLiftIntact(){
         lift.setPower(.15);
-    }
+    }*/
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone
         if (!self.opModeIsActive()) {
@@ -163,7 +163,7 @@ public class Bot {
                             intake.setPower(.35);
                         }
                         else{
-                            intake.setPower(.58);
+                            intake.setPower(.57);
                         }
                         armsPos = .205; //Laying flat on the ground
                         break;
@@ -176,16 +176,17 @@ public class Bot {
                             depPos = .35;
                         }
                         else{
-                            intake.setPower(-.52);
+                            intake.setPower(-.63);
                             depPos=.4;
                         }
                 }
             else {
                 intake.setPower(0);
                 fold.setPosition(.5);
-                depPos=.4;
-                if (!lifting)
-                    armsPos = .5; //Set the arm horizontal
+                if (!lifting) {
+                    depPos = .4;
+                    armsPos = .5; //Set the arm vertical
+                }
             }
             updateLift();
         }
@@ -205,7 +206,7 @@ public class Bot {
     public void depositAsync() throws InterruptedException {;
         depPos=.66;
         ElapsedTime time = new ElapsedTime();
-        while(time.milliseconds() < 300) { updateLift();heartbeat();dep.setPosition(depPos); }
+        while(time.milliseconds() < 300) { updateLift();heartbeat(); }
     }
     public int checkColorSensor(){
         if(color.alpha()>7000) { //If this is a freight or a duck
