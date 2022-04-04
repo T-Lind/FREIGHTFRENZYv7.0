@@ -131,6 +131,8 @@ public class BlueWarehouse extends LinearOpMode //creates class
                         bot.setIntakeGo(true);
                     })
                     .back(35 + (i * 2))
+                    //splineToConstantHeading(new Vector2d(46+(i*2), 64.5), Math.toRadians(180))
+                    //splineToConstantHeading(new Vector2d(46+(i*2), 64.5-(i*.75)), Math.toRadians(180))
                     .build()
             );
             bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
@@ -141,6 +143,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                         bot.liftTo(3);
 
                     })
+                    //splineToConstantHeading(new Vector2d(11, 64.5), Math.toRadians(180))
                     .forward(30 + (i * 2))
                     .splineTo(new Vector2d(-3.8, 41), Math.toRadians(-115))
                     .build()

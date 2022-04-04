@@ -176,7 +176,7 @@ public class Bot {
                             depPos = .35;
                         }
                         else{
-                            intake.setPower(-.63);
+                            intake.setPower(-.57);
                             depPos=.4;
                         }
                 }
