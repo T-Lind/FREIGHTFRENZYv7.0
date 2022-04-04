@@ -158,7 +158,7 @@ public class Bot {
                 switch(checkColorSensor()) {
                     case 1:
                         fold.setPosition(.275);
-                        depPos = .55; // Leave the deposit open
+                        depPos = .57; // Leave the deposit open
                         if(isDuck) {
                             intake.setPower(.35);
                         }
