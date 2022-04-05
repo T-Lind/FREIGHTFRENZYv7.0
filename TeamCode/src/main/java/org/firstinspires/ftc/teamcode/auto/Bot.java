@@ -167,7 +167,7 @@ public class Bot {
                             intake.setPower(.35);
                         }
                         else{
-                            intake.setPower(.5);
+                            intake.setPower(.635);
                         }
                         armsPos = .205; //Laying flat on the ground
                         break;
@@ -180,7 +180,7 @@ public class Bot {
                             depPos = .35;
                         }
                         else{
-                            intake.setPower(-.57);
+                            intake.setPower(-.585);
                             depPos=.4;
                         }
                 }
@@ -209,6 +209,7 @@ public class Bot {
     }
     public void depositAsync() throws InterruptedException {;
         depPos=.66;
+        dep.setPosition(depPos);
         ElapsedTime time = new ElapsedTime();
         while(time.milliseconds() < 300) { updateLift();heartbeat(); }
     }
