@@ -41,7 +41,7 @@ public class Bot {
     private RevColorSensorV3 color;
     private int depLevel = 0;
     private DcMotorEx intake, lift, ducc;
-    private Servo arm1, arm2, dep, fold;
+    private Servo arm1, arm2, dep, fold, cap;
     private boolean delay = false;
     private boolean intakeGo,lifting, isDuck;
     private LiftPID liftPID = new LiftPID(.0075, 0, .003);
@@ -54,6 +54,7 @@ public class Bot {
     private DuckDetectionPipeline pipeline2 = new DuckDetectionPipeline();
     private SampleMecanumDrive drive;
     Bot(LinearOpMode s, SampleMecanumDrive dr, Pose2d startingPos){
+
         self = s;
         intakeGo = false;
         isDuck = false;
@@ -81,6 +82,8 @@ public class Bot {
         arm2 = hardwareMap.servo.get("arm2");
         dep = hardwareMap.servo.get("dep");
         fold = hardwareMap.servo.get("fold");
+        cap = hardwareMap.servo.get("cap");
+
         color = hardwareMap.get(RevColorSensorV3.class, "color");
         arm1.setDirection(Servo.Direction.REVERSE);
         weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -139,6 +142,7 @@ public class Bot {
         fold.setPosition(.5);
         armsPos = .5;
         intake.setPower(0);
+        cap.setPosition(.5);
     }
 
     public Pose2d getStartingPos(){
@@ -163,7 +167,7 @@ public class Bot {
                             intake.setPower(.35);
                         }
                         else{
-                            intake.setPower(.57);
+                            intake.setPower(.5);
                         }
                         armsPos = .205; //Laying flat on the ground
                         break;

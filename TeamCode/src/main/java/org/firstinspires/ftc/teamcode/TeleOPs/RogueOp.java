@@ -262,7 +262,7 @@ public class RogueOp extends OpMode {
         } else if(element == 1){
             dep.setPosition(.4);
         } else if(element == 0){
-            dep.setPosition(.57);
+            dep.setPosition(.5);
         }
     }
 
