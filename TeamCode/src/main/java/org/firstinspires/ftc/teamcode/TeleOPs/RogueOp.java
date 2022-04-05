@@ -202,7 +202,7 @@ public class RogueOp extends OpMode {
                 BLP /= max;
                 BRP /= max;
             }
-            if (gamepad1.y) {
+            if (gamepad1.left_trigger > .5) {
                 leftFront.setPower(FLP * 0.35);
                 rightFront.setPower(FRP * 0.35);
                 leftBack.setPower(BLP * 0.35);
