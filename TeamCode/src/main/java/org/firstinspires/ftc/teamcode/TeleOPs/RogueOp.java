@@ -271,7 +271,7 @@ public class RogueOp extends OpMode {
     }
     public void cap() {
         cap.setPosition(capPos);
-        capPos += gamepad2.right_stick_y * .005;
+        capPos -= gamepad2.right_stick_y * .01;
     }
 
     public void check(){
