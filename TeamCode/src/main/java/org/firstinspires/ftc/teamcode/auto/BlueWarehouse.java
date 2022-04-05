@@ -124,6 +124,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.setAccelConstraint((a,e,c,d) -> 15)
                 //.splineToConstantHeading(new Vector2d(47, 67), Math.toRadians(180))
                 .back(25)
+                //Wiggle
                 .lineTo(new Vector2d(46,58))
                 .lineTo(new Vector2d(36,65))
                 .build()
