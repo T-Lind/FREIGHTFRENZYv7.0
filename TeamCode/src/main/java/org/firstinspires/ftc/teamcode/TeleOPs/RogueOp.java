@@ -33,7 +33,7 @@ public class RogueOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, ducc;
 
-    private Servo arm1, arm2, dep, fold;
+    private Servo arm1, arm2, dep, fold, cap;
     private boolean direction, togglePrecision;
     Orientation angles;
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
@@ -63,6 +63,7 @@ public class RogueOp extends OpMode {
     int element = 0;
     boolean liftTime = false;
     boolean checkTime = true;
+    double capPos = .5;
     @Override
     public void init() {
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
@@ -108,6 +109,7 @@ public class RogueOp extends OpMode {
         dep = hardwareMap.servo.get("dep");
         fold = hardwareMap.servo.get("fold");
         //initialize the color sensor
+        cap = hardwareMap.servo.get("cap");
         color = hardwareMap.get(RevColorSensorV3.class, "color");
 
 
@@ -129,13 +131,14 @@ public class RogueOp extends OpMode {
         arm1.setPosition(.5);
         arm2.setPosition(.5);
 
+
         //color sensor is named color
 
     }
 
     @Override
     public void start() {
-
+    cap.setPosition(.5);
     }
 
     @Override
@@ -158,6 +161,7 @@ public class RogueOp extends OpMode {
         deposit();
         check();
         levels();
+        cap();
 
 
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -264,6 +268,10 @@ public class RogueOp extends OpMode {
         } else if(element == 0){
             dep.setPosition(.5);
         }
+    }
+    public void cap() {
+        cap.setPosition(capPos);
+        capPos += gamepad2.right_stick_y * .005;
     }
 
     public void check(){
