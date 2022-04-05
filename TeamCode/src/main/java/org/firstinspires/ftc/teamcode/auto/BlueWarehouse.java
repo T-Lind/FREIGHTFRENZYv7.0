@@ -48,6 +48,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.splineToConstantHeading(new Vector2d(44, 65), Math.toRadians(0))
                 //.setAccelConstraint((a,e,c,d) -> 15)
                 //.splineToConstantHeading(new Vector2d(45, 64), Math.toRadians(180))
+                //.setAccelConstraint((a,e,c,d) -> 50)
                 .back(33)
                 .build()
         );
@@ -63,6 +64,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.setReversed(true)
                 //.splineToConstantHeading(new Vector2d(11, 65), Math.toRadians(180))
                 .forward(28)
+                //.setAccelConstraint((a,e,c,d) -> 43)
                 .splineTo(new Vector2d(-3.8, 42), Math.toRadians(-115))
                 .build()
         );
@@ -86,7 +88,8 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.splineToConstantHeading(new Vector2d(45, 67), Math.toRadians(0))
                 //.setAccelConstraint((a,e,c,d) -> 15)
                 //.splineToConstantHeading(new Vector2d(47, 66), Math.toRadians(180))
-                .back(39)
+                //.setAccelConstraint((a,e,c,d) -> 50)
+                .back(37)
                 .build()
         );
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
@@ -100,8 +103,9 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .setAccelConstraint((a,e,c,d) -> 43)
                 //.setReversed(true)
                 //.splineToConstantHeading(new Vector2d(11, 67), Math.toRadians(180))
-                .forward(34)
-                .splineTo(new Vector2d(-3.8, 44.5), Math.toRadians(-100))
+                .forward(32)
+                //.setAccelConstraint((a,e,c,d) -> 43)
+                .splineTo(new Vector2d(-3.8, 44.5), Math.toRadians(-107.5))
                 .build()
         );
         bot.depositAsync();
@@ -123,10 +127,11 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.splineToConstantHeading(new Vector2d(46, 68), Math.toRadians(0))
                 //.setAccelConstraint((a,e,c,d) -> 15)
                 //.splineToConstantHeading(new Vector2d(47, 67), Math.toRadians(180))
-                .back(25)
+                //.setAccelConstraint((a,e,c,d) -> 50)
+                .back(40)
                 //Wiggle
-                .lineTo(new Vector2d(46,58))
-                .lineTo(new Vector2d(36,65))
+                //.lineTo(new Vector2d(46,58))
+                //.lineTo(new Vector2d(36,65))
                 .build()
         );
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
@@ -140,8 +145,54 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.setAccelConstraint((a,e,c,d) -> 43)
                 //.setReversed(true)
                 //.splineToConstantHeading(new Vector2d(11, 68), Math.toRadians(180))
-                .forward(20)
-                .splineTo(new Vector2d(-3.8, 46), Math.toRadians(-100))
+                .forward(35)
+                //.setAccelConstraint((a,e,c,d) -> 43)
+                .splineTo(new Vector2d(-3.8, 46), Math.toRadians(-106.5))
+                .build()
+        );
+
+        bot.depositAsync();
+
+
+        //Cycle 4
+        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
+                .addTemporalMarker(.05, () -> {
+                    bot.liftDown(); //Lift down
+                })
+                //Go to the freights
+                .setReversed(true)
+                //.splineTo(new Vector2d(12.5, 64), Math.toRadians(0))
+                //.strafeRight(3.5)
+                .splineToSplineHeading(new Pose2d(11,69,Math.toRadians(180)), Math.toRadians(60))
+                .setReversed(false)
+                .addTemporalMarker(2, () -> {
+                    bot.setIntakeGo(true);
+                })
+                //.setReversed(true)
+                //.splineToConstantHeading(new Vector2d(46, 68), Math.toRadians(0))
+                //.setAccelConstraint((a,e,c,d) -> 15)
+                //.splineToConstantHeading(new Vector2d(47, 67), Math.toRadians(180))
+                //.setAccelConstraint((a,e,c,d) -> 50)
+                .back(43)
+                //Wiggle
+                //.lineTo(new Vector2d(46,58))
+                //.lineTo(new Vector2d(36,65))
+                .build()
+        );
+        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
+                .addTemporalMarker(.75,() ->{
+                    bot.setIntakeGo(false);
+                })
+                .addTemporalMarker(1, () -> {
+                    bot.liftTo(3);
+
+                })
+                //.setAccelConstraint((a,e,c,d) -> 43)
+                //.setReversed(true)
+                //.splineToConstantHeading(new Vector2d(11, 68), Math.toRadians(180))
+                .forward(38)
+                //.setAccelConstraint((a,e,c,d) -> 43)
+                .splineTo(new Vector2d(-3.8, 47), Math.toRadians(-105.5))
                 .build()
         );
         bot.depositAsync();
