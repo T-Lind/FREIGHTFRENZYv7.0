@@ -24,7 +24,7 @@ public class BlueCarousel extends LinearOpMode {
                 .addTemporalMarker(.5, () -> {
                     bot.liftTo(bot.getDepLevel());
                 })
-                .splineTo(new Vector2d(-30, 25.5), Math.toRadians(0))
+                .splineTo(new Vector2d(-30.5, 25.5), Math.toRadians(0))
                 .build()
         );
 
