@@ -242,7 +242,7 @@ public class Bot {
         ducc.setPower(.3*consta);
         while (spinTime.milliseconds() <= 1650) { updateLift();heartbeat(); }
         ducc.setPower(.24*consta);
-        while(spinTime.milliseconds()<=3000) { updateLift();heartbeat(); }
+        while(spinTime.milliseconds()<=4500) { updateLift();heartbeat(); }
         ducc.setPower(0);
     }
 }

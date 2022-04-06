@@ -144,12 +144,12 @@ public class BlueWarehouseSafe extends LinearOpMode //creates class
                     //Go to the freights
                     .setReversed(true)
                     .splineTo(new Vector2d(14, 64), Math.toRadians(0))
-                    .strafeRight(3.5)
+                    .strafeRight(3.5+(i*.2))
                     .setReversed(false)
                     .addTemporalMarker(2, () -> {
                         bot.setIntakeGo(true);
                     })
-                    .back(35 + (i * 2))
+                    .back(35 + (i * 1.75))
                     .build()
             );
             bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
@@ -160,8 +160,8 @@ public class BlueWarehouseSafe extends LinearOpMode //creates class
                         bot.liftTo(3);
 
                     })
-                    .forward(30 + (i * 2))
-                    .splineTo(new Vector2d(-4.5, 43.75), Math.toRadians(-100))
+                    .forward(30 + (i * 1.75))
+                    .splineTo(new Vector2d(-4.5, (43.75+(i*.2))), Math.toRadians(-100))
                     .build()
             );
             bot.depositAsync();
@@ -179,7 +179,7 @@ public class BlueWarehouseSafe extends LinearOpMode //creates class
                     bot.setIntakeGo(true);
                 })
                 .back(27)
-                .lineTo(new Vector2d(51,53))
+                .lineTo(new Vector2d(55,57))
                 .build()
         );
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
@@ -190,9 +190,9 @@ public class BlueWarehouseSafe extends LinearOpMode //creates class
                     bot.liftTo(3);
 
                 })
-                .lineTo(new Vector2d(45,65))
+                .lineTo(new Vector2d(52,65))
                 .forward(30)
-                .splineTo(new Vector2d(-4.5, 44.8), Math.toRadians(-100))
+                .splineTo(new Vector2d(-4.5, 44), Math.toRadians(-100))
                 .build()
         );
         bot.depositAsync();

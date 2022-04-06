@@ -40,7 +40,7 @@ public class BlueCarousel extends LinearOpMode {
                 .build()
         );
 
-        bot.spinDuck(true);
+        bot.spinDuck(false);
 
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -78,7 +78,7 @@ public class BlueCarousel extends LinearOpMode {
                     bot.liftDown();
                 })
                 .setReversed(true)
-                .splineTo(new Vector2d(-65, -37), Math.toRadians(180))
+                .splineTo(new Vector2d(-65, 37), Math.toRadians(180))
                 .build()
         );
     }
