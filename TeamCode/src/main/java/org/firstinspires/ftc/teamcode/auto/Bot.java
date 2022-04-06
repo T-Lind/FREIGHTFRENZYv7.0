@@ -145,6 +145,9 @@ public class Bot {
         cap.setPosition(.5);
     }
 
+    public void keepLiftIntact(){
+        lift.setPower(.15);
+    }
     public Pose2d getStartingPos(){
         return drive.getPoseEstimate();
     }
