@@ -167,19 +167,20 @@ public class Bot {
                         fold.setPosition(.275);
                         depPos = .57; // Leave the deposit open
                         if(isDuck) {
-                            intake.setPower(.35);
+                            fold.setPosition(.27);
+                            intake.setPower(.45);
                         }
                         else{
                             intake.setPower(.635);
                         }
-                        armsPos = .205; //Laying flat on the ground
+                        armsPos = .195; //Laying flat on the ground
                         break;
                     case 2:
                          //Shut the deposit
-                        armsPos = .205;
+                        armsPos = .195;
                         fold.setPosition(.275);
                         if(isDuck) {
-                            intake.setPower(.35);
+                            intake.setPower(.45);
                             depPos = .35;
                         }
                         else{
