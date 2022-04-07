@@ -28,8 +28,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 //not paying attention in CS2 pog
 
 // this is a test teleop class for testing. Do not use in competition. - Seb on may 7th, 2021.
-@TeleOp(name="RogueOp")
-public class RogueOp extends OpMode {
+@TeleOp(name="RogueOpRed")
+public class RogueOpRed extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, ducc;
 
