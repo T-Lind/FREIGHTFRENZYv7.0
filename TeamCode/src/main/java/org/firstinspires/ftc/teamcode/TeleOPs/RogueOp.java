@@ -265,8 +265,10 @@ public class RogueOp extends OpMode {
             dep.setPosition(.45);
         } else if(element == 1){
             dep.setPosition(.4);
-        } else if(element == 0){
+        } else if(element == 0 && intake.getPower() != 0){
             dep.setPosition(.53);
+        } else {
+            dep.setPosition(.4);
         }
     }
     public void cap() {
@@ -275,7 +277,7 @@ public class RogueOp extends OpMode {
     }
 
     public void check(){
-        if(arm1.getPosition() <= .5) {
+        if(arm1.getPosition() < .5) {
             if (color.alpha() > 7500) {
                 element = 2;
             } else if (color.alpha() > 1000) {
