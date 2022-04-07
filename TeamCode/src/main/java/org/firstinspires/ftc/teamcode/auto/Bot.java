@@ -170,7 +170,7 @@ public class Bot {
                 switch(checkColorSensor()) {
                     case 1:
                         fold.setPosition(.275);
-                        depPos = .54; // Leave the deposit open
+                        depPos = .55; // Leave the deposit open
                         if(isDuck) {
                             fold.setPosition(.27);
                             intake.setPower(.45);
@@ -195,11 +195,14 @@ public class Bot {
                 }
             else {
                 intake.setPower(0);
-                fold.setPosition(.5);
+
+
                 if (!lifting) {
                     depPos = .4;
                     armsPos = .5; //Set the arm vertical
                 }
+
+                fold.setPosition(.5);
             }
             updateLift();
         }

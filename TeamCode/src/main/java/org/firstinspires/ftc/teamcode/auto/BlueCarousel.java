@@ -24,11 +24,12 @@ public class BlueCarousel extends LinearOpMode {
                 .addTemporalMarker(.5, () -> {
                     bot.liftTo(bot.getDepLevel());
                 })
-                .splineTo(new Vector2d(-30.5, 25.5), Math.toRadians(0))
+                .splineTo(new Vector2d(-29.75, 26), Math.toRadians(0))
                 .build()
         );
 
         bot.depositAsync();
+        bot.cameraDeleter();
 
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
                 .addTemporalMarker(0.2, () -> {
@@ -67,7 +68,7 @@ public class BlueCarousel extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
                     bot.liftTo(3);
                 })
-                .splineTo(new Vector2d(-32, 24), Math.toRadians(15))
+                .splineTo(new Vector2d(-29.67, 25), Math.toRadians(15))
                 .build()
         );
 
@@ -78,7 +79,7 @@ public class BlueCarousel extends LinearOpMode {
                     bot.liftDown();
                 })
                 .setReversed(true)
-                .splineTo(new Vector2d(-65, 37), Math.toRadians(180))
+                .splineTo(new Vector2d(-65, 40), Math.toRadians(180))
                 .build()
         );
     }
