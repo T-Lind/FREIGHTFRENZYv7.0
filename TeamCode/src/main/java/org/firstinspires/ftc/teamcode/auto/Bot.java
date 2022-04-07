@@ -129,6 +129,11 @@ public class Bot {
     /*public void keepLiftIntact(){
         lift.setPower(.15);
     }*/
+    public void cameraDeleter(){
+        camera = null;
+        pipeline = null;
+        pipeline2 = null;
+    }
     public void  heartbeat() throws InterruptedException {
         //if opMode is stopped, will throw and catch an InterruptedException rather than resulting in red text and program crash on phone
         if (!self.opModeIsActive()) {
@@ -165,7 +170,7 @@ public class Bot {
                 switch(checkColorSensor()) {
                     case 1:
                         fold.setPosition(.275);
-                        depPos = .57; // Leave the deposit open
+                        depPos = .54; // Leave the deposit open
                         if(isDuck) {
                             fold.setPosition(.27);
                             intake.setPower(.45);
@@ -203,8 +208,8 @@ public class Bot {
         armsPos = .83;
         lifting = true;
         switch(level){
-            case 1: liftTargetPos = 250;break;//bottom tier
-            case 2: liftTargetPos = 600;break;//mid tier
+            case 1: liftTargetPos = 0;break;//bottom tier, 250
+            case 2: liftTargetPos = 525;break;//mid tier
             case 3: liftTargetPos = 1200;//top tier
         }
     }

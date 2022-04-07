@@ -259,14 +259,14 @@ public class RogueOp extends OpMode {
 
     //create a function that sets dep position to .57 if gamepad 1 right trigger is greater than .5, and if not, set dep to .4 if the color alpha is greater than 2000.
     public void deposit() {
-        if (gamepad2.dpad_up /*gamepad2.right_trigger > .5*/) {
+        if (gamepad2.dpad_up &&(arm1.getPosition() != .5)) /*gamepad2.right_trigger > .5*/ {
             dep.setPosition(.6);
         } else if (element == 2) {
             dep.setPosition(.45);
         } else if(element == 1){
             dep.setPosition(.4);
         } else if(element == 0){
-            dep.setPosition(.5);
+            dep.setPosition(.53);
         }
     }
     public void cap() {

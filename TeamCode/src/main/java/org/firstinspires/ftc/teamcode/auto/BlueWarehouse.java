@@ -24,11 +24,11 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .addTemporalMarker(.05,() ->{
                     bot.liftTo(bot.getDepLevel());
                 })
-                .splineTo(new Vector2d(1,35), Math.toRadians(-145))
+                .splineTo(new Vector2d(1,35.53), Math.toRadians(-145))
                 .build()
         );
         bot.depositAsync();
-
+        bot.cameraDeleter();
         //for(int i = 0;i<3;i++) {
         //cycle 1
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
@@ -39,7 +39,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .setReversed(true)
                 //.splineTo(new Vector2d(12.5, 64), Math.toRadians(0))
                 //.strafeRight(3.5)
-                .splineToSplineHeading(new Pose2d(11,65,Math.toRadians(180)), Math.toRadians(60))
+                .splineToSplineHeading(new Pose2d(11,64.7,Math.toRadians(180)), Math.toRadians(60))
                 .setReversed(false)
                 .addTemporalMarker(2, () -> {
                     bot.setIntakeGo(true);
@@ -56,7 +56,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .addTemporalMarker(.75,() ->{
                     bot.setIntakeGo(false);
                 })
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(1.25, () -> {
                     bot.liftTo(3);
 
                 })
@@ -79,24 +79,26 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .setReversed(true)
                 //.splineTo(new Vector2d(12.5, 64), Math.toRadians(0))
                 //.strafeRight(3.5)
-                .splineToSplineHeading(new Pose2d(11,67,Math.toRadians(180)), Math.toRadians(60))
+                .splineToSplineHeading(new Pose2d(11,65.5,Math.toRadians(180)), Math.toRadians(60))
+                .strafeRight(1)
                 .setReversed(false)
                 .addTemporalMarker(2, () -> {
                     bot.setIntakeGo(true);
                 })
+                .back(37)
                 //.setReversed(true)
                 //.splineToConstantHeading(new Vector2d(45, 67), Math.toRadians(0))
                 //.setAccelConstraint((a,e,c,d) -> 15)
                 //.splineToConstantHeading(new Vector2d(47, 66), Math.toRadians(180))
                 //.setAccelConstraint((a,e,c,d) -> 50)
-                .back(37)
+
                 .build()
         );
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
                 .addTemporalMarker(.75,() ->{
                     bot.setIntakeGo(false);
                 })
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(1.25, () -> {
                     bot.liftTo(3);
 
                 })
@@ -118,7 +120,8 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .setReversed(true)
                 //.splineTo(new Vector2d(12.5, 64), Math.toRadians(0))
                 //.strafeRight(3.5)
-                .splineToSplineHeading(new Pose2d(11,68,Math.toRadians(180)), Math.toRadians(60))
+                .splineToSplineHeading(new Pose2d(4,65.5,Math.toRadians(180)), Math.toRadians(60))
+                .strafeRight(1.75)
                 .setReversed(false)
                 .addTemporalMarker(2, () -> {
                     bot.setIntakeGo(true);
@@ -128,8 +131,10 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.setAccelConstraint((a,e,c,d) -> 15)
                 //.splineToConstantHeading(new Vector2d(47, 67), Math.toRadians(180))
                 //.setAccelConstraint((a,e,c,d) -> 50)
-                .back(40)
+                .back(37)//40
                 //Wiggle
+                .lineTo(new Vector2d(52,64))
+                .lineTo(new Vector2d(41,68))
                 //.lineTo(new Vector2d(46,58))
                 //.lineTo(new Vector2d(36,65))
                 .build()
@@ -138,7 +143,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .addTemporalMarker(.75,() ->{
                     bot.setIntakeGo(false);
                 })
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(1.25, () -> {
                     bot.liftTo(3);
 
                 })
@@ -147,13 +152,14 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.splineToConstantHeading(new Vector2d(11, 68), Math.toRadians(180))
                 .forward(35)
                 //.setAccelConstraint((a,e,c,d) -> 43)
-                .splineTo(new Vector2d(-3.8, 46), Math.toRadians(-106.5))
+
+                .splineTo(new Vector2d(-3.8, 48), Math.toRadians(-106.5))
                 .build()
         );
 
         bot.depositAsync();
 
-
+/*
         //Cycle 4
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
                 .addTemporalMarker(.05, () -> {
@@ -195,15 +201,16 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .splineTo(new Vector2d(-3.8, 47), Math.toRadians(-105.5))
                 .build()
         );
-        bot.depositAsync();
+        bot.depositAsync();*/
         //Park
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
                 .addTemporalMarker(.05, () -> {
                     bot.liftDown(); //Lift down
                 })
                 .setReversed(true)
+                .setVelConstraint((a,e,c,d)->70)
                 .setAccelConstraint((a,e,c,d)->90)
-                .splineTo(new Vector2d(55,68), Math.toRadians(0))
+                .splineTo(new Vector2d(50,68), Math.toRadians(0))
 
                 .build()
         );
