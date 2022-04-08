@@ -176,7 +176,7 @@ public class Bot {
                             intake.setPower(.45);
                         }
                         else{
-                            intake.setPower(.635);
+                            intake.setPower(.59);
                         }
                         armsPos = .195; //Laying flat on the ground
                         break;
@@ -212,7 +212,7 @@ public class Bot {
         lifting = true;
         switch(level){
             case 1: liftTargetPos = 0;break;//bottom tier, 250
-            case 2: liftTargetPos = 525;break;//mid tier
+            case 2: liftTargetPos = 515;break;//mid tier
             case 3: liftTargetPos = 1200;//top tier
         }
     }

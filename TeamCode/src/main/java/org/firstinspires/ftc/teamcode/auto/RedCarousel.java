@@ -24,7 +24,7 @@ public class RedCarousel extends LinearOpMode {
                 .addTemporalMarker(.5, () -> {
                     bot.liftTo(bot.getDepLevel());
                 })
-                .splineTo(new Vector2d(-29.75, -26), Math.toRadians(0))
+                .splineTo(new Vector2d(-25.5, 35.5), Math.toRadians(45))
                 .build()
         );
 
@@ -54,11 +54,10 @@ public class RedCarousel extends LinearOpMode {
                 .setAccelConstraint((a,e,c,d)->17)
                 .setVelConstraint((a,e,c,d)->25)
 
-                .strafeRight(30)
+                .strafeRight(25)
                 .turn(Math.toRadians(-21.8))
                 .setAccelConstraint((a,e,c,d)->7)
                 .setVelConstraint((a,e,c,d)->20)
-                .lineTo(new Vector2d(-24, -60.25))
                 .lineTo(new Vector2d(-60.5, -61.75))
                 .turn(Math.toRadians(21.8))
 
@@ -81,7 +80,7 @@ public class RedCarousel extends LinearOpMode {
                     bot.liftDown();
                 })
                 .setReversed(true)
-                .splineTo(new Vector2d(-65, -37), Math.toRadians(-180))
+                .splineTo(new Vector2d(-65, -38), Math.toRadians(-180))
                 .build()
         );
       /*  initialize();

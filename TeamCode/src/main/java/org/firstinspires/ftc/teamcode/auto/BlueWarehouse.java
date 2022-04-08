@@ -137,7 +137,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.setAccelConstraint((a,e,c,d) -> 50)
                 .back(37)//40
                 //Wiggle
-                .lineTo(new Vector2d(52,64))
+                .lineTo(new Vector2d(52,63.5))
                 .lineTo(new Vector2d(41,66.5))
                 //.lineTo(new Vector2d(46,58))
                 //.lineTo(new Vector2d(36,65))
@@ -157,7 +157,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .forward(22) //35
                 //.setAccelConstraint((a,e,c,d) -> 43)
 
-                .splineTo(new Vector2d(-4.8, 45.3), Math.toRadians(-102)) //-3.8,48, -106.5
+                .splineTo(new Vector2d(-4.8, 45.3), Math.toRadians(-100.5)) //-3.8,48, -106.5
                 .build()
         );
 
@@ -214,7 +214,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .setReversed(true)
                 .setVelConstraint((a,e,c,d)->70)
                 .setAccelConstraint((a,e,c,d)->90)
-                .splineTo(new Vector2d(50,68), Math.toRadians(0))
+                .splineTo(new Vector2d(48,68), Math.toRadians(0))
 
                 .build()
         );

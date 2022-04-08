@@ -24,7 +24,8 @@ public class BlueCarousel extends LinearOpMode {
                 .addTemporalMarker(.5, () -> {
                     bot.liftTo(bot.getDepLevel());
                 })
-                .splineTo(new Vector2d(-29.75, 26), Math.toRadians(0))
+                .setAccelConstraint((a,e,c,d)-> 25)
+                .splineTo(new Vector2d(-25.5,35.5), Math.toRadians(-45))
                 .build()
         );
 
@@ -54,11 +55,11 @@ public class BlueCarousel extends LinearOpMode {
                 .setAccelConstraint((a,e,c,d)->17)
                 .setVelConstraint((a,e,c,d)->25)
 
-                .strafeLeft(30)
+                .strafeLeft(25)
                 .turn(Math.toRadians(21.8))
                 .setAccelConstraint((a,e,c,d)->7)
                 .setVelConstraint((a,e,c,d)->20)
-                .lineTo(new Vector2d(-24, 60.25))
+                //.lineTo(new Vector2d(-24, 60.25))
                 .lineTo(new Vector2d(-60.5, 61.75))
                 .turn(Math.toRadians(-21.8))
 
@@ -70,7 +71,7 @@ public class BlueCarousel extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
                     bot.liftTo(3);
                 })
-                .splineTo(new Vector2d(-29.67, 25), Math.toRadians(0))
+                .splineTo(new Vector2d(-29.5, 25), Math.toRadians(0))
                 .build()
         );
 
@@ -81,7 +82,7 @@ public class BlueCarousel extends LinearOpMode {
                     bot.liftDown();
                 })
                 .setReversed(true)
-                .splineTo(new Vector2d(-65, 40), Math.toRadians(180))
+                .splineTo(new Vector2d(-65, 38), Math.toRadians(180))
                 .build()
         );
     }
