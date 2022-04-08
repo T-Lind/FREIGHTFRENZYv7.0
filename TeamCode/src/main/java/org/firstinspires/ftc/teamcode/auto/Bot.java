@@ -181,7 +181,7 @@ public class Bot {
                         armsPos = .195; //Laying flat on the ground
                         break;
                     case 2:
-                         //Shut the deposit
+                        //Shut the deposit
                         armsPos = .195;
                         fold.setPosition(.275);
                         if(isDuck) {
@@ -233,6 +233,9 @@ public class Bot {
             return 2;
         }
         return 1;
+    }
+    public void missionFuckSebsAss(){
+        cap.setPosition(.6);
     }
     public void setIntakeGo(boolean b){
         intakeGo = b;

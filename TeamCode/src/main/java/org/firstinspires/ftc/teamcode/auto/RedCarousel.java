@@ -24,6 +24,72 @@ public class RedCarousel extends LinearOpMode {
                 .addTemporalMarker(.5, () -> {
                     bot.liftTo(bot.getDepLevel());
                 })
+                .splineTo(new Vector2d(-29.75, -26), Math.toRadians(0))
+                .build()
+        );
+
+        bot.depositAsync();
+        bot.cameraDeleter();
+
+        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
+                .addTemporalMarker(0.2, () -> {
+                    bot.liftDown();
+                })
+                .setReversed(true)
+                .splineTo(new Vector2d(-59, -60.5), Math.toRadians(235))//go to ducc
+                .setReversed(false)
+                .build()
+        );
+
+        bot.spinDuck(true);
+
+        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    bot.setIntakeGo(true);
+                })
+                .turn(Math.toRadians(35))
+                //.turn(Math.toRadians(-10))//get better angle to ducc
+                // .turn(Math.toRadians(0))
+                // .lineTo(new Vector2d(-40, -62))//strafe ducc
+                .setAccelConstraint((a,e,c,d)->17)
+                .setVelConstraint((a,e,c,d)->25)
+
+                .strafeRight(30)
+                .turn(Math.toRadians(-21.8))
+                .setAccelConstraint((a,e,c,d)->7)
+                .setVelConstraint((a,e,c,d)->20)
+                .lineTo(new Vector2d(-24, -60.25))
+                .lineTo(new Vector2d(-60.5, -61.75))
+                .turn(Math.toRadians(21.8))
+
+                .setAccelConstraint((a,e,c,d)->25)
+                .setVelConstraint((a,e,c,d)->25)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    bot.setIntakeGo(false);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
+                    bot.liftTo(3);
+                })
+                .splineTo(new Vector2d(-29.67, -25), Math.toRadians(0))//-15
+                .build()
+        );
+
+        bot.depositAsync();
+
+        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
+                .addTemporalMarker(0.2, () -> {
+                    bot.liftDown();
+                })
+                .setReversed(true)
+                .splineTo(new Vector2d(-65, -37), Math.toRadians(-180))
+                .build()
+        );
+      /*  initialize();
+        bot.isDuck(true);
+        bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getStartingPos())
+                .addTemporalMarker(.5, () -> {
+                    bot.liftTo(bot.getDepLevel());
+                })
                 .splineTo(new Vector2d(-30.5, -25.5), Math.toRadians(0))
                 .build()
         );
@@ -53,7 +119,7 @@ public class RedCarousel extends LinearOpMode {
                 .setAccelConstraint((a,e,c,d)->7)
                 .setVelConstraint((a,e,c,d)->20)
 
-                .strafeRight(36)
+                .strafeRight(30)
                 .turn(Math.toRadians(-21.8))
                 .lineTo(new Vector2d(-24, -60.25))
                 .lineTo(new Vector2d(-60.5, -61.75))
@@ -80,6 +146,7 @@ public class RedCarousel extends LinearOpMode {
                 .setReversed(true)
                 .splineTo(new Vector2d(-65, -37), Math.toRadians(180))
                 .build()
-        );
+        ); */
     }
 }
+

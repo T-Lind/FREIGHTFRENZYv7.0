@@ -138,7 +138,7 @@ public class RogueOpRed extends OpMode {
 
     @Override
     public void start() {
-    cap.setPosition(.5);
+    cap.setPosition(.6);
     }
 
     @Override
@@ -234,6 +234,7 @@ public class RogueOpRed extends OpMode {
             checkTime = true;
             liftTargetPos = 0;
             liftTime = false;
+            element = 0;
 
         } else if (toggleOut.nowTrue()) {
             intake.setPower(-1);
@@ -261,6 +262,7 @@ public class RogueOpRed extends OpMode {
     public void deposit() {
         if (gamepad2.dpad_up &&(arm1.getPosition() != .5)) /*gamepad2.right_trigger > .5*/ {
             dep.setPosition(.6);
+            element = 0;
         } else if (element == 2) {
             dep.setPosition(.45);
         } else if(element == 1){
@@ -273,7 +275,13 @@ public class RogueOpRed extends OpMode {
     }
     public void cap() {
         cap.setPosition(capPos);
-        capPos -= gamepad2.right_stick_y * .01;
+        capPos -= gamepad2.left_stick_y * .01;
+        if(gamepad2.a){
+            capPos = .1;
+        }
+        if(gamepad2.b){
+            capPos = .6;
+        }
     }
 
     public void check(){
@@ -290,9 +298,9 @@ public class RogueOpRed extends OpMode {
 
     public void duck() {
         if (gamepad1.left_bumper && gamepad1.a) {
-            ducc.setPower(1);
+            ducc.setPower(-1);
         } else if (gamepad1.left_bumper) {
-            ducc.setPower(.5);
+            ducc.setPower(-.5);
         } else {
             ducc.setPower(0);
         }

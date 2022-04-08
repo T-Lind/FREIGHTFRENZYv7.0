@@ -51,11 +51,13 @@ public class BlueCarousel extends LinearOpMode {
                 //.turn(Math.toRadians(-10))//get better angle to ducc
                 // .turn(Math.toRadians(0))
                 // .lineTo(new Vector2d(-40, -62))//strafe ducc
+                .setAccelConstraint((a,e,c,d)->17)
+                .setVelConstraint((a,e,c,d)->25)
+
+                .strafeLeft(30)
+                .turn(Math.toRadians(21.8))
                 .setAccelConstraint((a,e,c,d)->7)
                 .setVelConstraint((a,e,c,d)->20)
-
-                .strafeLeft(36)
-                .turn(Math.toRadians(21.8))
                 .lineTo(new Vector2d(-24, 60.25))
                 .lineTo(new Vector2d(-60.5, 61.75))
                 .turn(Math.toRadians(-21.8))
@@ -68,7 +70,7 @@ public class BlueCarousel extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
                     bot.liftTo(3);
                 })
-                .splineTo(new Vector2d(-29.67, 25), Math.toRadians(15))
+                .splineTo(new Vector2d(-29.67, 25), Math.toRadians(0))
                 .build()
         );
 
