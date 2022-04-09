@@ -88,7 +88,7 @@ public class RedWarehouse extends LinearOpMode //creates class
                 })
                 .back(35)
                 .lineTo(new Vector2d(47,-64))
-                .lineTo(new Vector2d(46,-67.5))
+                .lineTo(new Vector2d(46,-67.65))
                 //.setReversed(true)
                 //.splineToConstantHeading(new Vector2d(45, 67), Math.toRadians(0))
                 //.setAccelConstraint((a,e,c,d) -> 15)
@@ -137,7 +137,7 @@ public class RedWarehouse extends LinearOpMode //creates class
                 .back(37)//40
                 //Wiggle
                 .lineTo(new Vector2d(52,-63.5))
-                .lineTo(new Vector2d(41,-66.75))
+                .lineTo(new Vector2d(41,-66.90))
                 //.lineTo(new Vector2d(46,58))
                 //.lineTo(new Vector2d(36,65))
                 .build()
@@ -156,7 +156,7 @@ public class RedWarehouse extends LinearOpMode //creates class
                 .forward(22) //35
                 //.setAccelConstraint((a,e,c,d) -> 43)
 
-                .splineTo(new Vector2d(-4.8, -45.05), Math.toRadians(100)) //-3.8,48, -106.5
+                .splineTo(new Vector2d(-4.8, -45.05), Math.toRadians(101)) //-3.8,48, -106.5
                 .build()
         );
 
@@ -194,7 +194,6 @@ public class RedWarehouse extends LinearOpMode //creates class
                 })
                 .addTemporalMarker(1, () -> {
                     bot.liftTo(3);
-
                 })
                 //.setAccelConstraint((a,e,c,d) -> 43)
                 //.setReversed(true)
