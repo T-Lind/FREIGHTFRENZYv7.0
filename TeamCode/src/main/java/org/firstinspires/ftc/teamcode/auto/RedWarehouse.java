@@ -110,7 +110,7 @@ public class RedWarehouse extends LinearOpMode //creates class
                 //.splineToConstantHeading(new Vector2d(11, 67), Math.toRadians(180))
                 .forward(32)
                 //.setAccelConstraint((a,e,c,d) -> 43)
-                .splineTo(new Vector2d(-4.5, -43.4), Math.toRadians(100))
+                .splineTo(new Vector2d(-4.5, -43.3), Math.toRadians(100))
                 .build()
         );
         bot.depositAsync();
@@ -156,7 +156,7 @@ public class RedWarehouse extends LinearOpMode //creates class
                 .forward(22) //35
                 //.setAccelConstraint((a,e,c,d) -> 43)
 
-                .splineTo(new Vector2d(-4.8, -45.05), Math.toRadians(101)) //-3.8,48, -106.5
+                .splineTo(new Vector2d(-4.8, -44.95), Math.toRadians(101)) //-3.8,48, -106.5
                 .build()
         );
 
