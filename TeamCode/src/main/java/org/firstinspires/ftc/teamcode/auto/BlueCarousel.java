@@ -37,7 +37,7 @@ public class BlueCarousel extends LinearOpMode {
                     bot.liftDown();
                 })
                 .setReversed(true)
-                .splineTo(new Vector2d(-59, 60.5), Math.toRadians(-235))//go to ducc
+                .splineTo(new Vector2d(-59, 58.75), Math.toRadians(-235))//go to ducc
                 .setReversed(false)
                 .build()
         );
@@ -71,7 +71,7 @@ public class BlueCarousel extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
                     bot.liftTo(3);
                 })
-                .splineTo(new Vector2d(-29.5, 25), Math.toRadians(0))
+                .splineTo(new Vector2d(-29.67, 25), Math.toRadians(0))
                 .build()
         );
 
@@ -82,7 +82,7 @@ public class BlueCarousel extends LinearOpMode {
                     bot.liftDown();
                 })
                 .setReversed(true)
-                .splineTo(new Vector2d(-65, 38), Math.toRadians(180))
+                .splineTo(new Vector2d(-65, 37.25), Math.toRadians(180))
                 .build()
         );
     }

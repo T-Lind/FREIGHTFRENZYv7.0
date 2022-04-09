@@ -41,7 +41,8 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .setReversed(true)
                 //.splineTo(new Vector2d(12.5, 64), Math.toRadians(0))
                 //.strafeRight(3.5)
-                .splineToSplineHeading(new Pose2d(11,64.85,Math.toRadians(180)), Math.toRadians(60))
+                .splineToSplineHeading(new Pose2d(9,65.85,Math.toRadians(180)), Math.toRadians(60))
+                .strafeRight(1.4)
                 .setReversed(false)
                 .addTemporalMarker(2, () -> {
                     bot.setIntakeGo(true);
@@ -51,7 +52,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.setAccelConstraint((a,e,c,d) -> 15)
                 //.splineToConstantHeading(new Vector2d(45, 64), Math.toRadians(180))
                 //.setAccelConstraint((a,e,c,d) -> 50)
-                .back(33)
+                .back(35)
                 .build()
         );
         bot.followTrajectory(drive.trajectorySequenceBuilder(bot.getCurrentTrajectory().end())
@@ -67,7 +68,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.splineToConstantHeading(new Vector2d(11, 65), Math.toRadians(180))
                 .forward(28)
                 //.setAccelConstraint((a,e,c,d) -> 43)
-                .splineTo(new Vector2d(-4.75, 42), Math.toRadians(-97)) //-3.8
+                .splineTo(new Vector2d(-5.25, 42), Math.toRadians(-97)) //-3.8
                 .build()
         );
         bot.depositAsync();
@@ -81,15 +82,15 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .setReversed(true)
                 //.splineTo(new Vector2d(12.5, 64), Math.toRadians(0))
                 //.strafeRight(3.5)
-                .splineToSplineHeading(new Pose2d(11,65.5,Math.toRadians(180)), Math.toRadians(60))
-                .strafeRight(1.25)
+                .splineToSplineHeading(new Pose2d(9,66.2,Math.toRadians(180)), Math.toRadians(60))
+                .strafeRight(1.65)
                 .setReversed(false)
                 .addTemporalMarker(2, () -> {
                     bot.setIntakeGo(true);
                 })
                 .back(35)
                 .lineTo(new Vector2d(47,64))
-                .lineTo(new Vector2d(46,66.2))
+                .lineTo(new Vector2d(46,67.5))
                 //.setReversed(true)
                 //.splineToConstantHeading(new Vector2d(45, 67), Math.toRadians(0))
                 //.setAccelConstraint((a,e,c,d) -> 15)
@@ -111,7 +112,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 //.splineToConstantHeading(new Vector2d(11, 67), Math.toRadians(180))
                 .forward(32)
                 //.setAccelConstraint((a,e,c,d) -> 43)
-                .splineTo(new Vector2d(-4.5, 43.3), Math.toRadians(-100))
+                .splineTo(new Vector2d(-4.5, 43.5), Math.toRadians(-100))
                 .build()
         );
         bot.depositAsync();
@@ -124,8 +125,8 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .setReversed(true)
                 //.splineTo(new Vector2d(12.5, 64), Math.toRadians(0))
                 //.strafeRight(3.5)
-                .splineToSplineHeading(new Pose2d(4,65.5,Math.toRadians(180)), Math.toRadians(60))
-                .strafeRight(1.3)
+                .splineToSplineHeading(new Pose2d(4,65.7,Math.toRadians(180)), Math.toRadians(60))
+                .strafeRight(1.45)
                 .setReversed(false)
                 .addTemporalMarker(2, () -> {
                     bot.setIntakeGo(true);
@@ -138,7 +139,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .back(37)//40
                 //Wiggle
                 .lineTo(new Vector2d(52,63.5))
-                .lineTo(new Vector2d(41,66.5))
+                .lineTo(new Vector2d(41,66.75))
                 //.lineTo(new Vector2d(46,58))
                 //.lineTo(new Vector2d(36,65))
                 .build()
@@ -157,7 +158,7 @@ public class BlueWarehouse extends LinearOpMode //creates class
                 .forward(22) //35
                 //.setAccelConstraint((a,e,c,d) -> 43)
 
-                .splineTo(new Vector2d(-4.8, 45.3), Math.toRadians(-100.5)) //-3.8,48, -106.5
+                .splineTo(new Vector2d(-4.8, 45.3), Math.toRadians(-100)) //-3.8,48, -106.5
                 .build()
         );
 
