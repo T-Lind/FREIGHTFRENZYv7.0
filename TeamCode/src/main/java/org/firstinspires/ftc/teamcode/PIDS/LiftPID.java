@@ -39,6 +39,10 @@ public class LiftPID {
             return false;
 
     }
+    public void setPD(double p, double d){
+        kp = p;
+        kd = d;
+    }
 
     public double getCorrection(double error) {
        /* if(errors.size() != 0) {

@@ -28,26 +28,30 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 //not paying attention in CS2 pog
 
 // this is a test teleop class for testing. Do not use in competition. - Seb on may 7th, 2021.
-@TeleOp(name="TestOp")
-public class TestOp extends OpMode {
+@TeleOp(name="RogueOpRed")
+public class RogueOpRed extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, intake, lift, ducc;
 
-    private Servo arm1, arm2, dep, fold;
+    private Servo arm1, arm2, dep, fold, cap;
     private boolean direction, togglePrecision;
     Orientation angles;
     EasyToggle toggleUp = new EasyToggle("up", false, 1, false, false);
     EasyToggle toggleDown = new EasyToggle("down", false, 1, false, false);
     EasyToggle toggleIn = new EasyToggle("in", false, 1, false, false);
     EasyToggle toggleOut = new EasyToggle("out", false, 1, false, false);
-
+    EasyToggle levelUp = new EasyToggle("lu", false, 1, false, false);
+    EasyToggle levelDown = new EasyToggle("ld", false, 1, false, false);
 
     private double factor;
     //test
     boolean reverse;
     BNO055IMU imu;
-    private LiftPID liftPID = new LiftPID(.0075, 0, .002);
+    private LiftPID liftPID = new LiftPID(.0075, 0, .003);
     int top = 1000;
+    int mid = 500;
+    int shared = 250;
+    int setPos = top;
     int liftError = 0;
     int liftTargetPos = 0;
     EasyToggle toggleA = new EasyToggle("a", false, 1, false, false);
@@ -57,7 +61,9 @@ public class TestOp extends OpMode {
     // initialize an elapsed time named test
     ElapsedTime test = new ElapsedTime();
     int element = 0;
-
+    boolean liftTime = false;
+    boolean checkTime = true;
+    double capPos = .5;
     @Override
     public void init() {
         leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
@@ -86,7 +92,7 @@ public class TestOp extends OpMode {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -103,6 +109,7 @@ public class TestOp extends OpMode {
         dep = hardwareMap.servo.get("dep");
         fold = hardwareMap.servo.get("fold");
         //initialize the color sensor
+        cap = hardwareMap.servo.get("cap");
         color = hardwareMap.get(RevColorSensorV3.class, "color");
 
 
@@ -123,21 +130,26 @@ public class TestOp extends OpMode {
         dep.setPosition(.57);
         arm1.setPosition(.5);
         arm2.setPosition(.5);
+
+
         //color sensor is named color
 
     }
 
     @Override
     public void start() {
-
+    cap.setPosition(.6);
     }
 
     @Override
     public void loop() {
-        toggleUp.updateStart(gamepad1.dpad_up/*gamepad2.dpad_up*/);
-        toggleDown.updateStart(gamepad1.dpad_down/*gamepad2.dpad_down*/);
-        toggleIn.updateStart(gamepad1.left_trigger > .5/*gamepad2.dpad_up*/);
-        toggleOut.updateStart(gamepad1.left_bumper/*gamepad2.dpad_down*/);
+        toggleUp.updateStart(gamepad2.right_bumper/*gamepad2.dpad_up*/);
+        toggleDown.updateStart(gamepad2.left_bumper/*gamepad2.dpad_down*/);
+        toggleIn.updateStart(gamepad1.right_trigger > .5/*gamepad2.dpad_up*/);
+        toggleOut.updateStart(gamepad1.right_bumper/*gamepad2.dpad_down*/);
+        levelUp.updateStart(gamepad2.y/*gamepad2.dpad_up*/);
+        levelDown.updateStart(gamepad2.x/*gamepad2.dpad_down*/);
+
 
         toggleA.updateStart(gamepad1.a);
         //toggles precision mode if the right stick button is pressed
@@ -148,6 +160,8 @@ public class TestOp extends OpMode {
         macroLift();
         deposit();
         check();
+        levels();
+        cap();
 
 
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -161,7 +175,7 @@ public class TestOp extends OpMode {
         telemetry.addData("Alpha", color.alpha());
 
         telemetry.addData("lift", lift.getCurrentPosition());
-        telemetry.addData("lift Power", lift.getPower());
+        telemetry.addData("setPos", setPos);
         telemetry.addData("liftTargetPos", liftTargetPos);
         telemetry.update();
         toggleA.updateEnd();
@@ -169,7 +183,8 @@ public class TestOp extends OpMode {
         toggleDown.updateEnd();
         toggleIn.updateEnd();
         toggleOut.updateEnd();
-
+        levelUp.updateEnd();
+        levelDown.updateEnd();
         //deadwheel time
         // deadwheels were a lie :(
     }
@@ -187,7 +202,7 @@ public class TestOp extends OpMode {
                 BLP /= max;
                 BRP /= max;
             }
-            if (gamepad1.right_trigger > 0.5) {
+            if (gamepad1.left_trigger > .5) {
                 leftFront.setPower(FLP * 0.35);
                 rightFront.setPower(FRP * 0.35);
                 leftBack.setPower(BLP * 0.35);
@@ -213,22 +228,31 @@ public class TestOp extends OpMode {
     public void intake() {
         if (toggleIn.nowTrue()) {
             intake.setPower(1);
-            fold.setPosition(.27);
+            fold.setPosition(.28);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
+            checkTime = true;
+            liftTargetPos = 0;
+            liftTime = false;
+            element = 0;
+
         } else if (toggleOut.nowTrue()) {
             intake.setPower(-1);
-            fold.setPosition(.27);
+            fold.setPosition(.28);
             arm1.setPosition(.2);
             arm2.setPosition(.2);
+            checkTime = true;
+            liftTargetPos = 0;
+            liftTime = false;
+
         } else if (toggleOut.nowFalse() || toggleIn.nowFalse()) {
             intake.setPower(0);
             fold.setPosition(.5);
             arm1.setPosition(.5);
             arm2.setPosition(.5);
-
+            checkTime = false;
         }
-        if(!(element == 0) && gamepad1.left_trigger > .5){
+        if(!(element == 0) && gamepad1.right_trigger > .5){
             intake.setPower(-1);
         }
 
@@ -236,45 +260,62 @@ public class TestOp extends OpMode {
 
     //create a function that sets dep position to .57 if gamepad 1 right trigger is greater than .5, and if not, set dep to .4 if the color alpha is greater than 2000.
     public void deposit() {
-        if (gamepad1.right_trigger > .5) {
+        if (gamepad2.dpad_up &&(arm1.getPosition() != .5)) /*gamepad2.right_trigger > .5*/ {
             dep.setPosition(.6);
+            element = 0;
         } else if (element == 2) {
             dep.setPosition(.45);
         } else if(element == 1){
             dep.setPosition(.4);
-        } else if(element == 0){
-            dep.setPosition(.5);
+        } else if(element == 0 && intake.getPower() != 0){
+            dep.setPosition(.53);
+        } else {
+            dep.setPosition(.4);
+        }
+    }
+    public void cap() {
+        cap.setPosition(capPos);
+        capPos -= gamepad2.left_stick_y * .01;
+        if(gamepad2.a){
+            capPos = .1;
+        }
+        if(gamepad2.b){
+            capPos = .6;
         }
     }
 
     public void check(){
-        if(color.alpha() > 7500) {
-            element = 2;
-        } else if (color.alpha() > 1000){
-            element = 1;
-        }else{
-            element = 0;
+        if(arm1.getPosition() < .5) {
+            if (color.alpha() > 7500) {
+                element = 2;
+            } else if (color.alpha() > 1000) {
+                element = 1;
+            } else {
+                element = 0;
+            }
         }
     }
 
     public void duck() {
-        if (gamepad1.right_bumper && gamepad1.a) {
-            ducc.setPower(1);
-        } else if (gamepad1.right_bumper) {
-            ducc.setPower(.5);
+        if (gamepad1.left_bumper && gamepad1.a) {
+            ducc.setPower(-1);
+        } else if (gamepad1.left_bumper) {
+            ducc.setPower(-.5);
         } else {
             ducc.setPower(0);
         }
     }
 
     public void arm() {
-        if (gamepad1.x) {
-            arm1.setPosition(.5);
-            arm2.setPosition(.5);
-        } else if (gamepad1.y) {
-            arm1.setPosition(.83);
-            arm2.setPosition(.83);
+        if(intake.getPower() == 0) {
+            if (gamepad2.x) {
+                //arm1.setPosition(.5);
+                //arm2.setPosition(.5);
+            } else if (gamepad2.y) {
+                //arm1.setPosition(.83);
+                //arm2.setPosition(.83);
 
+            }
         }
     }
 
@@ -282,14 +323,40 @@ public class TestOp extends OpMode {
         liftError = liftTargetPos - lift.getCurrentPosition();
         lift.setPower(Range.clip(liftPID.getCorrection(liftError), -.7, 1));
         if (toggleUp.nowTrue() && arm1.getPosition() > .4) {
-            liftTargetPos = top;
+            liftTargetPos = setPos;
             arm1.setPosition(.83);
             arm2.setPosition(.83);
+            liftTime = true;
         }
         if (toggleDown.nowTrue()) {
             liftTargetPos = 0;
             arm1.setPosition(.5);
             arm2.setPosition(.5);
+            liftTime = false;
+        }
+        if(liftTime){
+            liftTargetPos = setPos;
+        }
+    }
+
+    public void levels(){
+        if(levelUp.nowTrue()){
+            if(setPos == 0){
+                setPos = shared;
+            } else if(setPos == shared){
+                setPos = mid;
+            } else if (setPos == mid){
+                setPos = top;
+            }
+        }
+        if(levelDown.nowTrue()){
+            if(setPos == top){
+                setPos = mid;
+            } else if(setPos == mid){
+                setPos = shared;
+            } else if (setPos == shared){
+                setPos = 0;
+            }
         }
     }
 }

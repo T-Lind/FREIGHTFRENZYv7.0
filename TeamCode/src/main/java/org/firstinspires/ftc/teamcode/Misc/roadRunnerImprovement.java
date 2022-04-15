@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+/*package org.firstinspires.ftc.teamcode.Misc;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Point;
 
 @Autonomous(name = "roadRunnerImprovement")
-public class roadRunnerImprovement extends LinearOpMode //creates class
+public class roadRunnerImprovemen extends LinearOpMode //creates class
 { //test test
     BNO055IMU imu;
     //test
@@ -85,5 +85,5 @@ public class roadRunnerImprovement extends LinearOpMode //creates class
     }
 
 
-}
+}*/
 
