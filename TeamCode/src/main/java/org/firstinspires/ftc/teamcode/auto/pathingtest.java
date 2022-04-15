@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
 import java.util.ArrayList;
-
 /**
  * A program to take a path represented by an equation
  * and decompose it to motor power values on a differential swerve.
@@ -21,6 +20,8 @@ class Path{
     private ArrayList<Double> angularVelocity;
     private ArrayList<Double> motorOneVelocity;
     private ArrayList<Double> motorTwoVelocity;
+    private boolean staticAngle = true;
+
     public Path(double executeT, double step_time){
         executeTime = executeT;
         timeStep = step_time;
@@ -90,14 +91,17 @@ class Path{
         return motorTwoVelocity;
     }
 
+
+
     public void build(){
-        buildVelocity();
+        if(staticAngle)
+            buildVelocity();
         buildAngle();
         motorOnePower();
         motorTwoPower();
+
     }
 }
-
 class pathOne extends Path{
     public pathOne(double executeT, double time_step) {
         super(executeT, time_step);
@@ -110,49 +114,6 @@ class pathOne extends Path{
 }
 
 public class pathingtest {
-
-    public static ArrayList<Double> getVelocity(Path p) {
-        ArrayList<Double> velocity = new ArrayList<Double>();
-        double timeStep = p.getTimeStep();
-
-        for (int i = 0; i < (1 / timeStep) * p.getExecuteTime() - 2; i++)
-            velocity.add(Math.sqrt(timeStep * timeStep + (p.f((i + 1) * timeStep) - p.f(i * timeStep)) * (p.f((i + 1) * timeStep) - p.f(i * timeStep))) / timeStep);
-
-        return velocity;
-    }
-
-    public static ArrayList<Double> motorOnePower(ArrayList<Double> angularVelocities, ArrayList<Double> velocities) {
-        // need to map these velocities to diffy swerve encoder velocities
-
-        ArrayList<Double> motorOneVelocity = new ArrayList<Double>();
-        for (int i = 0; i < angularVelocities.size(); i++) {
-            double[] s = new double[2];
-            s[0] = velocities.get(i);
-            s[1] = angularVelocities.get(i);
-
-            motorOneVelocity.add((s[0] + (s[1] - s[0]) / 2) * Math.sqrt(2));
-        }
-        return motorOneVelocity;
-    }
-
-    public static ArrayList<Double> motorTwoPower(ArrayList<Double> angularVelocities, ArrayList<Double> velocities) {
-        ArrayList<Double> motorTwoVelocity = new ArrayList<Double>();
-        for (int i = 0; i < angularVelocities.size(); i++) {
-            double[] s = new double[2];
-            s[0] = velocities.get(i);
-            s[1] = angularVelocities.get(i);
-
-            double mag = (s[1] - s[0]) / 2;
-            mag *= mag;
-            if (s[1] - s[0] < 0)
-                mag *= -1;
-
-            motorTwoVelocity.add(mag);
-        }
-        return motorTwoVelocity;
-    }
-
-
     public static void main(String[] args) {
         final double timeStep = 0.01; // in seconds
 
