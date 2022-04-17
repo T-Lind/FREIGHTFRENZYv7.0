@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
-import java.util.ArrayList;
+
 /**
  * A program to take a path represented by an equation
  * and decompose it to motor power values on a differential swerve.
@@ -11,18 +11,23 @@ import java.util.ArrayList;
  * @author Tiernan Lindauer
  */
 
-class Path{
+import java.util.ArrayList;
+
+class StaticPath{
+    // specified in the trajectory
     private double executeTime;
     private double timeStep;
 
+    // all empty to start out with
     private ArrayList<Double> velocity;
     private ArrayList<Double> angle;
     private ArrayList<Double> angularVelocity;
     private ArrayList<Double> motorOneVelocity;
     private ArrayList<Double> motorTwoVelocity;
-    private boolean staticAngle = true;
 
-    public Path(double executeT, double step_time){
+
+    // two different constructors, staticAngle is only for splining
+    public StaticPath(double executeT, double step_time){
         executeTime = executeT;
         timeStep = step_time;
 
@@ -33,19 +38,13 @@ class Path{
         motorTwoVelocity = new ArrayList<Double>();
     }
 
-    public double getExecuteTime(){
-        return executeTime;
-    }
-    public double getTimeStep(){
-        return timeStep;
-    }
-
+    // the default movement function
     public double f(double t){
         return 0;
     }
 
 
-    public void buildAngle(){
+    public void buildStaticAngle(){
         for(int i=0;i<(1/timeStep)*executeTime-1;i++){
             double slope = (f((i+1)*timeStep)-f(i*timeStep))/timeStep;
             angle.add(Math.atan(slope));
@@ -54,7 +53,7 @@ class Path{
             angularVelocity.add((angle.get(i+1)-angle.get(i))/timeStep);
 
     }
-    public void buildVelocity() {
+    public void buildStaticVelocity() {
         for (int i = 0; i < (1 / timeStep) * executeTime - 2; i++)
             velocity.add(Math.sqrt(timeStep * timeStep + (f((i + 1) * timeStep) - f(i * timeStep)) * (f((i + 1) * timeStep) - f(i * timeStep))) / timeStep);
     }
@@ -93,37 +92,10 @@ class Path{
 
 
 
-    public void build(){
-        if(staticAngle)
-            buildVelocity();
-        buildAngle();
+    public void build() {
+        buildStaticVelocity();
+        buildStaticAngle();
         motorOnePower();
         motorTwoPower();
-
-    }
-}
-class pathOne extends Path{
-    public pathOne(double executeT, double time_step) {
-        super(executeT, time_step);
-    }
-
-    @Override
-    public double f(double t){
-        return -1*Math.cos(3.14159*t)+1;
-    }
-}
-
-public class pathingtest {
-    public static void main(String[] args) {
-        final double timeStep = 0.01; // in seconds
-
-        Path trajectory1 = new pathOne(1,timeStep);
-        trajectory1.build();
-
-        ArrayList<Double> m1p = trajectory1.getMotorOneVelocity();
-        ArrayList<Double> m2p = trajectory1.getMotorTwoVelocity();
-
-        System.out.println(m1p);
-        System.out.println(m2p);
     }
 }
