@@ -14,9 +14,24 @@ package org.firstinspires.ftc.teamcode.auto;
 import java.util.ArrayList;
 
 class StaticPath{
+    double timeStep;
+
+    public StaticPath(){
+
+    }
+
+    public StaticPath(double ts){
+        timeStep = ts;
+    }
+
+    public void build(){
+        timeStep = 0;
+    }
+}
+
+class SplineStaticHeading extends StaticPath{
     // specified in the trajectory
     private double executeTime;
-    private double timeStep;
 
     // all empty to start out with
     private ArrayList<Double> velocity;
@@ -27,7 +42,7 @@ class StaticPath{
 
 
     // two different constructors, staticAngle is only for splining
-    public StaticPath(double executeT, double step_time){
+    public SplineStaticHeading(double executeT, double step_time){
         executeTime = executeT;
         timeStep = step_time;
 
@@ -91,7 +106,7 @@ class StaticPath{
     }
 
 
-
+    @Override
     public void build() {
         buildStaticVelocity();
         buildStaticAngle();

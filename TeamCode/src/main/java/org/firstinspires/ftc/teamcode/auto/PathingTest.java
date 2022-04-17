@@ -5,7 +5,7 @@ import java.util.ArrayList;
  * Runner of StaticPath and SplinePath
  */
 
-class PathOne extends StaticPath{
+class PathOne extends SplineStaticHeading{
     public PathOne(double executeT, double time_step) {
         super(executeT, time_step);
     }
@@ -16,7 +16,7 @@ class PathOne extends StaticPath{
     }
 
 }
-class PathTwo extends StaticPath{
+class PathTwo extends SplineStaticHeading{
     public PathTwo(double executeT, double time_step) {
         super(executeT, time_step);
     }
@@ -30,9 +30,12 @@ class PathTwo extends StaticPath{
 
 public class PathingTest {
     public static void main(String[] args) {
+        /*
+          Code to follow a spline path (rotating wheels not bot)
+         */
         final double timeStep = 0.01; // in seconds
 
-        StaticPath trajectory1 = new PathOne(10,timeStep);
+        SplineStaticHeading trajectory1 = new PathOne(10,timeStep);
         trajectory1.build();
 
 
@@ -42,6 +45,10 @@ public class PathingTest {
 //        System.out.println(m1p);
 //        System.out.println(m2p);
 
+
+        /*
+          Code to follow a spline path by moving the bot - differential velocity
+          **/
         double[] radii = new double[2];
         radii[0] = 60;
         radii[1] = 30;
@@ -52,7 +59,21 @@ public class PathingTest {
         SplinePath trajectory2 = new SplinePath(12.0,10, radii, arcLengths);
         trajectory2.build();
 
-        for(int i=0;i<60;i++)
-            System.out.println(trajectory2.getLeftVelocity((double)i/2)+" "+trajectory2.getRightVelocity((double)i/2));
+//        for(int i=0;i<60;i++)
+//            System.out.println(trajectory2.getLeftVelocity((double)i/2)+" "+trajectory2.getRightVelocity((double)i/2));
+
+        /*
+          Code to move forward while first speeding up and then slowing down (velocity curve)
+          Must specify a distance to travel, velocity, and acceleration.
+          Always obeys max v/a at the expense of time.
+          This can be used in combination with a turn before to essentially execute a lineTo.
+         */
+
+        Line trajectory3 = new Line(100,80,50);
+        trajectory3.build();
+
+        for(double t = 0; t< trajectory3.getExecuteTime(); t+=0.25){
+            System.out.println(t+" "+ trajectory3.getVelocity(t));
+        }
     }
 }

@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import org.firstinspires.ftc.teamcode.auto.NeoPath;
+
 import java.util.ArrayList;
 
-public class SplinePath {
+
+public class SplinePath extends NeoPath {
     private double[] radii;
     private double[] arcLengths;
     private double velocity;
@@ -27,7 +30,7 @@ public class SplinePath {
         rightVel = new ArrayList<double[]>();
     }
 
-
+    @Override
     public void build(){
         double buildTime = 0;
         for(int i=0;i<radii.length;i++){
@@ -42,7 +45,6 @@ public class SplinePath {
 
                 double[] rightV = {velocity + difference, time + buildTime};
                 rightVel.add(rightV);
-                buildTime += time;
             }
             else{
                 // format is velocity and then start time
@@ -51,11 +53,13 @@ public class SplinePath {
 
                 double[] rightV = {velocity - difference, time + buildTime};
                 rightVel.add(rightV);
-                buildTime += time;
             }
+            buildTime += time;
         }
+        super.setExecuteTime(buildTime);
     }
 
+    @Override
     public double getLeftVelocity(double t){
         for (double[] doubles : leftVel) {
             if (doubles[1] > t)
@@ -63,6 +67,7 @@ public class SplinePath {
         }
         return 0;
     }
+    @Override
     public double getRightVelocity(double t){
         for (double[] doubles : rightVel) {
             if (doubles[1] > t)
@@ -71,4 +76,3 @@ public class SplinePath {
         return 0;
     }
 }
-
