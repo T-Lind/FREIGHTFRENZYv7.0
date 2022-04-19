@@ -4,13 +4,14 @@ package org.firstinspires.ftc.teamcode.auto;
  * A Kalman Filter for 1D data.
  * It can be used for multiple dimensioned data, however a separate
  * object must be created for each dimension.
- * Created for the Victorian Voltage 2022-2023 FIRST Tech Challenge Season/Preseason
+ * Created for Victorian Voltage (FTC team 7797) 2022-2023 FIRST Tech Challenge Season/Preseason ONLY
+ * 9527 Rogue Resistance or any other team may not use this code without permission from the author.
  *
  * Use this object in a runner like any other.
  *
  * @license Creative Commons
  *
- * 3/23/2022
+ * Last edited 4/18/22
  *
  * @author Tiernan Lindauer
  */
