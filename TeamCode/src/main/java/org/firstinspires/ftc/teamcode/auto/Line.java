@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.auto;
-
+/**
+ * Creates a list of velocities for the wheels on a robot to move at.
+ * created by @author Tiernan Lindauer for FTC team 7797.
+ * @license  Creative Commons
+ * Last edited 4/18/22
+ *
+ */
 import java.util.ArrayList;
 
 class Line extends NeoPath{

@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.teamcode.auto;
-
+/**
+ * Parent class for paths that solely are composed of varying
+ * motor power values.
+ * created by @author Tiernan Lindauer for FTC team 7797.
+ * @license  Creative Commons
+ * Last edited 4/18/22
+ *
+ */
 public class NeoPath {
     private double executeTime = 0;
 

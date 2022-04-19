@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.auto;
-
-import org.firstinspires.ftc.teamcode.auto.NeoPath;
+/**
+ * Translates a series of circle radii/arc lengths into motor power values for a 2 wheeled robot.
+ * created by @author Tiernan Lindauer for FTC team 7797.
+ * @license  Creative Commons
+ * Last edited 4/18/22
+ *
+ */
 
 import java.util.ArrayList;
 

@@ -3,6 +3,10 @@ import java.util.ArrayList;
 
 /**
  * Runner of StaticPath and SplinePath
+ * created by @author Tiernan Lindauer for FTC team 7797.
+ * @license  Creative Commons
+ * Last edited 4/18/22
+ *
  */
 
 class PathOne extends SplineStaticHeading{
