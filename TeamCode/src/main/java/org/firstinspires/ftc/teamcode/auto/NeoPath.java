@@ -9,6 +9,7 @@ package org.firstinspires.ftc.teamcode.auto;
  */
 public class NeoPath {
     private double executeTime = 0;
+    private boolean completed = false;
 
     public void build(){
         return;
@@ -19,6 +20,13 @@ public class NeoPath {
     }
     public double getExecuteTime(){
         return executeTime;
+    }
+
+    public void setCompleted(boolean b){
+        completed = b;
+    }
+    public boolean getCompleted(){
+        return completed;
     }
 
     public double getLeftVelocity(double t){

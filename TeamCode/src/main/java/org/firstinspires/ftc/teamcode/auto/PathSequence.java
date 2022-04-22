@@ -65,6 +65,13 @@ public class PathSequence {
      * @Precondition the arraylist of paths has at least one path
      * @Postcondition sets the angular velocity of each of the drive pods (not geared) in radians per second
      */
+    protected double convert(double v){
+        v/=wheelRadius; // convert to angular velocity by radius
+        v/=(2*3.14159);
+        v*=encoderTicksRev;
+        return v;
+    }
+
     public void buildAll(){
         for(NeoPath p : trajectory) {
             p.build();

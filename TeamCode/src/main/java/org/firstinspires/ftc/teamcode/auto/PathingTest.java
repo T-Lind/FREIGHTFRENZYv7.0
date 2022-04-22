@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import java.util.ArrayList;
 
 /**
@@ -73,11 +75,9 @@ public class PathingTest {
           This can be used in combination with a turn before to essentially execute a lineTo.
          */
 
-        Line trajectory3 = new Line(100,80,50);
+        Line trajectory3 = new Line(1,0.3);
         trajectory3.build();
 
-        for(double t = 0; t< trajectory3.getExecuteTime(); t+=0.25){
-            System.out.println(t+" "+ trajectory3.getVelocity(t));
-        }
+
     }
 }
