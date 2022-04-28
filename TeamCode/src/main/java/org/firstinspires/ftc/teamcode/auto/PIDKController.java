@@ -6,11 +6,12 @@ package org.firstinspires.ftc.teamcode.auto;
  * to be and the PID loop issues a correction based on that.
  * Created by @author Tiernan Lindauer for FTC team 7797.
  * @license Creative Commons
- * Last edited 4/18/22
+ * Last edited 4/26/22
  */
+
 public class PIDKController {
-    KalmanFilter predictor;
-    PIDController corrector;
+    private KalmanFilter predictor;
+    private PIDController corrector;
 
     public PIDKController(KalmanFilter k, PIDController p){
         predictor = k;
@@ -18,7 +19,7 @@ public class PIDKController {
     }
     public double update(long target, long state){
         long predictedState = (long)predictor.filter(state);
-        return corrector.update(target, predictedState);
+        return state+corrector.update(target, predictedState);
     }
     public KalmanFilter getPredictor(){
         return predictor;

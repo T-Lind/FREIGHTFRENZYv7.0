@@ -3,25 +3,22 @@ package org.firstinspires.ftc.teamcode.auto;
  * Creates a list of velocities for the wheels on a robot to move at.
  * created by @author Tiernan Lindauer for FTC team 7797.
  * @license  Creative Commons
- * Last edited 4/18/22
+ * Last edited 4/26/22
  *
  */
-import java.util.ArrayList;
 
 class Line extends NeoPath{
     private double distance;
     private double maxVelocity;
     private double eT;
-
-    private ArrayList<double[]> velocities;
-    private ArrayList<Double> motorVelocities;
+    private double errorRate;
 
 
     public Line(double d, double v){
-        distance = d;
+        errorRate = 1.2;
+        distance = d*errorRate;
         maxVelocity = v;
 
-        velocities = new ArrayList<double[]>();
         eT = 0;
     }
 

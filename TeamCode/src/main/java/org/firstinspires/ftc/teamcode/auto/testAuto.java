@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,7 +17,6 @@ public class testAuto extends LinearOpMode {
     protected double convert(double v){
         v/=0.048; // convert to angular velocity by radius
         v/=(2*3.14159);
-        v*=537.7;
         return v;
     }
 
@@ -29,16 +30,14 @@ public class testAuto extends LinearOpMode {
             telemetry.update();
         }
 
-        KalmanFilter k = new KalmanFilter(10,4);
-        PIDController pid = new PIDController(0.3,0.15,0.5);
+        KalmanFilter k = new KalmanFilter(7,4);
+        PIDController pid = new PIDController(0.5,0.5,0.2);
 
-        KalmanFilter k2 = new KalmanFilter(10,4);
-        PIDController pid2 = new PIDController(0.3,0.15,0.5);
+        KalmanFilter k2 = new KalmanFilter(7,4);
+        PIDController pid2 = new PIDController(0.5,0.5,0.2);
 
-        PIDKController pidControllerL = new PIDKController(k,pid);
-        PIDKController pidControllerR = new PIDKController(k2,pid2);
-
-        NeoPath trajectory3 = new Line(1,0.8);
+        NeoPath trajectory3 = new Line(0.5,0.4);
+        trajectory3.build();
 
 
         ElapsedTime t = new ElapsedTime();
@@ -48,17 +47,54 @@ public class testAuto extends LinearOpMode {
             double rightV = convert(trajectory3.getRightVelocity(t.milliseconds()/1000));
             telemetry.addData("left driven velocity: ", leftV);
             telemetry.addData("right driven velocity: ", rightV);
-            double leftCorrected = pidControllerL.update((long)leftV,(long)left.getVelocity());
-            double rightCorrected = pidControllerR.update((long)rightV,(long)right.getVelocity());
-            telemetry.addData("left corrected velocity: ", leftCorrected);
-            telemetry.addData("right corrected velocity: ", rightCorrected);
             telemetry.update();
+            leftV = k.filter(leftV);
+            rightV = k2.filter(rightV);
+            double corL = pid.update((long)leftV, (long)left.getVelocity(RADIANS));
+            double corR = pid.update((long)rightV, (long)right.getVelocity(RADIANS));
 
-            left.setVelocity(leftV);
-            right.setVelocity(rightV);
+            left.setVelocity(corL+leftV, RADIANS);
+            right.setVelocity(corR+rightV, RADIANS);
         }
 
+//        double[] radii = new double[1];
+//        radii[0] = .3;
+//        double[] arcLength = new double[1];
+//        arcLength[0] = 0.1;
+//        NeoPath trajectory3 = new SplinePath(0.3683, 0.3, 4, radii, arcLength);
+//        trajectory3.build();
+//        double velocity = 0.1;
+//        double time = arcLength[0]/velocity;
+//
+//
+//
+//        ElapsedTime t = new ElapsedTime();
+//        t.reset();
+//        while(t.milliseconds() < time*1000){
+//            double leftV = velocity-velocity*(0.3683/(2*radii[0]));
+//            double rightV = velocity+velocity*(0.3683/(2*radii[0]));
+//            leftV/=0.048;
+//            rightV/=0.048;
+//            leftV*=527.7;
+//            rightV*=537.7;
+//            telemetry.addData("lefAt driven velocity: ", leftV);
+//            telemetry.addData("right driven velocity: ", rightV);
+//            telemetry.update();
+//            left.setVelocity(-1*leftV);
+//            right.setVelocity(rightV);
+//        }
 
-
+//        while(!trajectory3.getCompleted()){
+//            double leftV = convert(trajectory3.getLeftVelocity(t.milliseconds()/1000));
+//            double rightV = convert(trajectory3.getRightVelocity(t.milliseconds()/1000));
+//            telemetry.addData("left driven velocity: ", leftV);
+//            telemetry.addData("right driven velocity: ", rightV);
+//            telemetry.update();
+//
+//            left.setVelocity(-1*leftV);
+//            right.setVelocity(rightV);
+//        }
+//        left.setVelocity(0);
+//        right.setVelocity(0);
     }
 }

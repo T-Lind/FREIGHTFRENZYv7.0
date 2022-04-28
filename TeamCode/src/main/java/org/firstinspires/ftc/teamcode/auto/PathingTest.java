@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Runner of StaticPath and SplinePath
  * created by @author Tiernan Lindauer for FTC team 7797.
  * @license  Creative Commons
- * Last edited 4/18/22
+ * Last edited 4/26/22
  *
  */
 
@@ -62,7 +62,7 @@ public class PathingTest {
         arcLengths[0] = -3.14159/4;
         arcLengths[1] = 3.14159/2;
 
-        SplinePath trajectory2 = new SplinePath(12.0,10, radii, arcLengths);
+        SplinePath trajectory2 = new SplinePath(12.0,10,0.5, radii, arcLengths);
         trajectory2.build();
 
 //        for(int i=0;i<60;i++)
