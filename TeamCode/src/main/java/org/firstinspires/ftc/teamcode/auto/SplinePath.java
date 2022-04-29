@@ -7,8 +7,6 @@ package org.firstinspires.ftc.teamcode.auto;
  *
  */
 
-import java.util.ArrayList;
-
 
 public class SplinePath extends NeoPath {
     private double[] radii;
@@ -19,7 +17,6 @@ public class SplinePath extends NeoPath {
     private double TpA;
     private double TpD;
 
-    private ArrayList<Double> times;
 
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.
     /**
@@ -35,56 +32,58 @@ public class SplinePath extends NeoPath {
         TpA = 0;
         TpD = 0;
 
-        times = new ArrayList<Double>();
     }
 
     @Override
     public void build(){
-        TpA = (3*arcLengths[0]-2*velocity*accelerationTime)/(3*velocity);
-        TpD = (3*arcLengths[arcLengths.length-1]-velocity*accelerationTime)/(3*velocity);
-        double buildTime = TpA+TpD+2*accelerationTime;
-
-        for(int i=1;i< radii.length-1;i++) {
-            times.add(buildTime);
-            buildTime += (arcLengths[i] * radii[i] / velocity);
-
-        }
-
-        super.setExecuteTime(buildTime);
+        TpA = (3*Math.abs(arcLengths[0])-2*velocity*accelerationTime)/(3*velocity);
+        TpD = (arcLengths[arcLengths.length-1]-((velocity*accelerationTime)/3))/velocity;
     }
 
-    public double getVelocity(double t){
-        if(t > this.getExecuteTime())
-            this.setCompleted(true);
+    public int getArc(double t){
+        double time = TpA;
+        if(t < time)
+            return 0;
 
-        if(t < accelerationTime){
-            return velocity*Math.sqrt(t/accelerationTime);
+        for(int i=1;i<radii.length-1;i++){
+            time += velocity*=radii[i];
+            if(t < time)
+                return i;
         }
-        if(t < this.getExecuteTime()-TpD){
-            return velocity;
-        }
-        return velocity-(velocity*Math.sqrt(t/accelerationTime));
+        time += TpD;
+        if(t < time)
+            return radii.length-1;
+        this.setCompleted(true);
+        return -1;
     }
-
-    public double getRadii(double t){
-        for(int i=0;i<times.size();i++){
-            if(t < times.get(i))
-                return radii[i];
-        }
-
-        return 1E-4;
+    private double getVelocity(double t){
+        double v = 0;
+        if(getArc(t) == 0)
+            v = velocity * Math.sqrt(t / accelerationTime);
+        else if(getArc(t) < radii[radii.length-1])
+            v = velocity;
+        else
+            if(getArc(t) != -1)
+                v = velocity - velocity * Math.sqrt(t / accelerationTime);
+        return v*(trackWidth/(2*radii[0]));
     }
 
     @Override
     public double getLeftVelocity(double t){
-        double v = -1*getVelocity(t);
-        return v - v*(trackWidth/(2*getRadii(t)));
-
+        if(getArc(t) == -1)
+            return 0;
+        double v = getVelocity(t)/(trackWidth/(2*radii[getArc(t)]));
+        if(arcLengths[getArc(t)] < 0)
+            return -1*(v+v*getVelocity(t));
+        return -1*(v-v*getVelocity(t));
     }
     @Override
     public double getRightVelocity(double t){
-        double v = getVelocity(t);
-        return v + v*(trackWidth/(2*getRadii(t)));
-
+        if(getArc(t) == -1)
+            return 0;
+        double v = getVelocity(t)/(trackWidth/(2*radii[getArc(t)]));
+        if(arcLengths[getArc(t)] < 0)
+            return (v-v*getVelocity(t));
+        return (v+v*getVelocity(t));
     }
 }

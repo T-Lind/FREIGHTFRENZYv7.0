@@ -39,14 +39,14 @@ public class PathingTest {
         /*
           Code to follow a spline path (rotating wheels not bot)
          */
-        final double timeStep = 0.01; // in seconds
-
-        SplineStaticHeading trajectory1 = new PathOne(10,timeStep);
-        trajectory1.build();
-
-
-        ArrayList<Double> m1p = trajectory1.getMotorOneVelocity();
-        ArrayList<Double> m2p = trajectory1.getMotorTwoVelocity();
+//        final double timeStep = 0.01; // in seconds
+//
+//        SplineStaticHeading trajectory1 = new PathOne(10,timeStep);
+//        trajectory1.build();
+//
+//
+//        ArrayList<Double> m1p = trajectory1.getMotorOneVelocity();
+//        ArrayList<Double> m2p = trajectory1.getMotorTwoVelocity();
 
 //        System.out.println(m1p);
 //        System.out.println(m2p);
@@ -55,15 +55,15 @@ public class PathingTest {
         /*
           Code to follow a spline path by moving the bot - differential velocity
           **/
-        double[] radii = new double[2];
-        radii[0] = 60;
-        radii[1] = 30;
-        double[] arcLengths = new double[2];
-        arcLengths[0] = -3.14159/4;
-        arcLengths[1] = 3.14159/2;
-
-        SplinePath trajectory2 = new SplinePath(12.0,10,0.5, radii, arcLengths);
-        trajectory2.build();
+//        double[] radii = new double[2];
+//        radii[0] = 60;
+//        radii[1] = 30;
+//        double[] arcLengths = new double[2];
+//        arcLengths[0] = -3.14159/4;
+//        arcLengths[1] = 3.14159/2;
+//
+//        SplinePath trajectory2 = new SplinePath(12.0,10,0.5, radii, arcLengths);
+//        trajectory2.build();
 
 //        for(int i=0;i<60;i++)
 //            System.out.println(trajectory2.getLeftVelocity((double)i/2)+" "+trajectory2.getRightVelocity((double)i/2));
@@ -74,9 +74,9 @@ public class PathingTest {
           Always obeys max v/a at the expense of time.
           This can be used in combination with a turn before to essentially execute a lineTo.
          */
-
-        Line trajectory3 = new Line(1,0.3);
-        trajectory3.build();
+//
+//        Line trajectory3 = new Line(1,0.3);
+//        trajectory3.build();
 
 
     }

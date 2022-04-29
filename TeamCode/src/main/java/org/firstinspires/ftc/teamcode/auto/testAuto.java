@@ -30,71 +30,74 @@ public class testAuto extends LinearOpMode {
             telemetry.update();
         }
 
-        KalmanFilter k = new KalmanFilter(7,4);
-        PIDController pid = new PIDController(0.5,0.5,0.2);
-
-        KalmanFilter k2 = new KalmanFilter(7,4);
-        PIDController pid2 = new PIDController(0.5,0.5,0.2);
-
-        NeoPath trajectory3 = new Line(0.5,0.4);
-        trajectory3.build();
-
-
-        ElapsedTime t = new ElapsedTime();
-        t.reset();
-        while(!trajectory3.getCompleted()){
-            double leftV = convert(trajectory3.getLeftVelocity(t.milliseconds()/1000));
-            double rightV = convert(trajectory3.getRightVelocity(t.milliseconds()/1000));
-            telemetry.addData("left driven velocity: ", leftV);
-            telemetry.addData("right driven velocity: ", rightV);
-            telemetry.update();
-            leftV = k.filter(leftV);
-            rightV = k2.filter(rightV);
-            double corL = pid.update((long)leftV, (long)left.getVelocity(RADIANS));
-            double corR = pid.update((long)rightV, (long)right.getVelocity(RADIANS));
-
-            left.setVelocity(corL+leftV, RADIANS);
-            right.setVelocity(corR+rightV, RADIANS);
-        }
-
-//        double[] radii = new double[1];
-//        radii[0] = .3;
-//        double[] arcLength = new double[1];
-//        arcLength[0] = 0.1;
-//        NeoPath trajectory3 = new SplinePath(0.3683, 0.3, 4, radii, arcLength);
-//        trajectory3.build();
-//        double velocity = 0.1;
-//        double time = arcLength[0]/velocity;
+        /**
+         * Code to move in a straight line.
+         */
+//        KalmanFilter k = new KalmanFilter(7,4);
+//        PIDController pid = new PIDController(0.5,0.5,0.2);
 //
+//        KalmanFilter k2 = new KalmanFilter(7,4);
+//        PIDController pid2 = new PIDController(0.5,0.5,0.2);
+//
+//        NeoPath trajectory3 = new Line(0.5,0.4);
+//        trajectory3.build();
 //
 //
 //        ElapsedTime t = new ElapsedTime();
 //        t.reset();
-//        while(t.milliseconds() < time*1000){
-//            double leftV = velocity-velocity*(0.3683/(2*radii[0]));
-//            double rightV = velocity+velocity*(0.3683/(2*radii[0]));
-//            leftV/=0.048;
-//            rightV/=0.048;
-//            leftV*=527.7;
-//            rightV*=537.7;
-//            telemetry.addData("lefAt driven velocity: ", leftV);
-//            telemetry.addData("right driven velocity: ", rightV);
-//            telemetry.update();
-//            left.setVelocity(-1*leftV);
-//            right.setVelocity(rightV);
-//        }
-
 //        while(!trajectory3.getCompleted()){
 //            double leftV = convert(trajectory3.getLeftVelocity(t.milliseconds()/1000));
 //            double rightV = convert(trajectory3.getRightVelocity(t.milliseconds()/1000));
 //            telemetry.addData("left driven velocity: ", leftV);
 //            telemetry.addData("right driven velocity: ", rightV);
 //            telemetry.update();
+//            leftV = k.filter(leftV);
+//            rightV = k2.filter(rightV);
+//            double corL = pid.update((long)leftV, (long)left.getVelocity(RADIANS));
+//            double corR = pid.update((long)rightV, (long)right.getVelocity(RADIANS));
 //
-//            left.setVelocity(-1*leftV);
-//            right.setVelocity(rightV);
+//            left.setVelocity(corL+leftV, RADIANS);
+//            right.setVelocity(corR+rightV, RADIANS);
 //        }
-//        left.setVelocity(0);
-//        right.setVelocity(0);
+
+        /**
+         * Splining code.
+         */
+        KalmanFilter k3 = new KalmanFilter(7,4);
+        PIDController pid3 = new PIDController(0.3,0.3,0.2);
+
+        KalmanFilter k4 = new KalmanFilter(7,4);
+        PIDController pid4 = new PIDController(0.3,0.3,0.2);
+
+        ElapsedTime t2 = new ElapsedTime();
+        t2.reset();
+
+        double[] r = new double[3];
+        r[0] = 1.5;
+        r[1] = 1;
+        r[2] = 1.5;
+
+        double[] arcs = new double[3];
+        arcs[0] = 0.5;
+        arcs[1] = 0.5;
+        arcs[2] = 0.25;
+
+        SplinePath trajectory4 = new SplinePath(0.368,0.4,0.75,r,arcs);
+        trajectory4.build();
+        while(!trajectory4.getCompleted()){
+            double leftV = convert(trajectory4.getLeftVelocity(t2.milliseconds()/1000));
+            double rightV = convert(trajectory4.getRightVelocity(t2.milliseconds()/1000));
+            telemetry.addData("left driven velocity: ", leftV);
+            telemetry.addData("right driven velocity: ", rightV);
+            telemetry.update();
+            leftV = k3.filter(leftV);
+            rightV = k4.filter(rightV);
+            double corL = pid3.update((long)leftV, (long)left.getVelocity(RADIANS));
+            double corR = pid4.update((long)rightV, (long)right.getVelocity(RADIANS));
+
+            left.setVelocity(corL+leftV, RADIANS);
+            right.setVelocity(corR+rightV, RADIANS);
+        }
+
     }
 }
