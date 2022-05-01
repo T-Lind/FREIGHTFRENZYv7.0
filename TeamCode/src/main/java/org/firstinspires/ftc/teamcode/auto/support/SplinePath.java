@@ -80,13 +80,11 @@ public class SplinePath extends NeoPath {
         if(arc == -1)
             return 0;
 
-        if(arc > 0 && arc < arcLengths.length-1) {
+        if(arc > 0 && arc < arcLengths.length-1)
             return velocity;
-        }
         else if(arc == 0){
-            if(t < accelerationTime){
+            if(t < accelerationTime)
                 return velocity*Math.sqrt(t/accelerationTime);
-            }
             return velocity;
         }
         else {

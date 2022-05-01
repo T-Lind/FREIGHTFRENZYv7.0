@@ -67,7 +67,6 @@ public class TwoWheelPathSequence {
             PIDController pid4 = new PIDController(0);
 
             while(!p.getCompleted()){
-                double time = t.milliseconds()/1000;
                 double leftV = p.convert(wheelRadius, p.getLeftVelocity(t.milliseconds()/1000));
                 double rightV = p.convert(wheelRadius, p.getRightVelocity(t.milliseconds()/1000));
 

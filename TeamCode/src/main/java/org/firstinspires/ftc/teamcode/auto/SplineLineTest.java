@@ -25,8 +25,8 @@ public class SplineLineTest extends LinearOpMode {
             telemetry.update();
         }
 
-        double[] r = {1,0.7,1.2,1};
-        double[] arcs = {0.4,0.2,-0.4,0.1};
+        double[] r = {1,0.7,1.2,1,.184};
+        double[] arcs = {0.4,0.2,-0.4,0.1,-0.578};
 
         NeoPath trajectory1 = new SplinePath(0.368,0.4,0.3,r,arcs);
         NeoPath trajectory2 = new Line(-0.5,0.6);
