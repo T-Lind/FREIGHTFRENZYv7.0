@@ -19,6 +19,10 @@ public class SplinePath extends NeoPath {
     private double TpD;
     private ArrayList<Double> times;
 
+    private KalmanFilter k;
+    private KalmanFilter k2;
+    private PIDController p;
+    private PIDController p2;
 
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.
     /**
@@ -35,16 +39,23 @@ public class SplinePath extends NeoPath {
         TpD = 0;
 
         times = new ArrayList<Double>();
+
+        k = new KalmanFilter(0);
+        k2 = new KalmanFilter(0);
+        p = new PIDController(0);
+        p2 = new PIDController(0);
     }
 
     @Override
     public void build(){
+        for(int i=1;i<arcLengths.length-1;i++)
+            arcLengths[i]*=(2*3.14159265);
         TpA = (3*Math.abs(arcLengths[0])-2*velocity*accelerationTime)/(3*velocity);
-        TpD = (arcLengths[arcLengths.length-1]-((velocity*accelerationTime)/3))/velocity;
+        TpD = (Math.abs(arcLengths[arcLengths.length-1])-((velocity*accelerationTime)/3))/velocity;
         System.out.println("TpA, TpD: "+TpA+" "+TpD);
         times.add(accelerationTime+TpA);
         for(int i=1;i<arcLengths.length-1;i++)
-            times.add(times.get(times.size()-1)+arcLengths[i]*velocity);
+            times.add(times.get(times.size()-1)+Math.abs(arcLengths[i])*velocity);
         times.add(times.get(times.size()-1)+accelerationTime+TpD);
     }
 
@@ -89,10 +100,13 @@ public class SplinePath extends NeoPath {
             this.setCompleted(true);
             return 0;
         }
-        double v = -getVelocity(t);
+        double v = getVelocity(t);
         if(arcLengths[getArc(t)] > 0)
-            return v-(v*trackWidth/(2*radii[getArc(t)]));
-        return v+(v*trackWidth/(2*radii[getArc(t)]));
+            v = v-(v*trackWidth/(2*radii[getArc(t)]));
+        else
+            v = v+(v*trackWidth/(2*radii[getArc(t)]));
+        v*=-1;
+        return v;
     }
     @Override
     public double getRightVelocity(double t){
@@ -105,5 +119,24 @@ public class SplinePath extends NeoPath {
             return v+(v*trackWidth/(2*radii[getArc(t)]));
         return v-(v*trackWidth/(2*radii[getArc(t)]));
     }
+    public double[] update(double left, double right, double time){
+        left = convert(left);
+        right = convert(right);
+
+        left = k.filter(left);
+        right = k2.filter(right);
+
+        double l = getLeftVelocity(time);
+        double r = getRightVelocity(time);
+
+        double corL = p.update((long)l, (long)left);
+        double corR = p.update((long)r, (long)right);
+
+        double[] ret = new double[2];
+        ret[0] = corL+left;
+        ret[1] = corR+right;
+        return ret;
+    }
 
 }
+

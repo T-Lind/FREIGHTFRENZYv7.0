@@ -38,6 +38,25 @@ public class KalmanFilter {
     C is the measurement vector
      */
 
+    /**
+     * Default constructor.
+     * @param deviceCode corresponds to what the Kalman Filter is for to reduce code and code errors.
+     *                   When deviceCode is 0, it is for motors
+     *                   When deviceCode is 1, it is for distance sensors (in CM)
+     *                   Additional deviceCodes will be added here.
+     *                   This method is shared with the PIDController class.
+     */
+    public KalmanFilter(int deviceCode){
+        if(deviceCode == 0){
+            this.R = 7;
+            this.Q = 4;
+        }
+        else if(deviceCode == 1){
+            this.R = 2;
+            this.Q = 10;
+        }
+    }
+
     public KalmanFilter(double R, double Q, double A, double B , double C){
         this.R = R;
         this.Q = Q;

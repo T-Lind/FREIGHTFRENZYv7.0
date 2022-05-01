@@ -63,33 +63,36 @@ public class testAuto extends LinearOpMode {
         /**
          * Splining code.
          */
-        KalmanFilter k3 = new KalmanFilter(7,4);
-        PIDController pid3 = new PIDController(0.3,0.3,0.2);
+        KalmanFilter k3 = new KalmanFilter(0);
+        PIDController pid3 = new PIDController(0);
 
-        KalmanFilter k4 = new KalmanFilter(7,4);
-        PIDController pid4 = new PIDController(0.3,0.3,0.2);
+        KalmanFilter k4 = new KalmanFilter(0);
+        PIDController pid4 = new PIDController(0);
+
+
+        double[] r = {1,0.7,1.2,1};
+        double[] arcs = {0.4,-0.2,-0.4,0.1};
 
         ElapsedTime t2 = new ElapsedTime();
         t2.reset();
 
-        double[] r = {1,2,3};
-        double[] arcs = {0.4,-0.6,0.9};
-
-        SplinePath trajectory4 = new SplinePath(0.368,0.4,0.75,r,arcs);
+        SplinePath trajectory4 = new SplinePath(0.368,0.4,0.7,r,arcs);
         trajectory4.build();
         while(!trajectory4.getCompleted()){
             double leftV = convert(trajectory4.getLeftVelocity(t2.milliseconds()/1000));
             double rightV = convert(trajectory4.getRightVelocity(t2.milliseconds()/1000));
             telemetry.addData("left driven velocity: ", leftV);
             telemetry.addData("right driven velocity: ", rightV);
+            telemetry.addData("path number ",trajectory4.getArc(t2.milliseconds()/1000));
             telemetry.update();
-            leftV = k3.filter(leftV);
-            rightV = k4.filter(rightV);
-            double corL = pid3.update((long)leftV, (long)left.getVelocity(RADIANS));
-            double corR = pid4.update((long)rightV, (long)right.getVelocity(RADIANS));
+            double corL = pid3.update((long)leftV, (long)k3.filter(left.getVelocity(RADIANS)));
+            double corR = pid4.update((long)rightV, (long)k4.filter(right.getVelocity(RADIANS)));
 
             left.setVelocity(corL+leftV, RADIANS);
             right.setVelocity(corR+rightV, RADIANS);
+//            double[] vels = trajectory4.update(left.getVelocity(RADIANS), right.getVelocity(RADIANS), t2.milliseconds()/1000);
+//            left.setVelocity(vels[0], RADIANS);
+//            right.setVelocity(vels[1], RADIANS);
         }
 
     }

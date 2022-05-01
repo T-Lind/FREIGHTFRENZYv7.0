@@ -26,6 +26,22 @@ public class PIDController {
         forgetLength = 64;
     }
     /**
+     * Default constructor.
+     * @param deviceCode corresponds to what the Kalman Filter is for to reduce code and code errors.
+     *                   When deviceCode is 0, it is for motors
+     *                   deviceCode 1 IS NOT USED IN PID - FOR DISTANCE SENSORS
+     */
+    public PIDController(int deviceCode){
+        if(deviceCode == 0){
+            proportional = 0.3;
+            integral = 0.3;
+            derivative = 0.2;
+            data = new ArrayList<Long>();
+            time = new ArrayList<Long>();
+            forgetLength = 64;
+        }
+    }
+    /**
      * construct PID controller
      * @param Kp Proportional coefficient
      * @param Ki Integral coefficient
@@ -49,7 +65,7 @@ public class PIDController {
         forgetLength = len;
     }
 
-    public long getIntegral(){
+    private long getIntegral(){
         long sum = 0;
         if(time.size() > 2){
             for(int i=0;i<time.size()-1;i++)
