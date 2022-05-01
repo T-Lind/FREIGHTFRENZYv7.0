@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.support;
 
 /**
  * Program that combines both a kalman filter and PID loop.

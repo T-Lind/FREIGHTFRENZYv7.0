@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * Translates a series of circle radii/arc lengths into motor power values for a 2 wheeled robot.
  * created by @author Tiernan Lindauer for FTC team 7797.
- * @license  Creative Commons
+ * @license  MIT License
  * Last edited 5/1/22
  *
  */
@@ -57,6 +57,7 @@ public class SplinePath extends NeoPath {
         for(int i=1;i<arcLengths.length-1;i++)
             times.add(times.get(times.size()-1)+Math.abs(arcLengths[i])*velocity);
         times.add(times.get(times.size()-1)+accelerationTime+TpD);
+        setBuilt(true);
     }
 
     @Override
@@ -119,24 +120,24 @@ public class SplinePath extends NeoPath {
             return v+(v*trackWidth/(2*radii[getArc(t)]));
         return v-(v*trackWidth/(2*radii[getArc(t)]));
     }
-    public double[] update(double left, double right, double time){
-        left = convert(left);
-        right = convert(right);
-
-        left = k.filter(left);
-        right = k2.filter(right);
-
-        double l = getLeftVelocity(time);
-        double r = getRightVelocity(time);
-
-        double corL = p.update((long)l, (long)left);
-        double corR = p.update((long)r, (long)right);
-
-        double[] ret = new double[2];
-        ret[0] = corL+left;
-        ret[1] = corR+right;
-        return ret;
-    }
+//    public double[] update(double left, double right, double time){
+//        left = convert(left);
+//        right = convert(right);
+//
+//        left = k.filter(left);
+//        right = k2.filter(right);
+//
+//        double l = getLeftVelocity(time);
+//        double r = getRightVelocity(time);
+//
+//        double corL = p.update((long)l, (long)left);
+//        double corR = p.update((long)r, (long)right);
+//
+//        double[] ret = new double[2];
+//        ret[0] = corL+left;
+//        ret[1] = corR+right;
+//        return ret;
+//    }
 
 }
 

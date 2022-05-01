@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.support;
 
 /**
  * A Kalman Filter for 1D data.
@@ -9,9 +9,9 @@ package org.firstinspires.ftc.teamcode.auto;
  *
  * Use this object in a runner like any other.
  *
- * @license Creative Commons
+ * @license MIT License
  *
- * Last edited 4/18/22
+ * Last edited 5/1/22
  *
  * @author Tiernan Lindauer
  */

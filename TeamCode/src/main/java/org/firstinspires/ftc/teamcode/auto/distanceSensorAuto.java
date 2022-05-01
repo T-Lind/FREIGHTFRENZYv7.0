@@ -7,6 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.auto.support.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.support.Line;
+import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.PIDController;
+
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 @Autonomous(name="distanceSensorAuto")

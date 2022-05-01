@@ -1,17 +1,16 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.support;
 /**
- * Parent class for paths that solely are composed of time to wheel velocity functions
- * created by @author Tiernan Lindauer for FTC team 7797.
- * @license  Creative Commons
- * Last edited 4/18/22
- *
+ * Parent class for paths that solely are composed of time to wheel velocity functions. Essentially acts as a piecewise function over time for both the left and right velocity.
+ * @author Tiernan
+ * @license MIT License
  */
 public class NeoPath {
     private double executeTime = 0;
     private boolean completed = false;
+    private boolean built = false;
 
     public void build(){
-        return;
+        built = true;
     }
 
     public void setExecuteTime(double d){
@@ -28,6 +27,13 @@ public class NeoPath {
         return completed;
     }
 
+    public void setBuilt(boolean b){
+        built = b;
+    }
+    public boolean getBuilt(){
+        return built;
+    }
+
     public double getLeftVelocity(double t){
         return 0;
     }
@@ -35,8 +41,8 @@ public class NeoPath {
         return 0;
     }
 
-    public double convert(double v){
-        v/=0.048; // convert to angular velocity by radius
+    public double convert(double wheelRadius, double v){
+        v/=wheelRadius; // convert to angular velocity by radius
         v/=(2*3.14159);
         return v;
     }

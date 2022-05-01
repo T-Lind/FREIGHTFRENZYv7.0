@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.support;
 
 /**
  * A PID control loop for general purpose,
  * created by @author Tiernan Lindauer for FTC team 7797.
- * @lisence Creative Commons
- * Last edited 4/18/22
+ * @lisence MIT License
+ * Last edited 5/1/22
  */
 
 import java.util.ArrayList;

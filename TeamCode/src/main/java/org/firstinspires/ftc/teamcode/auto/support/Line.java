@@ -1,19 +1,24 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * Creates a list of velocities for the wheels on a robot to move at.
  * created by @author Tiernan Lindauer for FTC team 7797.
- * @license  Creative Commons
+ * @license  MIT License
  * Last edited 4/26/22
  *
  */
 
-class Line extends NeoPath{
+public class Line extends NeoPath{
     private double distance;
     private double maxVelocity;
     private double eT;
     private double errorRate;
 
 
+    /**
+     *
+     * @param d is the distance traveled
+     * @param v is the maximum velocity to travel at
+     */
     public Line(double d, double v){
         errorRate = 1.2;
         distance = d*errorRate;
@@ -24,7 +29,8 @@ class Line extends NeoPath{
 
     @Override
     public void build(){
-        eT = 3.14159265*distance/(2*maxVelocity);
+        eT = 3.14159265*Math.abs(distance)/(2*maxVelocity);
+        setBuilt(true);
     }
 
     @Override
@@ -33,8 +39,11 @@ class Line extends NeoPath{
     }
 
     public double getVelocity(double t){
-        if(t < eT)
-            return maxVelocity*Math.sin(3.1415925*t/eT);
+        if(t < eT){
+            if(distance > 0)
+                return maxVelocity*Math.sin(3.1415925*t/eT);
+            return -1*maxVelocity*Math.sin(3.1415925*t/eT);
+        }
         else{
             this.setCompleted(true);
             return 0;

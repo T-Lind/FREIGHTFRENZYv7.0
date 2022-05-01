@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * A test program to evaluate the PIDK controller.
  * @author Tiernan Lindauer created for FTC team 7797.
