@@ -72,15 +72,8 @@ public class testAuto extends LinearOpMode {
         ElapsedTime t2 = new ElapsedTime();
         t2.reset();
 
-        double[] r = new double[3];
-        r[0] = 1.5;
-        r[1] = 1;
-        r[2] = 1.5;
-
-        double[] arcs = new double[3];
-        arcs[0] = 0.4;
-        arcs[1] = 0.8;
-        arcs[2] = 1.2;
+        double[] r = {1,2,3};
+        double[] arcs = {0.4,-0.6,0.9};
 
         SplinePath trajectory4 = new SplinePath(0.368,0.4,0.75,r,arcs);
         trajectory4.build();
