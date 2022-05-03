@@ -12,9 +12,6 @@ import org.firstinspires.ftc.teamcode.auto.support.TwoWheelPathSequence;
 
 import java.util.ArrayList;
 
-/**
- * Move in a square.
- */
 @Autonomous(name="Square")
 public class Square extends LinearOpMode {
     private DcMotorEx left, right;
