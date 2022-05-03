@@ -25,25 +25,25 @@ public class SplineLineTest extends LinearOpMode {
             telemetry.update();
         }
 
-        double[] r = {0.6,0.6,2.5,2.5};
-        double[] arcs = {0.2,0.-0.2,0.1,-0.1};
+        double[] r = {0.6,0.6,0.6};
+        double[] arcs = {-0.3,-0.3,-0.3};
 
-        NeoPath trajectory1 = new SplinePath(0.368,0.4,0.3,r,arcs);
-        NeoPath trajectory2 = new Line(0.75 ,0.6);
-        NeoPath trajectory3 = new Line(-0.5,0.2);
-        NeoPath trajectory4 = new Line(0.5,0.8);
-
-        double[] r2 = {0.6,0.6,2.5,2.5};
-        double[] arcs2 = {0.5,0.5,0.1,-0.1};
-
-        NeoPath trajectory5 = new SplinePath(0.368,0.4,0.3,r2,arcs2);
+        NeoPath trajectory1 = new SplinePath(0.368,0.4,0.3,r,arcs, true);
+//        NeoPath trajectory2 = new Line(0.75 ,0.6);
+//        NeoPath trajectory3 = new Line(-0.5,0.2);
+//        NeoPath trajectory4 = new Line(0.5,0.8);
+//
+//        double[] r2 = {0.6,0.6,2.5,2.5};
+//        double[] arcs2 = {0.5,0.5,0.1,-0.1};
+//
+//        NeoPath trajectory5 = new SplinePath(0.368,0.4,0.3,r2,arcs2);
 
         ArrayList<NeoPath> list = new ArrayList<NeoPath>();
         list.add(trajectory1);
-        list.add(trajectory2);
-        list.add(trajectory3);
-        list.add(trajectory4);
-        list.add(trajectory5);
+//        list.add(trajectory2);
+//        list.add(trajectory3);
+//        list.add(trajectory4);
+//        list.add(trajectory5);
 
         TwoWheelPathSequence sequence = new TwoWheelPathSequence(list, left, right, 0.048);
         sequence.buildAll();

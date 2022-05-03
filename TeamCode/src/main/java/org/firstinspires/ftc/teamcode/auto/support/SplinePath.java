@@ -17,6 +17,7 @@ public class SplinePath extends NeoPath {
     private double accelerationTime;
     private double TpA;
     private double TpD;
+    private boolean reversed;
     private ArrayList<Double> times;
 
     private KalmanFilter k;
@@ -44,6 +45,24 @@ public class SplinePath extends NeoPath {
         k2 = new KalmanFilter(0);
         p = new PIDController(0);
         p2 = new PIDController(0);
+        reversed = false;
+    }
+    public SplinePath(double tw, double v, double accTime, double[] r, double[] al, boolean reversed){
+        trackWidth = tw;
+        radii = r;
+        arcLengths = al;
+        velocity = v;
+        accelerationTime = accTime;
+        TpA = 0;
+        TpD = 0;
+
+        times = new ArrayList<Double>();
+
+        k = new KalmanFilter(0);
+        k2 = new KalmanFilter(0);
+        p = new PIDController(0);
+        p2 = new PIDController(0);
+        this.reversed = reversed;
     }
 
     @Override
@@ -95,28 +114,56 @@ public class SplinePath extends NeoPath {
     }
     @Override
     public double getLeftVelocity(double t){
-        if(getArc(t) == -1) {
-            this.setCompleted(true);
-            return 0;
+        if(!reversed) {
+            if (getArc(t) == -1) {
+                this.setCompleted(true);
+                return 0;
+            }
+            double v = getVelocity(t);
+            if (arcLengths[getArc(t)] > 0)
+                v = v - (v * trackWidth / (2 * radii[getArc(t)]));
+            else
+                v = v + (v * trackWidth / (2 * radii[getArc(t)]));
+            v *= -1;
+            return v;
+        } else {
+            if (getArc(t) == -1) {
+                this.setCompleted(true);
+                return 0;
+            }
+            double v = getVelocity(t);
+            if (arcLengths[getArc(t)] > 0)
+                v = v - (v * trackWidth / (2 * radii[getArc(t)]));
+            else
+                v = v + (v * trackWidth / (2 * radii[getArc(t)]));
+            return v;
         }
-        double v = getVelocity(t);
-        if(arcLengths[getArc(t)] > 0)
-            v = v-(v*trackWidth/(2*radii[getArc(t)]));
-        else
-            v = v+(v*trackWidth/(2*radii[getArc(t)]));
-        v*=-1;
-        return v;
     }
     @Override
     public double getRightVelocity(double t){
-        if(getArc(t) == -1) {
-            this.setCompleted(true);
-            return 0;
+        if(!reversed) {
+            if (getArc(t) == -1) {
+                this.setCompleted(true);
+                return 0;
+            }
+            double v = getVelocity(t);
+            if (arcLengths[getArc(t)] > 0)
+                return v + (v * trackWidth / (2 * radii[getArc(t)]));
+            return v - (v * trackWidth / (2 * radii[getArc(t)]));
+        } else {
+            if (getArc(t) == -1) {
+                this.setCompleted(true);
+                return 0;
+            }
+            double v = getVelocity(t);
+            if (arcLengths[getArc(t)] > 0){
+                v = v + (v * trackWidth / (2 * radii[getArc(t)]));
+                v *= -1;
+                return v;
+            }
+            v = v - (v * trackWidth / (2 * radii[getArc(t)]));
+            return -1*v;
         }
-        double v = getVelocity(t);
-        if(arcLengths[getArc(t)] > 0)
-            return v+(v*trackWidth/(2*radii[getArc(t)]));
-        return v-(v*trackWidth/(2*radii[getArc(t)]));
     }
 //    public double[] update(double left, double right, double time){
 //        left = convert(left);
