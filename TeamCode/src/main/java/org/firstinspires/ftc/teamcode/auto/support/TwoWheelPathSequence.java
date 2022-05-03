@@ -52,6 +52,12 @@ public class TwoWheelPathSequence {
      * @Precondition all paths have been build using the buildAll() method.
      * Note that this is not technically necessary but reduces lag time.
      */
+
+    public void reset(){
+        for(NeoPath p : trajectory)
+            p.setCompleted(false);
+    }
+
     public void follow(){
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
@@ -76,6 +82,7 @@ public class TwoWheelPathSequence {
                 left.setVelocity(corL+leftV, RADIANS);
                 right.setVelocity(corR+rightV, RADIANS);
             }
+            reset();
         }
     }
 }

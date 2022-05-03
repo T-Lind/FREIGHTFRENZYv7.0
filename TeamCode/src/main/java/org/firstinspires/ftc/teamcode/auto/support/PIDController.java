@@ -33,9 +33,9 @@ public class PIDController {
      */
     public PIDController(int deviceCode){
         if(deviceCode == 0){
-            proportional = 0.3;
-            integral = 0.3;
-            derivative = 0.2;
+            proportional = 0.4;
+            integral = 0.5;
+            derivative = 0.3;
             data = new ArrayList<Long>();
             time = new ArrayList<Long>();
             forgetLength = 64;

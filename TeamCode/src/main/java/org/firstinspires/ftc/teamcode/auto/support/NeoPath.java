@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.auto.support;
  * @author Tiernan
  * @license MIT License
  */
-public class NeoPath {
+public abstract class NeoPath {
     private double executeTime = 0;
     private boolean completed = false;
     private boolean built = false;
