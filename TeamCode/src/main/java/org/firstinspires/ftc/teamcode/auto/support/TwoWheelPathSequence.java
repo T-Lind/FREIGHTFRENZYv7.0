@@ -118,11 +118,11 @@ public class TwoWheelPathSequence {
 
                 left.setVelocity(corL+leftV, RADIANS);
                 right.setVelocity(corR+rightV, RADIANS);
+                if(markerList != null)
+                    for(InsertMarker m : markerList.getMarkers())
+                        m.execute(t.milliseconds()/1000);
             }
             reset();
-            if(markerList != null)
-                for(InsertMarker m : markerList.getMarkers())
-                    m.execute(t.milliseconds()/1000);
         }
     }
 }
