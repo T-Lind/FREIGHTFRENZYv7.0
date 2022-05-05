@@ -22,6 +22,7 @@ public class TwoWheelPathSequence {
     private DcMotorEx left;
     private DcMotorEx right;
 
+    MarkerList markerList;
     /**
      *
      * @param d is the ArrayList of paths
@@ -37,6 +38,17 @@ public class TwoWheelPathSequence {
 
         this.left = left;
         this.right = right;
+
+        markerList = null;
+    }
+    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, MarkerList mL){
+        trajectory = d;
+        wheelRadius = wheelR;
+
+        this.left = left;
+        this.right = right;
+
+        markerList = mL;
     }
 
 
@@ -59,12 +71,11 @@ public class TwoWheelPathSequence {
     }
 
     public void follow(){
+        ElapsedTime t = new ElapsedTime();
+        t.reset();
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
                 p.build();
-
-            ElapsedTime t = new ElapsedTime();
-            t.reset();
 
             KalmanFilter k3 = new KalmanFilter(0);
             PIDController pid3 = new PIDController(0);
@@ -72,9 +83,11 @@ public class TwoWheelPathSequence {
             KalmanFilter k4 = new KalmanFilter(0);
             PIDController pid4 = new PIDController(0);
 
+            double offset = t.milliseconds();
+
             while(!p.getCompleted()){
-                double leftV = p.convert(wheelRadius, p.getLeftVelocity(t.milliseconds()/1000));
-                double rightV = p.convert(wheelRadius, p.getRightVelocity(t.milliseconds()/1000));
+                double leftV = p.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = p.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
                 double corL = pid3.update((long)leftV, (long)k3.filter(left.getVelocity(RADIANS)));
                 double corR = pid4.update((long)rightV, (long)k4.filter(right.getVelocity(RADIANS)));
@@ -83,6 +96,9 @@ public class TwoWheelPathSequence {
                 right.setVelocity(corR+rightV, RADIANS);
             }
             reset();
+            for(int i=0;i<markerList.getMarkers().size();i++)
+                if(markerList.getTime(i) > t.milliseconds()/1000)
+                    markerList.getInsertMarker(i).execute(t.milliseconds()/1000);
         }
     }
 }
