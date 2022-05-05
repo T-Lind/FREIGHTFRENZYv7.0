@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * A PID control loop for general purpose,
  * created by @author Tiernan Lindauer for FTC team 7797.
- * @lisence MIT License
- * Last edited 5/1/22
+ * @license MIT License
+ * Last edited 5/5/22
  */
 
 import java.util.ArrayList;
@@ -55,6 +55,13 @@ public class PIDController {
         time = new ArrayList<Long>();
         forgetLength = 64;
     }
+    /**
+     * construct PID controller
+     * @param Kp Proportional coefficient
+     * @param Ki Integral coefficient
+     * @param Kd Derivative coefficient
+     * @param len is the amount of data entries after which they are not included in the PID calculations.
+     */
     public PIDController(double Kp, double Ki, double Kd, int len) {
         proportional = Kp;
         integral = Ki*1000;
@@ -65,6 +72,10 @@ public class PIDController {
         forgetLength = len;
     }
 
+    /**
+     * A private method to compute the integral term.
+     * @return a right Riemann sum of the error so far.
+     */
     private long getIntegral(){
         long sum = 0;
         if(time.size() > 2){

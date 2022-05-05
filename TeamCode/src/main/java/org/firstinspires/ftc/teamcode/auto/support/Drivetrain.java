@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.auto.support;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+/**
+ * A class not used as of 5/5/22
+ */
 public class Drivetrain {
     public DcMotorEx leftTop;
     public DcMotorEx leftBottom;

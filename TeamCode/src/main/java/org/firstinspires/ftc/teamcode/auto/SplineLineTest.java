@@ -36,12 +36,22 @@ public class SplineLineTest extends LinearOpMode {
 
         InsertMarker m = (t)->{
             // Insert marker code here - use as a function of t.
+            if(t > 2)
+                telemetry.addLine("Marker one executing at two seconds");
+            if(t > 5)
+                telemetry.addLine("Marker one executing at five seconds");
+            telemetry.update();
         };
         InsertMarker m2 = (t2)->{
             // Insert other marker code here - use as a function of t.
+            if(t2 > 3.5)
+                telemetry.addLine("Marker two executing at three point five seconds");
+            if(t2 > 5)
+                telemetry.addLine("Marker two executing at five seconds");
+            telemetry.update();
         };
 
-        TwoWheelPathSequence sequence = new TwoWheelPathSequence(list, left, right, 0.048, new MarkerList(m,m2,new double[]{2,5}));
+        TwoWheelPathSequence sequence = new TwoWheelPathSequence(list, left, right, 0.048, new MarkerList(m,m2));
         sequence.buildAll();
         sequence.follow();
 

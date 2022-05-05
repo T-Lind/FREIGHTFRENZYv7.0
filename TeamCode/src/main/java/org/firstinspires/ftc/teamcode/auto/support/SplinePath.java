@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * Translates a series of circle radii/arc lengths into motor power values for a 2 wheeled robot.
- * created by @author Tiernan Lindauer for FTC team 7797.
+ * created by
+ * @author Tiernan Lindauer
+ * for FTC team 7797.
  * @license  MIT License
- * Last edited 5/1/22
+ * Last edited 5/5/22
  *
  */
 
@@ -26,10 +28,17 @@ public class SplinePath extends NeoPath {
     private PIDController p2;
 
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.
+
     /**
+     * Constructor.
      * @Precondition each static array in v is 3 long, size of r and v is equal
      * @Convention positive arc length is CCW, negative is CW
-     * **/
+     * @param tw track width (m)
+     * @param v maximum linear velocity (m/s)
+     * @param accTime acceleration and deceleration time (s)
+     * @param r is the radii of the arcs in the spline
+     * @param al are the arc lengths travelled in each corresponding radii.
+     */
     public SplinePath(double tw, double v, double accTime, double[] r, double[] al){
         trackWidth = tw;
         radii = r;
@@ -47,6 +56,17 @@ public class SplinePath extends NeoPath {
         p2 = new PIDController(0);
         reversed = false;
     }
+    /**
+     * Constructor.
+     * @Precondition each static array in v is 3 long, size of r and v is equal
+     * @Convention positive arc length is CCW, negative is CW
+     * @param tw track width (m)
+     * @param v maximum linear velocity (m/s)
+     * @param accTime acceleration and deceleration time (s)
+     * @param r is the radii of the arcs in the spline
+     * @param al are the arc lengths travelled in each corresponding radii.
+     * @param reversed is if the path should be followed backwards.
+     */
     public SplinePath(double tw, double v, double accTime, double[] r, double[] al, boolean reversed){
         trackWidth = tw;
         radii = r;
@@ -65,6 +85,9 @@ public class SplinePath extends NeoPath {
         this.reversed = reversed;
     }
 
+    /**
+     * Compute the various aspects of the spline.
+     */
     @Override
     public void build(){
         for(int i=1;i<arcLengths.length-1;i++)
@@ -79,6 +102,10 @@ public class SplinePath extends NeoPath {
         setBuilt(true);
     }
 
+    /**
+     * Compute the execute time
+     * @return return the execute time
+     */
     @Override
     public double getExecuteTime(){
         return times.get(times.size()-1);

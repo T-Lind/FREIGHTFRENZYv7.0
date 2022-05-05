@@ -7,6 +7,8 @@ package org.firstinspires.ftc.teamcode.auto.support;
  * Created by @author Tiernan Lindauer for FTC team 7797.
  * @license Creative Commons
  * Last edited 4/26/22
+ *
+ * NOT USED as of 5/5/22.
  */
 
 public class PIDKController {

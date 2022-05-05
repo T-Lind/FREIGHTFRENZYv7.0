@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * Program to take linear velocities from each wheel and translate
- * them into diffy pod velocities and then into encoder speeds.
- * Created by author Tiernan Lindauer for FTC team 7797.
+ * them into 2wd/6wd
+ * Created by
+ * @author Tiernan Lindauer
+ * for FTC team 7797.
  * @license MIT License
- * Last edited 4/18/22
+ * Last edited 5/5/22
  */
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -41,6 +43,17 @@ public class TwoWheelPathSequence {
 
         markerList = null;
     }
+    /**
+     *
+     * @param d is the ArrayList of paths
+     * @param left is the left motor (presumed to be negative to go forward)
+     * @param right is the right motor (presumed to be positive to go forward)
+     * @param wheelR is the wheel's radius
+     * @param mL is the MarkerList object, which can be constructed directly in the constructor of this object
+     *
+     * @Precondition the left and right motors are objects that have been externally created
+     * @Precondition mL is not null
+     */
     public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, MarkerList mL){
         trajectory = d;
         wheelRadius = wheelR;
@@ -51,11 +64,18 @@ public class TwoWheelPathSequence {
         markerList = mL;
     }
 
-
+    /**
+     * Build each NeoPath in the trajectory.
+     */
     public void buildAll(){
         for(NeoPath p : trajectory)
             p.build();
     }
+
+    /**
+     * Build a specific trajectory
+     * @param i the index of the NeoPath that you want to build.
+     */
     public void build(int i){
         trajectory.get(i).build();
     }
@@ -70,6 +90,10 @@ public class TwoWheelPathSequence {
             p.setCompleted(false);
     }
 
+    /**
+     * Actually moves the robot along the specified NeoPaths.
+     * Also adheres to InsertMarkers if any.
+     */
     public void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();
@@ -96,9 +120,9 @@ public class TwoWheelPathSequence {
                 right.setVelocity(corR+rightV, RADIANS);
             }
             reset();
-            for(int i=0;i<markerList.getMarkers().size();i++)
-                if(markerList.getTime(i) > t.milliseconds()/1000)
-                    markerList.getInsertMarker(i).execute(t.milliseconds()/1000);
+            if(markerList != null)
+                for(InsertMarker m : markerList.getMarkers())
+                    m.execute(t.milliseconds()/1000);
         }
     }
 }
