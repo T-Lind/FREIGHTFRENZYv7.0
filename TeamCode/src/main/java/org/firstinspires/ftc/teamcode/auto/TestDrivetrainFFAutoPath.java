@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.auto.support.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.Line;
 import org.firstinspires.ftc.teamcode.auto.support.MarkerList;
@@ -14,15 +16,19 @@ import org.firstinspires.ftc.teamcode.auto.support.Turn;
 import org.firstinspires.ftc.teamcode.auto.support.TwoWheelPathSequence;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous(name="TestDrivetrainFFAutoPath")
 public class TestDrivetrainFFAutoPath extends LinearOpMode {
     private DcMotorEx left, right;
+    DistanceSensor distanceSensor;
 
     @Override
     public void runOpMode() throws InterruptedException {
         left = (DcMotorEx) hardwareMap.dcMotor.get("L");
         right = (DcMotorEx) hardwareMap.dcMotor.get("R");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "Distance");
+
         left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -47,24 +53,33 @@ public class TestDrivetrainFFAutoPath extends LinearOpMode {
         list.add(splne);
         list.add(splne2);
 
+        AtomicBoolean b = new AtomicBoolean(false);
         InsertMarker m = (t)->{
             // Insert marker code here - use as a function of t.
-            if(t > 2)
-                telemetry.addLine("Marker one executing at two seconds");
-            if(t > 5)
-                telemetry.addLine("Marker one executing at five seconds");
-            telemetry.update();
-        };
-        InsertMarker m2 = (t2)->{
-            // Insert other marker code here - use as a function of t.
-            if(t2 > 3.5)
-                telemetry.addLine("Marker two executing at three point five seconds");
-            if(t2 > 5)
-                telemetry.addLine("Marker two executing at five seconds");
-            telemetry.update();
-        };
+            if(t > 3 && t < 10){
+                if(distanceSensor.getDistance(DistanceUnit.MM) < 100) {
+                    telemetry.addData("Distance sensor status", "close");
+                    b.set(true);
+                }
 
-        TwoWheelPathSequence sequence = new TwoWheelPathSequence(list, left, right, 0.048, new MarkerList(m,m2));
+                else
+                    telemetry.addData("Distance sensor status","far");
+            }
+            else if(t > 10 && b.get()){
+                 telemetry.addData("Long time...","");
+            }
+            telemetry.update();
+        };
+//        InsertMarker m2 = (t2)->{
+//            // Insert other marker code here - use as a function of t.
+//            if(t2 > 3 && t2 < 3.1)
+//                telemetry.addData("Marker two executing at three seconds","");
+//            if(t2 > 4 && t2 < 5)
+//                telemetry.addData("Marker two executing at five seconds","");
+//            telemetry.update();
+//        };
+
+        TwoWheelPathSequence sequence = new TwoWheelPathSequence(list, left, right, 0.048, new MarkerList(m));
 
         sequence.buildAll();
         sequence.follow();
