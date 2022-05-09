@@ -22,17 +22,12 @@ public class SplinePath extends NeoPath {
     private boolean reversed;
     private ArrayList<Double> times;
 
-    private KalmanFilter k;
-    private KalmanFilter k2;
-    private PIDController p;
-    private PIDController p2;
-
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.
 
     /**
      * Constructor.
-     * @Precondition each static array in v is 3 long, size of r and v is equal
-     * @Convention positive arc length is CCW, negative is CW
+     * Precondition: each static array in v is 3 long, size of r and v is equal
+     * Convention: positive arc length is CCW, negative is CW
      * @param tw track width (m)
      * @param v maximum linear velocity (m/s)
      * @param accTime acceleration and deceleration time (s)
@@ -49,11 +44,6 @@ public class SplinePath extends NeoPath {
         TpD = 0;
 
         times = new ArrayList<Double>();
-
-        k = new KalmanFilter(0);
-        k2 = new KalmanFilter(0);
-        p = new PIDController(0);
-        p2 = new PIDController(0);
         reversed = false;
     }
     /**
@@ -77,16 +67,11 @@ public class SplinePath extends NeoPath {
         TpD = 0;
 
         times = new ArrayList<Double>();
-
-        k = new KalmanFilter(0);
-        k2 = new KalmanFilter(0);
-        p = new PIDController(0);
-        p2 = new PIDController(0);
         this.reversed = reversed;
     }
 
     /**
-     * Compute the various aspects of the spline.
+     * Compute the various aspects of the spline like ramp-up and ramp-down appending times, the times ArrayList, and ArcLengths list.
      */
     @Override
     public void build(){
@@ -111,16 +96,30 @@ public class SplinePath extends NeoPath {
         return times.get(times.size()-1);
     }
 
+    
+     /**
+     * Get the times ArrayList - not used except for debugging, times is the time at which every sequential part of the spline executes
+     * @return the times ArrayList
+     */
     public ArrayList<Double> getTimes(){
         return times;
     }
 
+    /**
+    * Gets the current arc that is executing based on the current time
+    * @param t is the current time since the start of the spline
+    */
     public int getArc(double t){
         for(int i=0;i<times.size();i++)
             if(t < times.get(i))
                 return i;
         return -1;
     }
+    
+    /**
+    * Get the linear velocity of the WHOLE robot based off of the current time. It's only != to the velocity specified in the constructor in the ramp-up and ramp-down times.
+    * @param t is the current time into the spline
+    */
     public double getVelocity(double t){
         int arc = getArc(t);
         if(arc == -1)
@@ -139,6 +138,12 @@ public class SplinePath extends NeoPath {
             return velocity-velocity*Math.sqrt((t-times.get(times.size()-2)-TpD)/accelerationTime);
         }
     }
+    
+    /**
+    * Get the left linear velocity based on the current time, accounting for negative arc lengths, reversed boolean, and different arc radii.
+    * @param t is the current time into the spline.
+    * @return the left wheel's linear velocity.
+    */
     @Override
     public double getLeftVelocity(double t){
         if(!reversed) {
@@ -166,6 +171,13 @@ public class SplinePath extends NeoPath {
             return v;
         }
     }
+    
+
+    /**
+    * Get the right linear velocity based on the current time, accounting for negative arc lengths, reversed boolean, and different arc radii.
+    * @param t is the current time into the spline.
+    * @return the right wheel's linear velocity.
+    */    
     @Override
     public double getRightVelocity(double t){
         if(!reversed) {
@@ -192,24 +204,6 @@ public class SplinePath extends NeoPath {
             return -1*v;
         }
     }
-//    public double[] update(double left, double right, double time){
-//        left = convert(left);
-//        right = convert(right);
-//
-//        left = k.filter(left);
-//        right = k2.filter(right);
-//
-//        double l = getLeftVelocity(time);
-//        double r = getRightVelocity(time);
-//
-//        double corL = p.update((long)l, (long)left);
-//        double corR = p.update((long)r, (long)right);
-//
-//        double[] ret = new double[2];
-//        ret[0] = corL+left;
-//        ret[1] = corR+right;
-//        return ret;
-//    }
 
 }
 
