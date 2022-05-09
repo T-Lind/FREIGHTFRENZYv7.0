@@ -17,6 +17,9 @@ public class PIDController {
     private ArrayList<Long> data;
     private ArrayList<Long> time;
 
+     /**
+     * Default constructor - assigns moderate values to the PID.
+     */
     public PIDController(){
         proportional = 0.3;
         integral = 0.3;
@@ -26,7 +29,7 @@ public class PIDController {
         forgetLength = 64;
     }
     /**
-     * Default constructor.
+     * DeviceCode constructor
      * @param deviceCode corresponds to what the Kalman Filter is for to reduce code and code errors.
      *                   When deviceCode is 0, it is for motors
      *                   deviceCode 1 IS NOT USED IN PID - FOR DISTANCE SENSORS
