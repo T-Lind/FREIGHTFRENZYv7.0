@@ -5,8 +5,6 @@ package org.firstinspires.ftc.teamcode.auto.support;
  * Created by
  * @author Tiernan Lindauer
  * for FTC team 7797.
- * @license MIT License
- * Last edited 5/5/22
  */
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -14,6 +12,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADI
 import java.util.ArrayList;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 
 public class TwoWheelPathSequence {
 
@@ -32,7 +31,7 @@ public class TwoWheelPathSequence {
      * @param right is the right motor (presumed to be positive to go forward)
      * @param wheelR is the wheel's radius
      *
-     * @Precondition the left and right motors are objects that have been externally created
+     * Precondition: the left and right motors are objects that have been externally created
      */
     public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR){
         trajectory = d;
@@ -51,8 +50,8 @@ public class TwoWheelPathSequence {
      * @param wheelR is the wheel's radius
      * @param mL is the MarkerList object, which can be constructed directly in the constructor of this object
      *
-     * @Precondition the left and right motors are objects that have been externally created
-     * @Precondition mL is not null
+     * Precondition: the left and right motors are objects that have been externally created
+     * Precondition: mL is not null
      */
     public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, MarkerList mL){
         trajectory = d;
@@ -81,7 +80,7 @@ public class TwoWheelPathSequence {
     }
 
     /**
-     * @Precondition all paths have been build using the buildAll() method.
+     * Precondition: all paths have been build using the buildAll() method.
      * Note that this is not technically necessary but reduces lag time.
      */
 

@@ -9,10 +9,6 @@ package org.firstinspires.ftc.teamcode.auto.support;
  *
  * Use this object in a runner like any other.
  *
- * @license MIT License
- *
- * Last edited 5/5/22
- *
  * @author Tiernan Lindauer
  */
 public class KalmanFilter {

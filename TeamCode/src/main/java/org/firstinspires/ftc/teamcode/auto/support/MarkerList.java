@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * Supporting file to create a static array of markers.
  * @author Tiernan Lindauer
- * For team 7797 Victorian VOltage.
+ * For team 7797 Victorian Voltage.
  */
 public class MarkerList {
     InsertMarker[] markers;

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * Parent class for paths that solely are composed of time to wheel velocity functions. Essentially acts as a piecewise function over time for both the left and right velocity.
- * @license MIT License
- * Last edited 5/5
  */
 public abstract class NeoPath {
     private double executeTime = 0;

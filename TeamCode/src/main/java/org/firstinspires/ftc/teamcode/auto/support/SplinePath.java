@@ -4,9 +4,6 @@ package org.firstinspires.ftc.teamcode.auto.support;
  * created by
  * @author Tiernan Lindauer
  * for FTC team 7797.
- * @license  MIT License
- * Last edited 5/5/22
- *
  */
 
 import java.util.ArrayList;
@@ -48,8 +45,8 @@ public class SplinePath extends NeoPath {
     }
     /**
      * Constructor.
-     * @Precondition each static array in v is 3 long, size of r and v is equal
-     * @Convention positive arc length is CCW, negative is CW
+     * Each static array in v is 3 long, size of r and v is equal
+     * Convention: positive arc length is CCW, negative is CW
      * @param tw track width (m)
      * @param v maximum linear velocity (m/s)
      * @param accTime acceleration and deceleration time (s)

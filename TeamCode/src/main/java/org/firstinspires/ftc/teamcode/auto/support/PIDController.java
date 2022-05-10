@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.auto.support;
 
 /**
  * A PID control loop for general purpose,
- * created by @author Tiernan Lindauer for FTC team 7797.
- * @license MIT License
- * Last edited 5/5/22
+ * created by
+ * @author Tiernan Lindauer
+ * for FTC team 7797.
  */
 
 import java.util.ArrayList;

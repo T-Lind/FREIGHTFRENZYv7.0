@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.auto.support;
 /**
  * An interface to execute different parts of code at different times in the trajectory.
  * Useful for running arms, motors, etc. while in movement.
- * Last edited on 5/5/22
  * @author Tiernan Lindauer
  */
 public interface InsertMarker {
