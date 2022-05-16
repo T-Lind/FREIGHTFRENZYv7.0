@@ -33,11 +33,21 @@ public class PIDController {
      * @param deviceCode corresponds to what the Kalman Filter is for to reduce code and code errors.
      *                   When deviceCode is 0, it is for motors
      *                   deviceCode 1 IS NOT USED IN PID - FOR DISTANCE SENSORS
+     *                   When deviceCode is 2, i is for drivetrain motors in a turn.
+     *      *
      */
     public PIDController(int deviceCode){
         if(deviceCode == 0){
             proportional = 0.4;
             integral = 0.5;
+            derivative = 0.3;
+            data = new ArrayList<Long>();
+            time = new ArrayList<Long>();
+            forgetLength = 64;
+        }
+        else if(deviceCode == 2){
+            proportional = 0.8;
+            integral = 0.8;
             derivative = 0.3;
             data = new ArrayList<Long>();
             time = new ArrayList<Long>();

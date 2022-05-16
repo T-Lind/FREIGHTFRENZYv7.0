@@ -12,6 +12,7 @@ public class Turn extends Line{
      */
     public Turn(double a, double trackWidth, double v) {
         super((3.14159*a*trackWidth)/360, v);
+        setType("Turn");
     }
 
     /**

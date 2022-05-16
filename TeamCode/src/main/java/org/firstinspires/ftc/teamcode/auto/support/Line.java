@@ -10,7 +10,6 @@ public class Line extends NeoPath{
     private double distance;
     private double maxVelocity;
     private double eT;
-    private double errorRate;
 
 
     /**
@@ -19,9 +18,9 @@ public class Line extends NeoPath{
      * @param v is the maximum velocity to travel at
      */
     public Line(double d, double v){
-        errorRate = 1.2;
-        distance = d*errorRate;
+        distance = d;
         maxVelocity = v;
+        setType("Line");
 
         eT = 0;
     }

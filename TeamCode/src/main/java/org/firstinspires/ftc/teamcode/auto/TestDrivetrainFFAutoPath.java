@@ -79,7 +79,7 @@ public class TestDrivetrainFFAutoPath extends LinearOpMode {
 //            telemetry.update();
 //        };
 
-        TwoWheelPathSequence sequence = new TwoWheelPathSequence(list, left, right, 0.048, new MarkerList(m));
+        TwoWheelPathSequence sequence = new TwoWheelPathSequence(list, left, right, 0.048);
 
         sequence.buildAll();
         sequence.follow();

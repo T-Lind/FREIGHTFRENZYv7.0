@@ -6,6 +6,7 @@ public abstract class NeoPath {
     private double executeTime = 0;
     private boolean completed = false;
     private boolean built = false;
+    private String type;
 
     /**
      * Meant to compute the trajectory and essentially turn it into a piecewise function.
@@ -13,6 +14,13 @@ public abstract class NeoPath {
      */
     public void build(){
         built = true;
+    }
+
+    public String getType(){
+        return type;
+    }
+    public void setType(String s){
+        type = s;
     }
 
     /**

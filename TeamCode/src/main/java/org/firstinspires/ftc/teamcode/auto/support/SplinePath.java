@@ -42,6 +42,7 @@ public class SplinePath extends NeoPath {
 
         times = new ArrayList<Double>();
         reversed = false;
+        setType("Spline");
     }
     /**
      * Constructor.
@@ -65,6 +66,7 @@ public class SplinePath extends NeoPath {
 
         times = new ArrayList<Double>();
         this.reversed = reversed;
+        setType("Spline");
     }
 
     /**

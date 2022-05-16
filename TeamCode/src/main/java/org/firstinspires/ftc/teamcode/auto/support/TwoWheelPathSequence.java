@@ -99,15 +99,35 @@ public class TwoWheelPathSequence {
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
                 p.build();
+            KalmanFilter k3;
+            PIDController pid3;
+            KalmanFilter k4;
+            PIDController pid4;
 
-            KalmanFilter k3 = new KalmanFilter(0);
-            PIDController pid3 = new PIDController(0);
+            if(p.getType().equals("Line") || p.getType().equals("Spline")){
 
-            KalmanFilter k4 = new KalmanFilter(0);
-            PIDController pid4 = new PIDController(0);
+                k3 = new KalmanFilter(0);
+                pid3 = new PIDController(0);
+
+                k4 = new KalmanFilter(0);
+                pid4 = new PIDController(0);
+            }
+            else if(p.getType().equals("Turn")){
+                k3 = new KalmanFilter(2);
+                pid3 = new PIDController(2);
+
+                k4 = new KalmanFilter(2);
+                pid4 = new PIDController(2);
+            }
+            else{
+                k3 = new KalmanFilter(0);
+                pid3 = new PIDController(0);
+
+                k4 = new KalmanFilter(0);
+                pid4 = new PIDController(0);
+            }
 
             double offset = t.milliseconds();
-
             while(!p.getCompleted()){
                 double leftV = p.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
                 double rightV = p.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
@@ -121,6 +141,7 @@ public class TwoWheelPathSequence {
                     for(InsertMarker m : markerList.getMarkers())
                         m.execute(t.milliseconds()/1000);
             }
+
             reset();
         }
     }
