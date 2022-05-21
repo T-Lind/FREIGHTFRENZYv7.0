@@ -1,22 +1,21 @@
-package org.firstinspires.ftc.teamcode.auto.support;
-/**
- * Creates a list of velocities for the wheels on a robot to move at.
- * created by
- * @author Tiernan Lindauer
- * for FTC team 7797.
- */
+package org.firstinspires.ftc.teamcode.auto.support.diffysupport;
 
-public class Line extends NeoPath{
+import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
+
+
+public class DiffyLine extends NeoPath {
     private double distance;
     private double maxVelocity;
     private double eT;
+    private double errorRate;
+
 
     /**
      *
      * @param d is the distance traveled
      * @param v is the maximum velocity to travel at
      */
-    public Line(double d, double v){
+    public DiffyLine(double d, double v){
         distance = d;
         maxVelocity = v;
 
