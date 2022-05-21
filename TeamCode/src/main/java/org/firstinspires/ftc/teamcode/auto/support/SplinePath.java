@@ -6,6 +6,8 @@ package org.firstinspires.ftc.teamcode.auto.support;
  * for FTC team 7797.
  */
 
+import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
+
 import java.util.ArrayList;
 
 public class SplinePath extends NeoPath {

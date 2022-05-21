@@ -1,4 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto.support;
+
+import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
+
 /**
  * Creates a list of velocities for the wheels on a robot to move at.
  * created by
@@ -6,10 +9,11 @@ package org.firstinspires.ftc.teamcode.auto.support;
  * for FTC team 7797.
  */
 
-public class Line extends NeoPath{
+public class Line extends NeoPath {
     private double distance;
     private double maxVelocity;
     private double eT;
+    private boolean isNotSymmetrical;
 
     /**
      *
@@ -22,7 +26,19 @@ public class Line extends NeoPath{
 
         eT = 0;
     }
+    /**
+     *
+     * @param d is the distance traveled
+     * @param v is the maximum velocity to travel at
+     * @param notSymmetrical is if the drivetrain is not mirrored across the axis (like in a differential swerve)
+     */
+    public Line(double d, double v, boolean notSymmetrical){
+        distance = d;
+        maxVelocity = v;
+        isNotSymmetrical = notSymmetrical;
 
+        eT = 0;
+    }
     /**
      * Build the line trajectory.
      */
@@ -66,7 +82,9 @@ public class Line extends NeoPath{
      */
     @Override
     public double getLeftVelocity(double t){
-        return -getVelocity(t);
+        if(isNotSymmetrical)
+            return -getVelocity(t);
+        return getVelocity(t);
     }
     /**
      * Get the right linear velocity

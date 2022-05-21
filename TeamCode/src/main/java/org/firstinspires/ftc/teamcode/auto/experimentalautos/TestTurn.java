@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.experimentalautos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.auto.support.Line;
 import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
-import org.firstinspires.ftc.teamcode.auto.support.SplinePath;
 import org.firstinspires.ftc.teamcode.auto.support.Turn;
-import org.firstinspires.ftc.teamcode.auto.support.TwoWheelPathSequence;
+import org.firstinspires.ftc.teamcode.auto.support.basicsupport.TwoWheelPathSequence;
 
 import java.util.ArrayList;
 

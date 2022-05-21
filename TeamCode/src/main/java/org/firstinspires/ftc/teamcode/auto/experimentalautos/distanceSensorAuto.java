@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.experimentalautos;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
