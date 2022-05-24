@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support;
+package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 /**
  * Translates a series of circle radii/arc lengths into motor power values for a 2 wheeled robot.
  * created by
@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.auto.support;
  * for FTC team 7797.
  */
 
-import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.direction;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ public class SplinePath extends NeoPath {
     private double accelerationTime;
     private double TpA;
     private double TpD;
-    private boolean reversed;
+    private direction moveWay;
     private ArrayList<Double> times;
 
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.
@@ -43,7 +43,7 @@ public class SplinePath extends NeoPath {
         TpD = 0;
 
         times = new ArrayList<Double>();
-        reversed = false;
+        moveWay = direction.FORWARD;
     }
     /**
      * Constructor.
@@ -66,7 +66,11 @@ public class SplinePath extends NeoPath {
         TpD = 0;
 
         times = new ArrayList<Double>();
-        this.reversed = reversed;
+
+        if(reversed)
+            moveWay = direction.REVERSE;
+        else
+            moveWay = direction.FORWARD;
     }
 
     /**
@@ -100,7 +104,7 @@ public class SplinePath extends NeoPath {
      * Get the times ArrayList - not used except for debugging, times is the time at which every sequential part of the spline executes
      * @return the times ArrayList
      */
-    public ArrayList<Double> getTimes(){
+    private ArrayList<Double> getTimes(){
         return times;
     }
 
@@ -108,7 +112,7 @@ public class SplinePath extends NeoPath {
     * Gets the current arc that is executing based on the current time
     * @param t is the current time since the start of the spline
     */
-    public int getArc(double t){
+    private int getArc(double t){
         for(int i=0;i<times.size();i++)
             if(t < times.get(i))
                 return i;
@@ -119,7 +123,7 @@ public class SplinePath extends NeoPath {
     * Get the linear velocity of the WHOLE robot based off of the current time. It's only != to the velocity specified in the constructor in the ramp-up and ramp-down times.
     * @param t is the current time into the spline
     */
-    public double getVelocity(double t){
+    private double getVelocity(double t){
         int arc = getArc(t);
         if(arc == -1)
             return 0;
@@ -145,7 +149,7 @@ public class SplinePath extends NeoPath {
     */
     @Override
     public double getLeftVelocity(double t){
-        if(!reversed) {
+        if(moveWay == direction.FORWARD) {
             if (getArc(t) == -1) {
                 this.setCompleted(true);
                 return 0;
@@ -179,7 +183,7 @@ public class SplinePath extends NeoPath {
     */    
     @Override
     public double getRightVelocity(double t){
-        if(!reversed) {
+        if(moveWay == direction.FORWARD) {
             if (getArc(t) == -1) {
                 this.setCompleted(true);
                 return 0;

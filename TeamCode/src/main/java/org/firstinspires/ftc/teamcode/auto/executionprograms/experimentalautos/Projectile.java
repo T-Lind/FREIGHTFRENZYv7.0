@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.experimentalautos;
+package org.firstinspires.ftc.teamcode.auto.executionprograms.experimentalautos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-import java.util.ArrayList;
 
 @Autonomous(name="Projectile")
 public class Projectile extends LinearOpMode {

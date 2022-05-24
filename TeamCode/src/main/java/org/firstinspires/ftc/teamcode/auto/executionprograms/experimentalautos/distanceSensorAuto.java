@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.experimentalautos;
+package org.firstinspires.ftc.teamcode.auto.executionprograms.experimentalautos;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.auto.support.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.Line;
-import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
-import org.firstinspires.ftc.teamcode.auto.support.PIDController;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Line;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 

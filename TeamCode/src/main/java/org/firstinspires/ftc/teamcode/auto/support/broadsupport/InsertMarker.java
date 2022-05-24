@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support;
+package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 /**
  * An interface to execute different parts of code at different times in the trajectory.

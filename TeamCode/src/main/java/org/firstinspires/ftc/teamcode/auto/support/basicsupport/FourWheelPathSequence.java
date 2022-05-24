@@ -12,11 +12,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADI
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.support.InsertMarker;
-import org.firstinspires.ftc.teamcode.auto.support.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.MarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
-import org.firstinspires.ftc.teamcode.auto.support.PIDController;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 
 import java.util.ArrayList;
 
@@ -40,7 +40,7 @@ public class FourWheelPathSequence {
      * @param right2 is the right motor (presumed to be positive to go forward) does not matter which
      * @param wheelR is the wheel's radius
      *
-     * Precondition: the left and right motors are objects that have been externally created
+     * @Precondition the left and right motors are objects that have been externally created
      */
     public FourWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
         trajectory = d;
@@ -63,7 +63,7 @@ public class FourWheelPathSequence {
      * @param wheelR is the wheel's radius
      * @param m is the MarkerList
      *
-     * Precondition: the left and right motors are objects that have been externally created
+     * @Precondition the left and right motors are objects that have been externally created
      */
     public FourWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR, MarkerList m){
         trajectory = d;
@@ -94,9 +94,7 @@ public class FourWheelPathSequence {
     }
 
     /**
-     * Precondition:
-     * all paths have been build using the buildAll() method.
-     * Note that this is not technically necessary but reduces lag time.
+     * @Precondition all paths have been build using the buildAll() method. Note that this is not technically necessary but reduces lag time.
      */
 
     public void reset(){
@@ -136,8 +134,8 @@ public class FourWheelPathSequence {
             double offset = t.milliseconds();
 
             while(!p.getCompleted()){
-                double leftV = p.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
-                double rightV = p.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
+                double leftV = NeoPath.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = NeoPath.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
                 double corL1 = pidLeft1.update((long)leftV, (long)kLeft1.filter(left1.getVelocity(RADIANS)));
                 double corL2 = pidLeft2.update((long)leftV, (long)kLeft2.filter(left2.getVelocity(RADIANS)));

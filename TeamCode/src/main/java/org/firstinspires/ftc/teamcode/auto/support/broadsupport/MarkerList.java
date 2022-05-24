@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support;
+package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 /**
  * Supporting file to create a static array of markers.

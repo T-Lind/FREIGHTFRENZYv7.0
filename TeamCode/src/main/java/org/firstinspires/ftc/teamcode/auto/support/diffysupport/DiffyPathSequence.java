@@ -12,11 +12,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADI
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.support.InsertMarker;
-import org.firstinspires.ftc.teamcode.auto.support.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.MarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
-import org.firstinspires.ftc.teamcode.auto.support.PIDController;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 
 import java.util.ArrayList;
 
@@ -134,8 +134,8 @@ public class DiffyPathSequence {
             double offset = t.milliseconds();
 
             while(!p.getCompleted()){
-                double leftV = p.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
-                double rightV = p.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
+                double leftV = NeoPath.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = NeoPath.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
                 double leftFrontTargetV = leftV*DIFFY_FACTOR;
                 double leftBackTargetV = -leftV*DIFFY_FACTOR;

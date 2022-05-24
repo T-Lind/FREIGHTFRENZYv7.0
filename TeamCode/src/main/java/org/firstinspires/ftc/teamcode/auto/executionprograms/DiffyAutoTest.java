@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.auto;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+package org.firstinspires.ftc.teamcode.auto.executionprograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.teamcode.auto.support.Line;
-import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
-import org.firstinspires.ftc.teamcode.auto.support.Turn;
+
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.BotContainer;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Line;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Turn;
 import org.firstinspires.ftc.teamcode.auto.support.diffysupport.DiffyPathSequence;
 
 import java.util.ArrayList;
@@ -40,13 +40,13 @@ public class DiffyAutoTest extends LinearOpMode {
         }
 
         NeoPath line = new Line(0.5,0.5);
-        NeoPath turn = new Turn(90, Bot.trackWidth, 0.5);
+        NeoPath turn = new Turn(90, BotContainer.trackWidth, 0.5);
         ArrayList<NeoPath> list = new ArrayList<NeoPath>();
         list.add(line);
         list.add(turn);
 
 //        DiffyPathSequence sequence = new DiffyPathSequence(list, bot.LF(), bot.LB(), bot.RF(), bot.RB(), Bot.wheelR);
-        DiffyPathSequence sequence = new DiffyPathSequence(list, leftFront, leftBack, rightFront, rightBack, Bot.wheelR);
+        DiffyPathSequence sequence = new DiffyPathSequence(list, leftFront, leftBack, rightFront, rightBack, BotContainer.wheelR);
 
         sequence.buildAll();
         sequence.follow();

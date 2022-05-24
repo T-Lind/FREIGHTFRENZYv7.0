@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.executionprograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.auto.support.InsertMarker;
-import org.firstinspires.ftc.teamcode.auto.support.Line;
-import org.firstinspires.ftc.teamcode.auto.support.MarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
-import org.firstinspires.ftc.teamcode.auto.support.SplinePath;
-import org.firstinspires.ftc.teamcode.auto.support.Turn;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Line;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.SplinePath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Turn;
 import org.firstinspires.ftc.teamcode.auto.support.basicsupport.TwoWheelPathSequence;
 
 import java.util.ArrayList;

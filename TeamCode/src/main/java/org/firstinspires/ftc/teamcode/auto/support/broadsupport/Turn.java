@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support;
+package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 /**
  * Program to turn a specified angle.
@@ -14,11 +14,16 @@ public class Turn extends Line{
         super((3.14159*a*trackWidth)/360, v);
     }
 
+    public Turn(double a, double trackWidth, double v, boolean notSymmetrical) {
+        super((3.14159*a*trackWidth)/360, v, notSymmetrical);
+    }
+
     /**
      * Get the left wheel velocity
      * @param t the current time
      * @return the left wheel velocity so as to turn the right amount.
      */
+
     @Override
     public double getLeftVelocity(double t){
         return -1*super.getLeftVelocity(t);

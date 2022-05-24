@@ -1,18 +1,20 @@
-package org.firstinspires.ftc.teamcode.auto.support;
+package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.buildStatus;
+
 /**
  * Parent class for paths that solely are composed of time to wheel velocity functions. Essentially acts as a piecewise function over time for both the left and right velocity.
  */
 public abstract class NeoPath {
     private double executeTime = 0;
     private boolean completed = false;
-    private boolean built = false;
+    private buildStatus construction = buildStatus.UNBUILT;
 
     /**
      * Meant to compute the trajectory and essentially turn it into a piecewise function.
      * This method is supposed to be overriden.
      */
     public void build(){
-        built = true;
+        construction = buildStatus.BUILT;
     }
 
     /**
@@ -51,14 +53,19 @@ public abstract class NeoPath {
     * @param b is the build status.
     */
     public void setBuilt(boolean b){
-        built = b;
+        if(b)
+            construction = buildStatus.BUILT;
+        else
+            construction = buildStatus.UNBUILT;
     }
     /**
     * Get the build status of this NeoPath.
     * @return the built variable (build status).
     */
     public boolean getBuilt(){
-        return built;
+        if(construction == buildStatus.BUILT)
+            return true;
+        return false;
     }
 
     /**
@@ -98,7 +105,7 @@ public abstract class NeoPath {
      * @param v is the linear velocity in m/s
      * @return the angular velocity in rad/s
      */
-    public double convert(double wheelRadius, double v){
+    public static double convert(double wheelRadius, double v){
         v/=wheelRadius; // convert to angular velocity by radius
         v/=(2*3.14159);
         return v;

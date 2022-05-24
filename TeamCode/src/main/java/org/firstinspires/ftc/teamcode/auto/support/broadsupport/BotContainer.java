@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * Static class to slim down autonomous programs for four motor drivetrains.
  */
-public class Bot {
+public class BotContainer {
    private DcMotorEx leftFront;
    private DcMotorEx leftBack;
    private DcMotorEx rightFront;
@@ -21,7 +21,7 @@ public class Bot {
    /**
     * Initialize four motors.
     */
-   public Bot(){
+   public BotContainer(){
       // build the motor objects
       leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
       leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");

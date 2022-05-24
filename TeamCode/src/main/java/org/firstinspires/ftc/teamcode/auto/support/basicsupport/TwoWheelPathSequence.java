@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.auto.support.InsertMarker;
-import org.firstinspires.ftc.teamcode.auto.support.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.MarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
-import org.firstinspires.ftc.teamcode.auto.support.PIDController;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 
 
 public class TwoWheelPathSequence {
@@ -37,7 +37,7 @@ public class TwoWheelPathSequence {
      * @param right is the right motor (presumed to be positive to go forward)
      * @param wheelR is the wheel's radius
      *
-     * Precondition: the left and right motors are objects that have been externally created
+     * @Precondition the left and right motors are objects that have been externally created
      */
     public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR){
         trajectory = d;
@@ -56,8 +56,8 @@ public class TwoWheelPathSequence {
      * @param wheelR is the wheel's radius
      * @param mL is the MarkerList object, which can be constructed directly in the constructor of this object
      *
-     * Precondition: the left and right motors are objects that have been externally created
-     * Precondition: mL is not null
+     * @Precondition the left and right motors are objects that have been externally created
+     * @Precondition mL is not null
      */
     public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, MarkerList mL){
         trajectory = d;
@@ -86,7 +86,7 @@ public class TwoWheelPathSequence {
     }
 
     /**
-     * Precondition: all paths have been build using the buildAll() method.
+     * @Precondition all paths have been build using the buildAll() method.
      * Note that this is not technically necessary but reduces lag time.
      */
 
@@ -115,8 +115,8 @@ public class TwoWheelPathSequence {
             double offset = t.milliseconds();
 
             while(!p.getCompleted()){
-                double leftV = p.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
-                double rightV = p.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
+                double leftV = NeoPath.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = NeoPath.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
                 double corL = pid3.update((long)leftV, (long)k3.filter(left.getVelocity(RADIANS)));
                 double corR = pid4.update((long)rightV, (long)k4.filter(right.getVelocity(RADIANS)));
