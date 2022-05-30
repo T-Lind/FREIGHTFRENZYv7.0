@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.auto.support.MarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.SplinePath;
 import org.firstinspires.ftc.teamcode.auto.support.Turn;
-import org.firstinspires.ftc.teamcode.auto.support.TwoWheelPathSequence;
+import org.firstinspires.ftc.teamcode.auto.support.basicsupport.TwoWheelPathSequence;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;

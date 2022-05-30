@@ -70,17 +70,33 @@ public abstract class NeoPath {
     }
 
     /**
-    * Get the left velocity - meant to be overriden, defaults to zero speed.
+    * Get the left velocity - meant to be overridden, defaults to zero speed.
     * @param t is the current time into this specific NeoPath.
     */
     public double getLeftVelocity(double t){
         return 0;
     }
     /**
-    * Get the right velocity - meant to be overriden, defaults to zero speed.
+    * Get the right velocity - meant to be overridden, defaults to zero speed.
     * @param t is the current time into this specific NeoPath.
     */
     public double getRightVelocity(double t){
+        return 0;
+    }
+
+    /**
+     * Get the left angle - meant to be overridden, defaults to zero.
+     * @param t is the current time into this specific NeoPath.
+     */
+    public double getLeftAngle(double t){
+        return 0;
+    }
+
+    /**
+     * Get the right angle - meant to be overridden, defaults to zero.
+     * @param t is the current time into this specific NeoPath.
+     */
+    public double getRightAngle(double t){
         return 0;
     }
 

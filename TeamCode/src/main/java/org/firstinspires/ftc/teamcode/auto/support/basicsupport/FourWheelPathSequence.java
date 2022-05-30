@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.auto.support;
+package org.firstinspires.ftc.teamcode.auto.support.basicsupport;
 /**
  * Program to take linear velocities from each wheel and translate
- * them into 6wd
+ * them into 4wd
  * Created by
  * @author Tiernan Lindauer
  * for FTC team 7797.
@@ -12,19 +12,23 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADI
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.support.InsertMarker;
+import org.firstinspires.ftc.teamcode.auto.support.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.support.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.PIDController;
+
 import java.util.ArrayList;
 
-public class SixWheelPathSequence {
+public class FourWheelPathSequence {
 
     private ArrayList<NeoPath> trajectory;
     private double wheelRadius;
 
     private DcMotorEx left1;
     private DcMotorEx left2;
-    private DcMotorEx left3;
     private DcMotorEx right1;
     private DcMotorEx right2;
-    private DcMotorEx right3;
 
     MarkerList markerList;
     /**
@@ -32,24 +36,20 @@ public class SixWheelPathSequence {
      * @param d is the ArrayList of paths
      * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
-     * @param left3 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param right1 is the right motor (presumed to be positive to go forward) does not matter which
      * @param right2 is the right motor (presumed to be positive to go forward) does not matter which
-     * @param right3 is the right motor (presumed to be positive to go forward) does not matter which
      * @param wheelR is the wheel's radius
      *
      * Precondition: the left and right motors are objects that have been externally created
      */
-    public SixWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR){
+    public FourWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
         trajectory = d;
         wheelRadius = wheelR;
 
         this.left1 = left1;
-        this.left2 = left1;
-        this.left3 = left1;
+        this.left2 = left2;
         this.right1 = right1;
         this.right2= right2;
-        this.right3= right3;
 
         markerList = null;
     }
@@ -58,25 +58,21 @@ public class SixWheelPathSequence {
      * @param d is the ArrayList of paths
      * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
-     * @param left3 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param right1 is the right motor (presumed to be positive to go forward) does not matter which
      * @param right2 is the right motor (presumed to be positive to go forward) does not matter which
-     * @param right3 is the right motor (presumed to be positive to go forward) does not matter which
      * @param wheelR is the wheel's radius
      * @param m is the MarkerList
      *
      * Precondition: the left and right motors are objects that have been externally created
      */
-    public SixWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR, MarkerList m){
+    public FourWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR, MarkerList m){
         trajectory = d;
         wheelRadius = wheelR;
 
         this.left1 = left1;
-        this.left2 = left2;
-        this.left3 = left3;
+        this.left2 = left1;
         this.right1 = right1;
         this.right2= right2;
-        this.right3= right3;
 
         markerList = m;
     }
@@ -145,18 +141,14 @@ public class SixWheelPathSequence {
 
                 double corL1 = pidLeft1.update((long)leftV, (long)kLeft1.filter(left1.getVelocity(RADIANS)));
                 double corL2 = pidLeft2.update((long)leftV, (long)kLeft2.filter(left2.getVelocity(RADIANS)));
-                double corL3 = pidLeft3.update((long)leftV, (long)kLeft3.filter(left3.getVelocity(RADIANS)));
                 double corR1 = pidRight1.update((long)rightV, (long)kRight1.filter(right1.getVelocity(RADIANS)));
                 double corR2 = pidRight2.update((long)rightV, (long)kRight2.filter(right2.getVelocity(RADIANS)));
-                double corR3 = pidRight3.update((long)rightV, (long)kRight3.filter(right3.getVelocity(RADIANS)));
 
                 left1.setVelocity(corL1+leftV, RADIANS);
                 left2.setVelocity(corL2+leftV, RADIANS);
-                left3.setVelocity(corL3+leftV, RADIANS);
 
                 right1.setVelocity(corR1+rightV, RADIANS);
                 right2.setVelocity(corR2+rightV, RADIANS);
-                right3.setVelocity(corR3+rightV, RADIANS);
                 if(markerList != null)
                     for(InsertMarker m : markerList.getMarkers())
                         m.execute(t.milliseconds()/1000);

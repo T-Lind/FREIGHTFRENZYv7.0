@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="JavadocGenerationManager">
-    <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Downloads/javadoc-5-9-22-pm-2" />
+    <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Downloads" />
     <option name="OPTION_SCOPE" value="public" />
     <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="true" />
   </component>

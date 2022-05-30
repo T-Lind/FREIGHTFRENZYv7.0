@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support;
+package org.firstinspires.ftc.teamcode.auto.support.basicsupport;
 /**
  * Program to take linear velocities from each wheel and translate
  * them into 2wd
@@ -13,8 +13,13 @@ import java.util.ArrayList;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.auto.support.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.support.NeoMarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.PIDController;
 
-public class TwoWheelPathSequence {
+
+public class TwoWheelPathSequenceAsynch extends Thread{
 
     private ArrayList<NeoPath> trajectory;
 
@@ -23,7 +28,7 @@ public class TwoWheelPathSequence {
     private DcMotorEx left;
     private DcMotorEx right;
 
-    MarkerList markerList;
+    NeoMarkerList markerList;
     /**
      *
      * @param d is the ArrayList of paths
@@ -33,7 +38,7 @@ public class TwoWheelPathSequence {
      *
      * Precondition: the left and right motors are objects that have been externally created
      */
-    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR){
+    public TwoWheelPathSequenceAsynch(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR){
         trajectory = d;
         wheelRadius = wheelR;
 
@@ -53,7 +58,7 @@ public class TwoWheelPathSequence {
      * Precondition: the left and right motors are objects that have been externally created
      * Precondition: mL is not null
      */
-    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, MarkerList mL){
+    public TwoWheelPathSequenceAsynch(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, NeoMarkerList mL){
         trajectory = d;
         wheelRadius = wheelR;
 
@@ -94,40 +99,22 @@ public class TwoWheelPathSequence {
      * Also adheres to InsertMarkers if any.
      */
     public void follow(){
+        start();
+
         ElapsedTime t = new ElapsedTime();
         t.reset();
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
                 p.build();
-            KalmanFilter k3;
-            PIDController pid3;
-            KalmanFilter k4;
-            PIDController pid4;
 
-            if(p.getType().equals("Line") || p.getType().equals("Spline")){
+            KalmanFilter k3 = new KalmanFilter(0);
+            PIDController pid3 = new PIDController(0);
 
-                k3 = new KalmanFilter(0);
-                pid3 = new PIDController(0);
-
-                k4 = new KalmanFilter(0);
-                pid4 = new PIDController(0);
-            }
-            else if(p.getType().equals("Turn")){
-                k3 = new KalmanFilter(2);
-                pid3 = new PIDController(2);
-
-                k4 = new KalmanFilter(2);
-                pid4 = new PIDController(2);
-            }
-            else{
-                k3 = new KalmanFilter(0);
-                pid3 = new PIDController(0);
-
-                k4 = new KalmanFilter(0);
-                pid4 = new PIDController(0);
-            }
+            KalmanFilter k4 = new KalmanFilter(0);
+            PIDController pid4 = new PIDController(0);
 
             double offset = t.milliseconds();
+
             while(!p.getCompleted()){
                 double leftV = p.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
                 double rightV = p.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
@@ -137,12 +124,28 @@ public class TwoWheelPathSequence {
 
                 left.setVelocity(corL+leftV, RADIANS);
                 right.setVelocity(corR+rightV, RADIANS);
-                if(markerList != null)
-                    for(InsertMarker m : markerList.getMarkers())
-                        m.execute(t.milliseconds()/1000);
             }
-
             reset();
+        }
+    }
+
+    /**
+     * Execute the markerList asynchronously
+     * using the overridden Thread method run()
+     */
+    @Override
+    public void run() {
+        if(markerList != null){
+            ElapsedTime t = new ElapsedTime();
+            for(int i = 0; i < markerList.length(); i++){
+                double time = t.milliseconds()/1000;
+
+                while(time < markerList.getTime(i)){
+                    time = t.milliseconds()/1000;
+                }
+
+                markerList.getInsertMarker(i).execute(t.milliseconds()/1000);
+            }
         }
     }
 }
