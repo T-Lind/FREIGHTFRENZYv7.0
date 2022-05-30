@@ -85,12 +85,24 @@ public class DiffyTestOp extends OpMode {
         toggleA.updateEnd();
     }
 
+    private double convert(double p){
+        if(p > 0)
+            return Math.log(p+1)+1;
+        else if(p < 0)
+            return -(Math.log(Math.abs(p)+1)+1);
+        return 0;
+    }
+
     public void drive() {
         // get the x and y values - reorient y to follow unit circle, of both sticks
         double left_stick_x = gamepad1.left_stick_x;
         double left_stick_y = -1*gamepad1.left_stick_y;
         double right_stick_x = gamepad1.right_stick_x;
         double right_stick_y = -1*gamepad1.right_stick_y;
+        left_stick_x= convert(left_stick_x);
+        left_stick_y= -convert(left_stick_y);
+        right_stick_x= convert(right_stick_x);
+        right_stick_y= -convert(right_stick_y);
 
         // VARIABLE TO REDUCE CODE
         double driveSimilarity = left_stick_x * -VEL_COEFF + left_stick_y * VEL_COEFF;

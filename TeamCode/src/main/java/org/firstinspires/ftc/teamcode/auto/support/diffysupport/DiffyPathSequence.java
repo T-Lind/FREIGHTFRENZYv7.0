@@ -30,7 +30,6 @@ public class DiffyPathSequence {
     private DcMotorEx rightFront;
     private DcMotorEx rightBack;
 
-    private final double DIFFY_FACTOR = 100;
 
     MarkerList markerList;
     /**
@@ -77,6 +76,10 @@ public class DiffyPathSequence {
         this.rightBack= rightBack;
 
         markerList = m;
+    }
+
+    private double convertDistance(double meters){
+        return meters*(18.1*meters+9.61);
     }
 
     /**
@@ -134,13 +137,13 @@ public class DiffyPathSequence {
             double offset = t.milliseconds();
 
             while(!p.getCompleted()){
-                double leftV = p.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
-                double rightV = p.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
+                double leftV = convertDistance(p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = convertDistance(p.getRightVelocity((t.milliseconds()-offset)/1000));
 
-                double leftFrontTargetV = leftV*DIFFY_FACTOR;
-                double leftBackTargetV = -leftV*DIFFY_FACTOR;
-                double rightFrontTargetV = -rightV*DIFFY_FACTOR;
-                double rightBackTargetV = rightV*DIFFY_FACTOR;
+                double leftFrontTargetV = -convertDistance(leftV);
+                double leftBackTargetV = convertDistance(leftV);
+                double rightFrontTargetV = convertDistance(rightV);
+                double rightBackTargetV = -convertDistance(leftV);
 
                 double corL1 = pidLeft1.update((long)leftFrontTargetV, (long)kLeft1.filter(leftFront.getVelocity(RADIANS)));
                 double corL2 = pidLeft2.update((long)leftBackTargetV, (long)kLeft2.filter(leftBack.getVelocity(RADIANS)));

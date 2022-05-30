@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.experimentalautos;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.auto.Bot;
 import org.firstinspires.ftc.teamcode.auto.support.Line;
 import org.firstinspires.ftc.teamcode.auto.support.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.Turn;
@@ -39,11 +41,9 @@ public class DiffyAutoTest extends LinearOpMode {
             telemetry.update();
         }
 
-        NeoPath line = new Line(0.5,0.5);
-        NeoPath turn = new Turn(90, Bot.trackWidth, 0.5);
+        NeoPath line = new Line(0.75,1);
         ArrayList<NeoPath> list = new ArrayList<NeoPath>();
         list.add(line);
-        list.add(turn);
 
 //        DiffyPathSequence sequence = new DiffyPathSequence(list, bot.LF(), bot.LB(), bot.RF(), bot.RB(), Bot.wheelR);
         DiffyPathSequence sequence = new DiffyPathSequence(list, leftFront, leftBack, rightFront, rightBack, Bot.wheelR);
