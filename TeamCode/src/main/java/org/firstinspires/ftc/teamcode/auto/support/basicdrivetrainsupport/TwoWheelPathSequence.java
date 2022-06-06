@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support.basicsupport;
+package org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport;
 /**
  * Program to take linear velocities from each wheel and translate
  * them into 2wd
@@ -13,13 +13,15 @@ import java.util.ArrayList;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoMarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
 
 
-public class TwoWheelPathSequenceAsynch extends Thread{
+public class TwoWheelPathSequence implements PathSequenceFather {
 
     private ArrayList<NeoPath> trajectory;
 
@@ -28,7 +30,7 @@ public class TwoWheelPathSequenceAsynch extends Thread{
     private DcMotorEx left;
     private DcMotorEx right;
 
-    NeoMarkerList markerList;
+    MarkerList markerList;
     /**
      *
      * @param d is the ArrayList of paths
@@ -38,7 +40,7 @@ public class TwoWheelPathSequenceAsynch extends Thread{
      *
      * @Precondition the left and right motors are objects that have been externally created
      */
-    public TwoWheelPathSequenceAsynch(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR){
+    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR){
         trajectory = d;
         wheelRadius = wheelR;
 
@@ -58,7 +60,7 @@ public class TwoWheelPathSequenceAsynch extends Thread{
      * @Precondition the left and right motors are objects that have been externally created
      * @Precondition mL is not null
      */
-    public TwoWheelPathSequenceAsynch(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, NeoMarkerList mL){
+    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, MarkerList mL){
         trajectory = d;
         wheelRadius = wheelR;
 
@@ -99,8 +101,6 @@ public class TwoWheelPathSequenceAsynch extends Thread{
      * Also adheres to InsertMarkers if any.
      */
     public void follow(){
-        start();
-
         ElapsedTime t = new ElapsedTime();
         t.reset();
         for(NeoPath p : trajectory){
@@ -124,28 +124,11 @@ public class TwoWheelPathSequenceAsynch extends Thread{
 
                 left.setVelocity(corL+leftV, RADIANS);
                 right.setVelocity(corR+rightV, RADIANS);
+                if(markerList != null)
+                    for(InsertMarker m : markerList.getMarkers())
+                        m.execute(t.milliseconds()/1000);
             }
             reset();
-        }
-    }
-
-    /**
-     * Execute the markerList asynchronously
-     * using the overridden Thread method run()
-     */
-    @Override
-    public void run() {
-        if(markerList != null){
-            ElapsedTime t = new ElapsedTime();
-            for(int i = 0; i < markerList.length(); i++){
-                double time = t.milliseconds()/1000;
-
-                while(time < markerList.getTime(i)){
-                    time = t.milliseconds()/1000;
-                }
-
-                markerList.getInsertMarker(i).execute(t.milliseconds()/1000);
-            }
         }
     }
 }

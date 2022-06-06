@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support.basicsupport;
+package org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport;
 /**
  * Program to take linear velocities from each wheel and translate
  * them into 6wd
@@ -17,10 +17,11 @@ import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
 
 import java.util.ArrayList;
 
-public class SixWheelPathSequence {
+public class SixWheelPathSequence implements PathSequenceFather {
 
     private ArrayList<NeoPath> trajectory;
     private double wheelRadius;
@@ -32,10 +33,10 @@ public class SixWheelPathSequence {
     private DcMotorEx right2;
     private DcMotorEx right3;
 
-    MarkerList markerList;
+    private MarkerList markerList;
     /**
      *
-     * @param d is the ArrayList of paths
+     * @param paths is the ArrayList of paths
      * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left3 and is a left motor (presumed to be negative to go forward) does not matter which
@@ -46,8 +47,8 @@ public class SixWheelPathSequence {
      *
      * @Precondition the left and right motors are objects that have been externally created
      */
-    public SixWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR){
-        trajectory = d;
+    public SixWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR){
+        trajectory = paths;
         wheelRadius = wheelR;
 
         this.left1 = left1;
@@ -61,7 +62,7 @@ public class SixWheelPathSequence {
     }
     /**
      *
-     * @param d is the ArrayList of paths
+     * @param paths is the ArrayList of paths
      * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left3 and is a left motor (presumed to be negative to go forward) does not matter which
@@ -73,8 +74,8 @@ public class SixWheelPathSequence {
      *
      * @Precondition the left and right motors are objects that have been externally created
      */
-    public SixWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR, MarkerList m){
-        trajectory = d;
+    public SixWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR, MarkerList m){
+        trajectory = paths;
         wheelRadius = wheelR;
 
         this.left1 = left1;
@@ -90,6 +91,7 @@ public class SixWheelPathSequence {
     /**
      * Build each NeoPath in the trajectory.
      */
+    @Override
     public void buildAll(){
         for(NeoPath p : trajectory)
             p.build();
@@ -117,6 +119,7 @@ public class SixWheelPathSequence {
      * Actually moves the robot along the specified NeoPaths.
      * Also adheres to InsertMarkers if any.
      */
+    @Override
     public void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.dtType;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
 
 /**
  * Creates a list of velocities for the wheels on a robot to move at.
@@ -13,7 +13,7 @@ public class Line extends NeoPath {
     private double distance;
     private double maxVelocity;
     private double eT;
-    private dtType dt;
+    private DrivetrainSymmetry dt;
 
     /**
      *
@@ -26,7 +26,7 @@ public class Line extends NeoPath {
 
         eT = 0;
 
-        dt = dtType.ASYMMETRICAL;
+        dt = DrivetrainSymmetry.ASYMMETRICAL;
     }
     /**
      *
@@ -40,9 +40,9 @@ public class Line extends NeoPath {
         eT = 0;
 
         if(notSymmetrical)
-            dt = dtType.ASYMMETRICAL;
+            dt = DrivetrainSymmetry.ASYMMETRICAL;
         else
-            dt = dtType.SYMMETRICAL;
+            dt = DrivetrainSymmetry.SYMMETRICAL;
     }
     /**
      * Build the line trajectory.
@@ -87,7 +87,7 @@ public class Line extends NeoPath {
      */
     @Override
     public double getLeftVelocity(double t){
-        if(dt == dtType.ASYMMETRICAL)
+        if(dt == DrivetrainSymmetry.ASYMMETRICAL)
             return -getVelocity(t);
         return getVelocity(t);
     }

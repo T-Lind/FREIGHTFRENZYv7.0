@@ -14,19 +14,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.EasyToggle;
-
+import org.firstinspires.ftc.teamcode.Toggle;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 
 @TeleOp(name="DiffyTestOp")
 public class DiffyTestOp extends OpMode {
     private DcMotorEx leftFront, leftBack, rightFront, rightBack;
 
-    final double VEL_COEFF = 2;
-    BNO055IMU imu;
-    Orientation angles;
+    final double VEL_COEFF = 4;
 
-    EasyToggle toggleA;
-    boolean a;
+    Toggle toggleA;
+
 
     @Override
     public void init() {
@@ -46,43 +44,28 @@ public class DiffyTestOp extends OpMode {
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        // toggle A is not in use at the moment
-        toggleA = new EasyToggle("a", false, 1, false, false);
+        toggleA = new Toggle(false);
 
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
-        imu.initialize(parameters);
 
-        a = false;
-    }
-
-    @Override
-    public void start() {
 
     }
 
     @Override
     public void loop() {
-        // BAD TOGGLE - REPLACE LATER
-        if(gamepad1.a && !a)
-            a = true;
-        else if(gamepad1.a && a)
-            a = false;
+        toggleA.updateLeadingEdge(gamepad1.a);
 
         drive();
-
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
         telemetry.update();
 
-        toggleA.updateEnd();
     }
 
     public void drive() {
@@ -96,7 +79,7 @@ public class DiffyTestOp extends OpMode {
         double driveSimilarity = left_stick_x * -VEL_COEFF + left_stick_y * VEL_COEFF;
 
         // HIGH DEGREE OF USER CONTROL
-        if(a){
+        if(toggleA.getToggleState()){
             leftFront.setVelocity(driveSimilarity, AngleUnit.RADIANS);
             leftBack.setVelocity(left_stick_x*-VEL_COEFF-left_stick_y*2, AngleUnit.RADIANS);
 
@@ -118,14 +101,14 @@ public class DiffyTestOp extends OpMode {
             rfv += right_stick_x*0.5*VEL_COEFF;
             rbv += -right_stick_x*0.5*VEL_COEFF;
 
+
             // set velocities
             leftFront.setVelocity(lfv, AngleUnit.RADIANS);
             leftBack.setVelocity(lbv, AngleUnit.RADIANS);
 
-            rightFront.setVelocity(rfv, AngleUnit.RADIANS);
+            rightFront.setVelocity(1.025*rfv, AngleUnit.RADIANS);
             rightBack.setVelocity(rbv, AngleUnit.RADIANS);
         }
-
 
 
         // Add telemetry data
@@ -133,6 +116,6 @@ public class DiffyTestOp extends OpMode {
         telemetry.addData("LBv: ",leftBack.getVelocity(AngleUnit.RADIANS));
         telemetry.addData("RFv: ",rightFront.getVelocity(AngleUnit.RADIANS));
         telemetry.addData("RFv: ",rightBack.getVelocity(AngleUnit.RADIANS));
-        telemetry.addData("a: ",a);
+        telemetry.addData("a: ",toggleA.getToggleState());
     }
 }

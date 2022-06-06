@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Line;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.SplinePath;
-import org.firstinspires.ftc.teamcode.auto.support.basicsupport.TwoWheelPathSequence;
+import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.TwoWheelPathSequence;
 
 import java.util.ArrayList;
 

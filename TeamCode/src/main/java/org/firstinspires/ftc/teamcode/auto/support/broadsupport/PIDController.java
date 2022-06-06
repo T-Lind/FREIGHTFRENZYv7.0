@@ -43,6 +43,14 @@ public class PIDController {
             time = new ArrayList<Long>();
             forgetLength = 64;
         }
+        if(deviceCode == 2){
+            proportional = 0.01;
+            integral = 0.01;
+            derivative = 0.01;
+            data = new ArrayList<Long>();
+            time = new ArrayList<Long>();
+            forgetLength = 64;
+        }
     }
     /**
      * construct PID controller

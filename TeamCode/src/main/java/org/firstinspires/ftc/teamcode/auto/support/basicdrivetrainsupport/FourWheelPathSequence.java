@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support.basicsupport;
+package org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport;
 /**
  * Program to take linear velocities from each wheel and translate
  * them into 4wd
@@ -17,10 +17,11 @@ import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
 
 import java.util.ArrayList;
 
-public class FourWheelPathSequence {
+public class FourWheelPathSequence implements PathSequenceFather {
 
     private ArrayList<NeoPath> trajectory;
     private double wheelRadius;
@@ -33,7 +34,7 @@ public class FourWheelPathSequence {
     MarkerList markerList;
     /**
      *
-     * @param d is the ArrayList of paths
+     * @param paths is the ArrayList of paths
      * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param right1 is the right motor (presumed to be positive to go forward) does not matter which
@@ -42,8 +43,8 @@ public class FourWheelPathSequence {
      *
      * @Precondition the left and right motors are objects that have been externally created
      */
-    public FourWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
-        trajectory = d;
+    public FourWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
+        trajectory = paths;
         wheelRadius = wheelR;
 
         this.left1 = left1;
@@ -55,7 +56,7 @@ public class FourWheelPathSequence {
     }
     /**
      *
-     * @param d is the ArrayList of paths
+     * @param paths is the ArrayList of paths
      * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param right1 is the right motor (presumed to be positive to go forward) does not matter which
@@ -65,8 +66,8 @@ public class FourWheelPathSequence {
      *
      * @Precondition the left and right motors are objects that have been externally created
      */
-    public FourWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR, MarkerList m){
-        trajectory = d;
+    public FourWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR, MarkerList m){
+        trajectory = paths;
         wheelRadius = wheelR;
 
         this.left1 = left1;

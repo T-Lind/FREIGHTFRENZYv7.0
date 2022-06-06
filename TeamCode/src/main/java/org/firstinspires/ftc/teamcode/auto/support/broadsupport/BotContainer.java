@@ -3,25 +3,61 @@ package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
 
 /**
- * Static class to slim down autonomous programs for four motor drivetrains.
+ * Class to slim down autonomous programs for four motor drivetrains.
  */
 public class BotContainer {
-   private DcMotorEx leftFront;
-   private DcMotorEx leftBack;
-   private DcMotorEx rightFront;
-   private DcMotorEx rightBack;
+   private LinearOpMode linearOpMode;
+   private PathSequence pathSequence;
+
+   public DcMotorEx leftFront, leftBack, rightFront, rightBack;
+
+   private Telemetry telemetry;
+
+   private WebcamName weCam;
+   private OpenCvCamera camera;
+   private TSEDetectionPipeline pipeline;
 
    public final static double wheelR = 0.03715;
    public final static double trackWidth = 0.295;
 
-   /**
-    * Initialize four motors.
-    */
-   public BotContainer(){
+
+   public BotContainer(LinearOpMode linearOpMode){
+      this.linearOpMode = linearOpMode;
+
+      initMotors();
+      initCamera();
+
+      pathSequence.buildAll();
+   }
+
+   public void setPathSequence(PathSequence pathSequence) {
+      this.pathSequence = pathSequence;
+   }
+
+   private void executeAuto(){
+      pathSequence.follow();
+   }
+
+   private void inInitialization(){
+      while (!linearOpMode.opModeIsActive()) {
+         // In initialization
+      }
+   }
+
+   private void initMotors(){
       // build the motor objects
       leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
       leftBack = (DcMotorEx) hardwareMap.dcMotor.get("BL");
@@ -38,29 +74,28 @@ public class BotContainer {
       rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
    }
 
-   /**
-    * @return the left front motor
-    */
-   public DcMotorEx LF(){
-      return leftFront;
-   }
-   /**
-    * @return the left back motor
-    */
-   public DcMotorEx LB(){
-      return leftBack;
-   }
-   /**
-    * @return the right front motor
-    */
-   public DcMotorEx RF(){
-      return rightFront;
-   }
-   /**
-    * @return the right back motor
-    */
-   public DcMotorEx RB(){
-      return rightBack;
+   private void initCamera(){
+      weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
+      int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+      camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
+      pipeline = new TSEDetectionPipeline();
+      camera.setPipeline(pipeline);
+      camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+         // @Override
+         public void onOpened() {
+            telemetry.update();
+            camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+         }
+         @Override
+         public void onError(int errorCode) {
+         }
+      });
    }
 
+   public void buildAllPaths(){
+      pathSequence.buildAll();
+   }
+   public void followPaths(){
+      pathSequence.follow();
+   }
 }
