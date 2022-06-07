@@ -1,11 +1,4 @@
 package org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport;
-/**
- * Program to take linear velocities from each wheel and translate
- * them into 2wd
- * Created by
- * @author Tiernan Lindauer
- * for FTC team 7797.
- */
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
@@ -16,21 +9,23 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoMarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.RunnableCollective;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 
-
-public class TwoWheelPathSequence implements PathSequenceFather {
-
-    private ArrayList<NeoPath> trajectory;
-
-    private double wheelRadius;
-
+/**
+ * Program to take linear velocities from each wheel and translate
+ * them into 2wd
+ * Created by
+ * @author Tiernan Lindauer
+ * for FTC team 7797.
+ */
+public class TwoWheelPathSequence extends PathSequenceFather{
     private DcMotorEx left;
     private DcMotorEx right;
-
-    MarkerList markerList;
     /**
      *
      * @param d is the ArrayList of paths
@@ -48,6 +43,7 @@ public class TwoWheelPathSequence implements PathSequenceFather {
         this.right = right;
 
         markerList = null;
+        runnableCollectiveMarkerList = null;
     }
     /**
      *
@@ -60,7 +56,7 @@ public class TwoWheelPathSequence implements PathSequenceFather {
      * @Precondition the left and right motors are objects that have been externally created
      * @Precondition mL is not null
      */
-    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, MarkerList mL){
+    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, NeoMarkerList mL){
         trajectory = d;
         wheelRadius = wheelR;
 
@@ -68,33 +64,9 @@ public class TwoWheelPathSequence implements PathSequenceFather {
         this.right = right;
 
         markerList = mL;
+        runnableCollectiveMarkerList = new RunnableCollective(markerList);
     }
 
-    /**
-     * Build each NeoPath in the trajectory.
-     */
-    public void buildAll(){
-        for(NeoPath p : trajectory)
-            p.build();
-    }
-
-    /**
-     * Build a specific trajectory
-     * @param i the index of the NeoPath that you want to build.
-     */
-    public void build(int i){
-        trajectory.get(i).build();
-    }
-
-    /**
-     * @Precondition all paths have been build using the buildAll() method.
-     * Note that this is not technically necessary but reduces lag time.
-     */
-
-    public void reset(){
-        for(NeoPath p : trajectory)
-            p.setCompleted(false);
-    }
 
     /**
      * Actually moves the robot along the specified NeoPaths.
@@ -103,18 +75,43 @@ public class TwoWheelPathSequence implements PathSequenceFather {
     public void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();
+
+        if(runnableCollectiveMarkerList != null)
+            runnableCollectiveMarkerList.setRunMarkers(true);
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
                 p.build();
 
-            KalmanFilter k3 = new KalmanFilter(0);
-            PIDController pid3 = new PIDController(0);
+            KalmanFilter k3;
+            PIDController pid3;
+            KalmanFilter k4;
+            PIDController pid4;
 
-            KalmanFilter k4 = new KalmanFilter(0);
-            PIDController pid4 = new PIDController(0);
+            // Experimental bit here
+            if(p.getType() == PathType.LINE || p.getType() == PathType.SPLINE){
+
+                k3 = new KalmanFilter(0);
+                pid3 = new PIDController(0);
+
+                k4 = new KalmanFilter(0);
+                pid4 = new PIDController(0);
+            }
+            else if(p.getType() == PathType.TURN){
+                k3 = new KalmanFilter(2);
+                pid3 = new PIDController(2);
+
+                k4 = new KalmanFilter(2);
+                pid4 = new PIDController(2);
+            }
+            else{
+                k3 = new KalmanFilter(0);
+                pid3 = new PIDController(0);
+
+                k4 = new KalmanFilter(0);
+                pid4 = new PIDController(0);
+            }
 
             double offset = t.milliseconds();
-
             while(!p.getCompleted()){
                 double leftV = NeoPath.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
                 double rightV = NeoPath.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
@@ -124,11 +121,12 @@ public class TwoWheelPathSequence implements PathSequenceFather {
 
                 left.setVelocity(corL+leftV, RADIANS);
                 right.setVelocity(corR+rightV, RADIANS);
-                if(markerList != null)
-                    for(InsertMarker m : markerList.getMarkers())
-                        m.execute(t.milliseconds()/1000);
             }
-            reset();
+
+            resetPaths();
         }
+        if(runnableCollectiveMarkerList != null)
+            runnableCollectiveMarkerList.setStopMarkers(true);
     }
+
 }

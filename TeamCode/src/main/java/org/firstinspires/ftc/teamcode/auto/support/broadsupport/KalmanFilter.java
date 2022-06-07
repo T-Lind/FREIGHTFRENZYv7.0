@@ -37,19 +37,32 @@ public class KalmanFilter {
     /**
      * Default constructor.
      * @param deviceCode corresponds to what the Kalman Filter is for to reduce code and code errors.
-     *                   When deviceCode is 0, it is for motors
+     *                   When deviceCode is 0, it is for drivetrain motors in a line or spline
      *                   When deviceCode is 1, it is for distance sensors (in CM)
+     *                   When deviceCode is 2, i is for drivetrain motors in a turn.
      *                   Additional deviceCodes will be added here.
      *                   This method is shared with the PIDController class.
      */
     public KalmanFilter(int deviceCode){
         if(deviceCode == 0){
-            this.R = 7;
-            this.Q = 4;
+            this.R = 18;
+            this.Q = 6;
+
+            this.C = 2.7;
+            this.B = 10;
+            this.A = 1.5;
         }
         else if(deviceCode == 1){
             this.R = 2;
             this.Q = 10;
+        }
+        else if(deviceCode == 2){
+            this.R = 15;
+            this.Q = 30;
+
+            this.C = 2.4;
+            this.B = 4.9;
+            this.A = 2.1;
         }
     }
 

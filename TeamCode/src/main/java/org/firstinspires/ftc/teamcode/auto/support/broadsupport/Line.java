@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 
 /**
  * Creates a list of velocities for the wheels on a robot to move at.
@@ -99,5 +100,14 @@ public class Line extends NeoPath {
     @Override
     public double getRightVelocity(double t){
         return getVelocity(t);
+    }
+
+    /**
+     * Get what type of path this is. Useful for debugging
+     * @return The type of path, in this case a line.
+     */
+    @Override
+    public PathType getType(){
+        return PathType.LINE;
     }
 }

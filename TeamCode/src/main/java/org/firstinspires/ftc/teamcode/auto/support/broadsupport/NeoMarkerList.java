@@ -6,77 +6,79 @@ package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
  * For team 7797 Victorian Voltage.
  */
 public class NeoMarkerList {
-    InsertMarker[] markers;
-    double times[];
+    private NeoInsertMarker[] markers;
+    private double times[];
+    private final int MAX_AMOUNT_MARKERS = 7;
+    
     /**
-     * All of these methods are just meant to nicely create a static array of the InsertMarker implementation.
+     * All of these methods are just meant to nicely create a static array of the NeoNeoInsertMarker implementation.
      * @param m the marker (listed m, m2, m3, etc.)
      */
-    public NeoMarkerList(InsertMarker m, double time1){
-        markers = new InsertMarker[1];
+    public NeoMarkerList(NeoInsertMarker m, double time1){
+        markers = new NeoInsertMarker[1];
         markers[0] = m;
-        times = new double[1];
+        times = new double[MAX_AMOUNT_MARKERS];
         times[0] = time1;
     }
-    public NeoMarkerList(InsertMarker m, double time1, InsertMarker m2, double time2){
-        markers = new InsertMarker[2];
+    public NeoMarkerList(NeoInsertMarker m, double time1, NeoInsertMarker m2, double time2){
+        markers = new NeoInsertMarker[2];
         markers[0] = m;
         markers[1] = m2;
-        times = new double[2];
+        times = new double[MAX_AMOUNT_MARKERS];
         times[0] = time1;
         times[1] = time2;
     }
-    public NeoMarkerList(InsertMarker m, double time1, InsertMarker m2, double time2,
-                         InsertMarker m3, double time3){
-        markers = new InsertMarker[3];
+    public NeoMarkerList(NeoInsertMarker m, double time1, NeoInsertMarker m2, double time2,
+                         NeoInsertMarker m3, double time3){
+        markers = new NeoInsertMarker[3];
         markers[0] = m;
         markers[1] = m2;
         markers[2] = m3;
-        times = new double[3];
+        times = new double[MAX_AMOUNT_MARKERS];
         times[0] = time1;
         times[1] = time2;
         times[2] = time3;
     }
-    public NeoMarkerList(InsertMarker m, double time1, InsertMarker m2, double time2,
-                         InsertMarker m3, double time3, InsertMarker m4, double time4){
-        markers = new InsertMarker[4];
+    public NeoMarkerList(NeoInsertMarker m, double time1, NeoInsertMarker m2, double time2,
+                         NeoInsertMarker m3, double time3, NeoInsertMarker m4, double time4){
+        markers = new NeoInsertMarker[4];
         markers[0] = m;
         markers[1] = m2;
         markers[2] = m3;
         markers[3] = m4;
-        times = new double[4];
+        times = new double[MAX_AMOUNT_MARKERS];
         times[0] = time1;
         times[1] = time2;
         times[2] = time3;
         times[3] = time4;
     }
-    public NeoMarkerList(InsertMarker m, double time1, InsertMarker m2, double time2,
-                         InsertMarker m3, double time3, InsertMarker m4, double time4,
-                         InsertMarker m5, double time5){
-        markers = new InsertMarker[5];
+    public NeoMarkerList(NeoInsertMarker m, double time1, NeoInsertMarker m2, double time2,
+                         NeoInsertMarker m3, double time3, NeoInsertMarker m4, double time4,
+                         NeoInsertMarker m5, double time5){
+        markers = new NeoInsertMarker[5];
         markers[0] = m;
         markers[1] = m2;
         markers[2] = m3;
         markers[3] = m4;
         markers[4] = m5;
-        times = new double[5];
+        times = new double[MAX_AMOUNT_MARKERS];
         times[0] = time1;
         times[1] = time2;
         times[2] = time3;
         times[3] = time4;
         times[4] = time5;
     }
-    public NeoMarkerList(InsertMarker m, double time1, InsertMarker m2, double time2,
-                         InsertMarker m3, double time3, InsertMarker m4, double time4,
-                         InsertMarker m5, double time5, InsertMarker m6, double time6){
-        markers = new InsertMarker[6];
+    public NeoMarkerList(NeoInsertMarker m, double time1, NeoInsertMarker m2, double time2,
+                         NeoInsertMarker m3, double time3, NeoInsertMarker m4, double time4,
+                         NeoInsertMarker m5, double time5, NeoInsertMarker m6, double time6){
+        markers = new NeoInsertMarker[6];
         markers[0] = m;
         markers[1] = m2;
         markers[2] = m3;
         markers[3] = m4;
         markers[4] = m5;
         markers[5] = m6;
-        times = new double[6];
+        times = new double[MAX_AMOUNT_MARKERS];
         times[0] = time1;
         times[1] = time2;
         times[2] = time3;
@@ -84,11 +86,11 @@ public class NeoMarkerList {
         times[4] = time5;
         times[5] = time6;
     }
-    public NeoMarkerList(InsertMarker m, double time1, InsertMarker m2, double time2,
-                         InsertMarker m3, double time3, InsertMarker m4, double time4,
-                         InsertMarker m5, double time5, InsertMarker m6, double time6,
-                         InsertMarker m7, double time7){
-        markers = new InsertMarker[7];
+    public NeoMarkerList(NeoInsertMarker m, double time1, NeoInsertMarker m2, double time2,
+                         NeoInsertMarker m3, double time3, NeoInsertMarker m4, double time4,
+                         NeoInsertMarker m5, double time5, NeoInsertMarker m6, double time6,
+                         NeoInsertMarker m7, double time7){
+        markers = new NeoInsertMarker[7];
         markers[0] = m;
         markers[1] = m2;
         markers[2] = m3;
@@ -96,7 +98,7 @@ public class NeoMarkerList {
         markers[4] = m5;
         markers[5] = m6;
         markers[6] = m7;
-        times = new double[7];
+        times = new double[MAX_AMOUNT_MARKERS];
         times[0] = time1;
         times[1] = time2;
         times[2] = time3;
@@ -105,42 +107,39 @@ public class NeoMarkerList {
         times[5] = time6;
         times[6] = time7;
     }
-    public NeoMarkerList(InsertMarker m, double time1, InsertMarker m2, double time2,
-                         InsertMarker m3, double time3, InsertMarker m4, double time4,
-                         InsertMarker m5, double time5, InsertMarker m6, double time6,
-                         InsertMarker m7, double time7, InsertMarker m8, double time8){
-        markers = new InsertMarker[8];
-        markers[0] = m;
-        markers[1] = m2;
-        markers[2] = m3;
-        markers[3] = m4;
-        markers[4] = m5;
-        markers[5] = m6;
-        markers[6] = m7;
-        markers[7] = m8;
-        times = new double[8];
-        times[0] = time1;
-        times[1] = time2;
-        times[2] = time3;
-        times[3] = time4;
-        times[4] = time5;
-        times[5] = time6;
-        times[6] = time7;
-        times[7] = time8;
-    }
-    public InsertMarker[] getMarkers(){
+
+    /**
+     * Get the full list of markers
+     * @return all of the markers
+     */
+    public NeoInsertMarker[] getMarkers(){
         return markers;
     }
 
-    public InsertMarker getInsertMarker(int i){
+    /**
+     * Get the maximum amount of markers allowed
+     * @return the maximum amount of markers
+     */
+    public int getMAX_AMOUNT_MARKERS(){
+        return MAX_AMOUNT_MARKERS;
+    }
+
+    /**
+     * Get the InsertMarker at position i
+     * @param i the index to get the InsertMarker in the markers list
+     * @return The InsertMarker alias at i
+     */
+    public NeoInsertMarker getNeoInsertMarker(int i){
         return markers[i];
     }
 
+    /**
+     * Get the starting time for the marker at position i
+     * @param i the index to get the time in the times list
+     * @return the starting time for marker i
+     */
     public double getTime(int i){
         return times[i];
     }
 
-    public int length(){
-        return markers.length;
-    }
 }

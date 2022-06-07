@@ -15,17 +15,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoMarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.RunnableCollective;
 
 import java.util.ArrayList;
 
-public class SixWheelPathSequence implements PathSequenceFather {
-
-    private ArrayList<NeoPath> trajectory;
-    private double wheelRadius;
-
+public class SixWheelPathSequence extends PathSequenceFather {
     private DcMotorEx left1;
     private DcMotorEx left2;
     private DcMotorEx left3;
@@ -33,7 +31,6 @@ public class SixWheelPathSequence implements PathSequenceFather {
     private DcMotorEx right2;
     private DcMotorEx right3;
 
-    private MarkerList markerList;
     /**
      *
      * @param paths is the ArrayList of paths
@@ -59,6 +56,7 @@ public class SixWheelPathSequence implements PathSequenceFather {
         this.right3= right3;
 
         markerList = null;
+        runnableCollectiveMarkerList = null;
     }
     /**
      *
@@ -74,7 +72,7 @@ public class SixWheelPathSequence implements PathSequenceFather {
      *
      * @Precondition the left and right motors are objects that have been externally created
      */
-    public SixWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR, MarkerList m){
+    public SixWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR, NeoMarkerList m){
         trajectory = paths;
         wheelRadius = wheelR;
 
@@ -86,33 +84,7 @@ public class SixWheelPathSequence implements PathSequenceFather {
         this.right3= right3;
 
         markerList = m;
-    }
-
-    /**
-     * Build each NeoPath in the trajectory.
-     */
-    @Override
-    public void buildAll(){
-        for(NeoPath p : trajectory)
-            p.build();
-    }
-
-    /**
-     * Build a specific trajectory
-     * @param i the index of the NeoPath that you want to build.
-     */
-    public void build(int i){
-        trajectory.get(i).build();
-    }
-
-    /**
-     * @Precondition all paths have been build using the buildAll() method. Note that this is not
-     * technically necessary but reduces lag time.
-     */
-
-    public void reset(){
-        for(NeoPath p : trajectory)
-            p.setCompleted(false);
+        runnableCollectiveMarkerList = new RunnableCollective(markerList);
     }
 
     /**
@@ -123,6 +95,9 @@ public class SixWheelPathSequence implements PathSequenceFather {
     public void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();
+
+        if(runnableCollectiveMarkerList != null)
+            runnableCollectiveMarkerList.setRunMarkers(true);
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
                 p.build();
@@ -147,10 +122,13 @@ public class SixWheelPathSequence implements PathSequenceFather {
 
             double offset = t.milliseconds();
 
+            // Execute the path
             while(!p.getCompleted()){
+                // Get the velocities from what the path says the end result velocities should be
                 double leftV = NeoPath.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
                 double rightV = NeoPath.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
+                // Correct based on PID and kalman filter
                 double corL1 = pidLeft1.update((long)leftV, (long)kLeft1.filter(left1.getVelocity(RADIANS)));
                 double corL2 = pidLeft2.update((long)leftV, (long)kLeft2.filter(left2.getVelocity(RADIANS)));
                 double corL3 = pidLeft3.update((long)leftV, (long)kLeft3.filter(left3.getVelocity(RADIANS)));
@@ -158,6 +136,7 @@ public class SixWheelPathSequence implements PathSequenceFather {
                 double corR2 = pidRight2.update((long)rightV, (long)kRight2.filter(right2.getVelocity(RADIANS)));
                 double corR3 = pidRight3.update((long)rightV, (long)kRight3.filter(right3.getVelocity(RADIANS)));
 
+                // Write the corrected values
                 left1.setVelocity(corL1+leftV, RADIANS);
                 left2.setVelocity(corL2+leftV, RADIANS);
                 left3.setVelocity(corL3+leftV, RADIANS);
@@ -165,11 +144,10 @@ public class SixWheelPathSequence implements PathSequenceFather {
                 right1.setVelocity(corR1+rightV, RADIANS);
                 right2.setVelocity(corR2+rightV, RADIANS);
                 right3.setVelocity(corR3+rightV, RADIANS);
-                if(markerList != null)
-                    for(InsertMarker m : markerList.getMarkers())
-                        m.execute(t.milliseconds()/1000);
             }
-            reset();
+            resetPaths();
         }
+        if(runnableCollectiveMarkerList != null)
+            runnableCollectiveMarkerList.setStopMarkers(true);
     }
 }

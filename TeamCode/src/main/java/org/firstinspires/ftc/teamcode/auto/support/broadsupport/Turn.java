@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
+
 /**
  * Program to turn a specified angle.
  * @author Tiernan Lindauer
@@ -27,5 +29,14 @@ public class Turn extends Line{
     @Override
     public double getLeftVelocity(double t){
         return -1*super.getLeftVelocity(t);
+    }
+
+    /**
+     * Get what type of path this is. Useful for debugging
+     * @return The type of path, in this case a turn.
+     */
+    @Override
+    public PathType getType(){
+        return PathType.TURN;
     }
 }

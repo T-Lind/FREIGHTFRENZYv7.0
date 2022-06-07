@@ -6,6 +6,7 @@ package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
  * for FTC team 7797.
  */
 
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.direction;
 
 import java.util.ArrayList;
@@ -207,6 +208,12 @@ public class SplinePath extends NeoPath {
             return -1*v;
         }
     }
-
+    /**
+     * Get what type of path this is. Useful for debugging
+     * @return The type of path, in this case a spline.
+     */
+    public PathType getType(){
+        return PathType.SPLINE;
+    }
 }
 
