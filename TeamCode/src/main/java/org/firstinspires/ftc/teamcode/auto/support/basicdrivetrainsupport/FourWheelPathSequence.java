@@ -5,10 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADI
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoMarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
@@ -48,41 +45,15 @@ public class FourWheelPathSequence extends PathSequenceFather {
         this.right1 = right1;
         this.right2= right2;
 
-        markerList = null;
-    }
-    /**
-     *
-     * @param paths is the ArrayList of paths
-     * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
-     * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
-     * @param right1 is the right motor (presumed to be positive to go forward) does not matter which
-     * @param right2 is the right motor (presumed to be positive to go forward) does not matter which
-     * @param wheelR is the wheel's radius
-     * @param m is the MarkerList
-     *
-     * @Precondition the left and right motors are objects that have been externally created
-     */
-    public FourWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR, NeoMarkerList m){
-        trajectory = paths;
-        wheelRadius = wheelR;
-
-        this.left1 = left1;
-        this.left2 = left1;
-        this.right1 = right1;
-        this.right2= right2;
-
-        markerList = m;
     }
 
     /**
      * Actually moves the robot along the specified NeoPaths.
      * Also adheres to InsertMarkers if any.
      */
-    public void follow(){
+    public final void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();
-        if(runnableCollectiveMarkerList != null)
-            runnableCollectiveMarkerList.setRunMarkers(true);
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
                 p.build();
@@ -123,7 +94,5 @@ public class FourWheelPathSequence extends PathSequenceFather {
             }
             resetPaths();
         }
-        if(runnableCollectiveMarkerList != null)
-            runnableCollectiveMarkerList.setStopMarkers(true);
     }
 }

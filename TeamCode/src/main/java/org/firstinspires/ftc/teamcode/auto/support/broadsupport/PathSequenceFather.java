@@ -6,13 +6,12 @@ public abstract class PathSequenceFather {
     // Common variables and objects among all path sequences
     protected ArrayList<NeoPath> trajectory;
     protected double wheelRadius;
-    protected NeoMarkerList markerList;
-    protected RunnableCollective runnableCollectiveMarkerList;
+
 
     /**
      * Build each NeoPath in the trajectory.
      */
-    protected void buildAll(){
+    protected final void buildAll(){
         for(NeoPath p : trajectory)
             p.build();
     }
@@ -20,7 +19,7 @@ public abstract class PathSequenceFather {
      * Build a specific trajectory
      * @param i the index of the NeoPath that you want to build.
      */
-    protected void build(int i){
+    protected final void build(int i){
         trajectory.get(i).build();
     }
 
@@ -31,7 +30,7 @@ public abstract class PathSequenceFather {
      * @Postcondition only the completed variable in each NeoPath in trajectory has been changed
      */
 
-    public void resetPaths(){
+    protected final void resetPaths(){
         for(NeoPath p : trajectory)
             p.setCompleted(false);
     }

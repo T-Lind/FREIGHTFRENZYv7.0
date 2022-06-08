@@ -6,14 +6,10 @@ import java.util.ArrayList;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoMarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.RunnableCollective;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 
 /**
@@ -42,29 +38,6 @@ public class TwoWheelPathSequence extends PathSequenceFather{
         this.left = left;
         this.right = right;
 
-        markerList = null;
-        runnableCollectiveMarkerList = null;
-    }
-    /**
-     *
-     * @param d is the ArrayList of paths
-     * @param left is the left motor (presumed to be negative to go forward)
-     * @param right is the right motor (presumed to be positive to go forward)
-     * @param wheelR is the wheel's radius
-     * @param mL is the MarkerList object, which can be constructed directly in the constructor of this object
-     *
-     * @Precondition the left and right motors are objects that have been externally created
-     * @Precondition mL is not null
-     */
-    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR, NeoMarkerList mL){
-        trajectory = d;
-        wheelRadius = wheelR;
-
-        this.left = left;
-        this.right = right;
-
-        markerList = mL;
-        runnableCollectiveMarkerList = new RunnableCollective(markerList);
     }
 
 
@@ -72,12 +45,10 @@ public class TwoWheelPathSequence extends PathSequenceFather{
      * Actually moves the robot along the specified NeoPaths.
      * Also adheres to InsertMarkers if any.
      */
-    public void follow(){
+    public final void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();
 
-        if(runnableCollectiveMarkerList != null)
-            runnableCollectiveMarkerList.setRunMarkers(true);
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
                 p.build();
@@ -125,8 +96,6 @@ public class TwoWheelPathSequence extends PathSequenceFather{
 
             resetPaths();
         }
-        if(runnableCollectiveMarkerList != null)
-            runnableCollectiveMarkerList.setStopMarkers(true);
     }
 
 }

@@ -18,44 +18,69 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 /**
  * Class to slim down autonomous programs for four motor drivetrains.
  */
-public class BotContainer {
-   private LinearOpMode linearOpMode;
+abstract public class BotContainer extends LinearOpMode{
    private PathSequence pathSequence;
-
-   public DcMotorEx leftFront, leftBack, rightFront, rightBack;
-
-   private Telemetry telemetry;
+   private NeoMarkerList markerList;
+   private RunnableCollective runMarkerObject;
 
    private WebcamName weCam;
    private OpenCvCamera camera;
-   private TSEDetectionPipeline pipeline;
+   private TSEDetectionPipeline pipeline; // Replace with some other pipeline
 
-   public final static double wheelR = 0.03715;
-   public final static double trackWidth = 0.295;
+   protected DcMotorEx leftFront, leftBack, rightFront, rightBack;
+   protected final double wheelR = 0.03715;
+   protected final double trackWidth = 0.295;
 
 
-   public BotContainer(LinearOpMode linearOpMode){
-      this.linearOpMode = linearOpMode;
-
-      initMotors();
-      initCamera();
-
-      pathSequence.buildAll();
-   }
-
-   public void setPathSequence(PathSequence pathSequence) {
+   /**
+    * Assign the path sequence to this LinearOpMode
+    * @param pathSequence is the set of basic robot instructions to move along
+    *                     (final linear wheel velocities).
+    */
+   protected final void setPathSequence(PathSequence pathSequence) {
       this.pathSequence = pathSequence;
    }
 
-   private void executeAuto(){
-      pathSequence.follow();
+   protected final void setMarkerList(NeoMarkerList markerList){
+      this.markerList = markerList;
+      runMarkerObject = new RunnableCollective(this.markerList);
+   }
+   protected final void executeMarkers(){
+      // Start the markers
+      if(runMarkerObject != null)
+         runMarkerObject.activateMarkers();
+   }
+   protected final void stopMarkers(){
+      runMarkerObject.setStopMarkers();
    }
 
-   private void inInitialization(){
-      while (!linearOpMode.opModeIsActive()) {
-         // In initialization
-      }
+   protected final void executeAuto() {
+      // Only execute the auto when the button is pressed
+      waitForStart();
+
+      // Start markers
+      if (markerList != null)
+         executeMarkers();
+
+      // Follow the path
+      if (pathSequence != null)
+         pathSequence.follow();
    }
+
+   protected final void initialize(){
+      initMotors();
+      initCamera();
+      if(pathSequence != null)
+         pathSequence.buildAll();
+
+      do{
+         // In initialization
+         telemetry.addData("The initialization has started successfully.","");
+         telemetry.update();
+      }
+      while (!opModeIsActive());
+   }
+
 
    private void initMotors(){
       // build the motor objects
@@ -81,21 +106,17 @@ public class BotContainer {
       pipeline = new TSEDetectionPipeline();
       camera.setPipeline(pipeline);
       camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-         // @Override
+         @Override
          public void onOpened() {
             telemetry.update();
             camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
          }
          @Override
          public void onError(int errorCode) {
+            telemetry.addData("Error in camera initialization! Error code",errorCode);
+            telemetry.update();
          }
       });
    }
 
-   public void buildAllPaths(){
-      pathSequence.buildAll();
-   }
-   public void followPaths(){
-      pathSequence.follow();
-   }
 }

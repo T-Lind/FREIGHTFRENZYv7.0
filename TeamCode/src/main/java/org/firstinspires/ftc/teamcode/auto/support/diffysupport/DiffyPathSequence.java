@@ -12,13 +12,10 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADI
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoMarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.RunnableCollective;
 
 import java.util.ArrayList;
 
@@ -51,32 +48,6 @@ public class DiffyPathSequence extends PathSequenceFather {
         this.rightFront = rightFront;
         this.rightBack= rightBack;
 
-        markerList = null;
-        runnableCollectiveMarkerList = null;
-    }
-    /**
-     *
-     * @param d is the ArrayList of paths
-     * @param leftFront is the front left motor - CHUB side is the front
-     * @param leftBack is the back left motor - CHUB side is the front
-     * @param rightFront is the front right motor - CHUB side is the front
-     * @param rightBack is the back right motor - CHUB side is the front
-     * @param wheelR is the wheel's radius
-     * @param markerList is the marker list
-     *
-     * Precondition: the left and right motors are objects that have been externally created
-     */
-    public DiffyPathSequence(ArrayList<NeoPath> d, DcMotorEx leftFront, DcMotorEx leftBack, DcMotorEx rightFront, DcMotorEx rightBack, double wheelR, NeoMarkerList markerList){
-        trajectory = d;
-        wheelRadius = wheelR;
-
-        this.leftFront = leftFront;
-        this.leftBack = leftBack;
-        this.rightFront = rightFront;
-        this.rightBack= rightBack;
-
-        this.markerList = markerList;
-        runnableCollectiveMarkerList = new RunnableCollective(markerList);
     }
 
     private double convertDistance(double meters){
@@ -90,12 +61,9 @@ public class DiffyPathSequence extends PathSequenceFather {
      * NOTE: cannot rotate diffy swerve pod angles at this time
      */
     @Override
-    public void follow(){
+    public final void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();
-
-        if(runnableCollectiveMarkerList != null)
-            runnableCollectiveMarkerList.setRunMarkers(true);
 
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
@@ -130,24 +98,24 @@ public class DiffyPathSequence extends PathSequenceFather {
                 double rightBackTargetV = -convertDistance(leftV);
 
                 // Correct using PID loop and Kalman Filter
+
+                assert leftFront != null && leftBack != null && rightFront != null && rightBack != null : "One of the motor objects is null!";
+
                 double corL1 = pidLeft1.update((long)leftFrontTargetV, (long)kLeft1.filter(leftFront.getVelocity(RADIANS)));
                 double corL2 = pidLeft2.update((long)leftBackTargetV, (long)kLeft2.filter(leftBack.getVelocity(RADIANS)));
                 double corR1 = pidRight1.update((long)rightFrontTargetV, (long)kRight1.filter(rightFront.getVelocity(RADIANS)));
                 double corR2 = pidRight2.update((long)rightBackTargetV, (long)kRight2.filter(rightBack.getVelocity(RADIANS)));
 
                 // Write the corrected values
-                leftFront.setVelocity(leftFrontTargetV+corL1);
-                leftBack.setVelocity(leftBackTargetV+corL2);
-                rightFront.setVelocity(rightFrontTargetV+corR1);
-                rightBack.setVelocity(rightBackTargetV+corR2);
+                leftFront.setVelocity(leftFrontTargetV+corL1, RADIANS);
+                leftBack.setVelocity(leftBackTargetV+corL2, RADIANS);
+                rightFront.setVelocity(rightFrontTargetV+corR1, RADIANS);
+                rightBack.setVelocity(rightBackTargetV+corR2, RADIANS);
 
 
             }
             // Set each path back to an unused state so the trajectory could be run again
             resetPaths();
         }
-        // Make the marker threads stop
-        if(runnableCollectiveMarkerList != null)
-            runnableCollectiveMarkerList.setStopMarkers(true);
     }
 }

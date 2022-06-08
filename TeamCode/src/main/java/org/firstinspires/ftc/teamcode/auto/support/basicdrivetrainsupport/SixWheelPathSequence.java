@@ -12,14 +12,10 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADI
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoMarkerList;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.RunnableCollective;
 
 import java.util.ArrayList;
 
@@ -49,42 +45,12 @@ public class SixWheelPathSequence extends PathSequenceFather {
         wheelRadius = wheelR;
 
         this.left1 = left1;
-        this.left2 = left1;
-        this.left3 = left1;
-        this.right1 = right1;
-        this.right2= right2;
-        this.right3= right3;
-
-        markerList = null;
-        runnableCollectiveMarkerList = null;
-    }
-    /**
-     *
-     * @param paths is the ArrayList of paths
-     * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
-     * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
-     * @param left3 and is a left motor (presumed to be negative to go forward) does not matter which
-     * @param right1 is the right motor (presumed to be positive to go forward) does not matter which
-     * @param right2 is the right motor (presumed to be positive to go forward) does not matter which
-     * @param right3 is the right motor (presumed to be positive to go forward) does not matter which
-     * @param wheelR is the wheel's radius
-     * @param m is the MarkerList
-     *
-     * @Precondition the left and right motors are objects that have been externally created
-     */
-    public SixWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR, NeoMarkerList m){
-        trajectory = paths;
-        wheelRadius = wheelR;
-
-        this.left1 = left1;
         this.left2 = left2;
         this.left3 = left3;
         this.right1 = right1;
         this.right2= right2;
         this.right3= right3;
 
-        markerList = m;
-        runnableCollectiveMarkerList = new RunnableCollective(markerList);
     }
 
     /**
@@ -92,12 +58,10 @@ public class SixWheelPathSequence extends PathSequenceFather {
      * Also adheres to InsertMarkers if any.
      */
     @Override
-    public void follow(){
+    public final void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();
 
-        if(runnableCollectiveMarkerList != null)
-            runnableCollectiveMarkerList.setRunMarkers(true);
         for(NeoPath p : trajectory){
             if(!p.getBuilt())
                 p.build();
@@ -147,7 +111,5 @@ public class SixWheelPathSequence extends PathSequenceFather {
             }
             resetPaths();
         }
-        if(runnableCollectiveMarkerList != null)
-            runnableCollectiveMarkerList.setStopMarkers(true);
     }
 }
