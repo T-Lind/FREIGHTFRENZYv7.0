@@ -21,11 +21,13 @@ import java.util.ArrayList;
 
 public class DiffyPathSequence extends PathSequenceFather {
 
+    // Motor variables specific to a diffy swerve
     private DcMotorEx leftFront;
     private DcMotorEx leftBack;
     private DcMotorEx rightFront;
     private DcMotorEx rightBack;
 
+    // Conversion number for diffy swerves
     private final double DIFFY_FACTOR = 100;
 
     /**
@@ -50,6 +52,11 @@ public class DiffyPathSequence extends PathSequenceFather {
 
     }
 
+    /**
+     * Convert a distance in meters (or a velocity) to radians
+     * @param meters the distance or velocity in meters
+     * @return the distance or velocity in radians
+     */
     private double convertDistance(double meters){
         return meters*(18.1*meters+9.61);
     }
@@ -59,15 +66,18 @@ public class DiffyPathSequence extends PathSequenceFather {
      * Actually moves the robot along the specified NeoPaths.
      * Also adheres to InsertMarkers if any.
      * NOTE: cannot rotate diffy swerve pod angles at this time
+     * @Postcondition every path has been executed
      */
     @Override
     public final void follow(){
         ElapsedTime t = new ElapsedTime();
         t.reset();
 
-        for(NeoPath p : trajectory){
-            if(!p.getBuilt())
-                p.build();
+        // Go through every path in the trajectory
+        for(NeoPath path : trajectory){
+            // Make sure the path is built
+            if(!path.getBuilt())
+                path.build();
 
             // Create kalman filter and PID objects
             KalmanFilter kLeft1 = new KalmanFilter(0);
@@ -83,13 +93,14 @@ public class DiffyPathSequence extends PathSequenceFather {
             PIDController pidRight2 = new PIDController(0);
 
 
+            // Used to only consider the time into this individual path
             double offset = t.milliseconds();
 
             // Execute the path
-            while(!p.getCompleted()){
+            while(!path.getCompleted()){
                 // Get the velocities from what the path says the end result velocities should be
-                double leftV = p.getLeftVelocity((t.milliseconds()-offset)/1000);
-                double rightV = p.getRightVelocity((t.milliseconds()-offset)/1000);
+                double leftV = path.getLeftVelocity((t.milliseconds()-offset)/1000);
+                double rightV = path.getRightVelocity((t.milliseconds()-offset)/1000);
 
                 // Convert the velocities into pod velocities
                 double leftFrontTargetV = -convertDistance(leftV);
@@ -98,15 +109,12 @@ public class DiffyPathSequence extends PathSequenceFather {
                 double rightBackTargetV = -convertDistance(leftV);
 
                 // Correct using PID loop and Kalman Filter
-
-                assert leftFront != null && leftBack != null && rightFront != null && rightBack != null : "One of the motor objects is null!";
-
                 double corL1 = pidLeft1.update((long)leftFrontTargetV, (long)kLeft1.filter(leftFront.getVelocity(RADIANS)));
                 double corL2 = pidLeft2.update((long)leftBackTargetV, (long)kLeft2.filter(leftBack.getVelocity(RADIANS)));
                 double corR1 = pidRight1.update((long)rightFrontTargetV, (long)kRight1.filter(rightFront.getVelocity(RADIANS)));
                 double corR2 = pidRight2.update((long)rightBackTargetV, (long)kRight2.filter(rightBack.getVelocity(RADIANS)));
 
-                // Write the corrected values
+                // Write the corrected velocities to the motors
                 leftFront.setVelocity(leftFrontTargetV+corL1, RADIANS);
                 leftBack.setVelocity(leftBackTargetV+corL2, RADIANS);
                 rightFront.setVelocity(rightFrontTargetV+corR1, RADIANS);

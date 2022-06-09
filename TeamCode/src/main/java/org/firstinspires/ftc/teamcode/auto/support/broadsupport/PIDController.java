@@ -9,11 +9,15 @@ package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 import java.util.ArrayList;
 public class PIDController {
+    // PID gains
     private double proportional;
     private double integral;
     private double derivative;
+
+    // Leftmost integration bound
     private int forgetLength;
 
+    // ArrayLists to store the timing data
     private ArrayList<Long> data;
     private ArrayList<Long> time;
 
@@ -88,8 +92,11 @@ public class PIDController {
     /**
      * A private method to compute the integral term.
      * @return a right Riemann sum of the error so far.
+     * @Precondition time and data have been instantiated
+     * @Postcondition the accurate integration has been performed and returned.
      */
     private long getIntegral(){
+        assert time != null && data != null : "time and data in PIDController.getIntegral() must not be equal to null!";
         long sum = 0;
         if(time.size() > 2){
             for(int i=0;i<time.size()-1;i++)
@@ -103,6 +110,8 @@ public class PIDController {
      * @param target where we would like to be, also called the reference
      * @param state where we currently are, I.E. motor position
      * @return the command to our motor, I.E. motor power
+     * @Precondition target and state are accurate
+     * @Postcondition the appropriate correction is returned
      */
     public double update(long target, long state) {
         // PID logic and then return the output
@@ -115,10 +124,9 @@ public class PIDController {
         else{
             long dNum = data.get(data.size()-1)-data.get(data.size()-forgetLength);
             long dDen = time.get(time.size()-1)-time.get(time.size()-forgetLength);
-            //dDen*=-1000;
             if(dDen==0)
                 dDen = (long)1.1;
-            return proportional * error + integral * getIntegral();// + derivative * dNum / dDen;
+            return proportional * error + integral * getIntegral() + 1E-8 * derivative * dNum / dDen;
         }
     }
 }

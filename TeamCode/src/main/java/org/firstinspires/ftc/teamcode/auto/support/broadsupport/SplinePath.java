@@ -12,13 +12,14 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.direction;
 import java.util.ArrayList;
 
 public class SplinePath extends NeoPath {
+    // Variables to characterize the spline
     private double[] radii;
     private double[] arcLengths;
     private double velocity;
     private double trackWidth;
     private double accelerationTime;
-    private double TpA;
-    private double TpD;
+    private double additionalpathonetime;
+    private double additionalPathTwoTime;
     private direction moveWay;
     private ArrayList<Double> times;
 
@@ -40,8 +41,8 @@ public class SplinePath extends NeoPath {
         arcLengths = al;
         velocity = v;
         accelerationTime = accTime;
-        TpA = 0;
-        TpD = 0;
+        additionalpathonetime = 0;
+        additionalPathTwoTime = 0;
 
         times = new ArrayList<Double>();
         moveWay = direction.FORWARD;
@@ -63,8 +64,8 @@ public class SplinePath extends NeoPath {
         arcLengths = al;
         velocity = v;
         accelerationTime = accTime;
-        TpA = 0;
-        TpD = 0;
+        additionalpathonetime = 0;
+        additionalPathTwoTime = 0;
 
         times = new ArrayList<Double>();
 
@@ -76,27 +77,35 @@ public class SplinePath extends NeoPath {
 
     /**
      * Compute the various aspects of the spline like ramp-up and ramp-down appending times, the times ArrayList, and ArcLengths list.
+     * @Precondition arcLengths and times is not null and has been instantiated
+     * @Postcondition times have been successfully computed and this path has been built,
      */
     @Override
     public void build(){
+        assert arcLengths != null && times != null : "arcLengths and times must not be null in SplinePath.build()";
+
         for(int i=1;i<arcLengths.length-1;i++)
             arcLengths[i]*=(2*3.14159265);
-        TpA = (3*Math.abs(arcLengths[0])-2*velocity*accelerationTime)/(3*velocity);
-        TpD = (Math.abs(arcLengths[arcLengths.length-1])-((velocity*accelerationTime)/3))/velocity;
-        System.out.println("TpA, TpD: "+TpA+" "+TpD);
-        times.add(accelerationTime+TpA);
+        additionalpathonetime = (3*Math.abs(arcLengths[0])-2*velocity*accelerationTime)/(3*velocity);
+        additionalPathTwoTime = (Math.abs(arcLengths[arcLengths.length-1])-((velocity*accelerationTime)/3))/velocity;
+        System.out.println("TpA, TpD: "+ additionalpathonetime +" "+ additionalPathTwoTime);
+        times.add(accelerationTime+ additionalpathonetime);
         for(int i=1;i<arcLengths.length-1;i++)
             times.add(times.get(times.size()-1)+Math.abs(arcLengths[i])*velocity);
-        times.add(times.get(times.size()-1)+accelerationTime+TpD);
+        times.add(times.get(times.size()-1)+accelerationTime+ additionalPathTwoTime);
         setBuilt(true);
     }
 
     /**
      * Compute the execute time
      * @return return the execute time
+     * @Precondition times has been instantiated and is not null
+     * @Postcondition the appropriate execute time has been returned
      */
     @Override
     public double getExecuteTime(){
+        assert times != null : "Times must not be equal to null in SplinePath.getExecuteTime()";
+
         return times.get(times.size()-1);
     }
 
@@ -104,74 +113,91 @@ public class SplinePath extends NeoPath {
      /**
      * Get the times ArrayList - not used except for debugging, times is the time at which every sequential part of the spline executes
      * @return the times ArrayList
+      * @Precondition times is not null and has been instantiated
+      * @Postcondition times is returned successfully
      */
     private ArrayList<Double> getTimes(){
+        assert times != null : "Times must not be equal to null in SplinePath.getTimes()";
+
         return times;
     }
 
     /**
     * Gets the current arc that is executing based on the current time
-    * @param t is the current time since the start of the spline
+    * @param currentTime is the current time since the start of the spline
+     * @Precondition times is not null
+     * @Postcondition the appropriate arc is returned
     */
-    private int getArc(double t){
+    private int getArc(double currentTime){
+        assert times != null : "Times must not be equal to null in SplinePath.getArc()";
+
         for(int i=0;i<times.size();i++)
-            if(t < times.get(i))
+            if(currentTime < times.get(i))
                 return i;
         return -1;
     }
     
     /**
     * Get the linear velocity of the WHOLE robot based off of the current time. It's only != to the velocity specified in the constructor in the ramp-up and ramp-down times.
-    * @param t is the current time into the spline
+    * @param currentTime is the current time into the spline
+     * @Precondition currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
+     * @Postcondition the appropriate velocity is returned
     */
-    private double getVelocity(double t){
-        int arc = getArc(t);
+    private double getVelocity(double currentTime){
+        assert arcLengths != null && times != null && currentTime >= 0 : "currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getVelocity()";
+
+        int arc = getArc(currentTime);
         if(arc == -1)
             return 0;
 
         if(arc > 0 && arc < arcLengths.length-1)
             return velocity;
         else if(arc == 0){
-            if(t < accelerationTime)
-                return velocity*Math.sqrt(t/accelerationTime);
+            if(currentTime < accelerationTime)
+                return velocity*Math.sqrt(currentTime/accelerationTime);
             return velocity;
         }
         else {
-            if(t < times.get(times.size()-2)+TpD)
+            if(currentTime < times.get(times.size()-2)+ additionalPathTwoTime)
                 return velocity;
-            return velocity-velocity*Math.sqrt((t-times.get(times.size()-2)-TpD)/accelerationTime);
+            return velocity-velocity*Math.sqrt((currentTime-times.get(times.size()-2)- additionalPathTwoTime)/accelerationTime);
         }
     }
     
     /**
     * Get the left linear velocity based on the current time, accounting for negative arc lengths, reversed boolean, and different arc radii.
-    * @param t is the current time into the spline.
+    * @param currentTime is the current time into the spline.
     * @return the left wheel's linear velocity.
+     *
+     * @Precondition currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
+     * @Postcondition the accurate left velocity is returned
     */
     @Override
-    public double getLeftVelocity(double t){
+    public double getLeftVelocity(double currentTime){
+        assert arcLengths != null && times != null && currentTime >= 0 : "currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getLeftVelocity()";
+
         if(moveWay == direction.FORWARD) {
-            if (getArc(t) == -1) {
+            if (getArc(currentTime) == -1) {
                 this.setCompleted(true);
                 return 0;
             }
-            double v = getVelocity(t);
-            if (arcLengths[getArc(t)] > 0)
-                v = v - (v * trackWidth / (2 * radii[getArc(t)]));
+            double v = getVelocity(currentTime);
+            if (arcLengths[getArc(currentTime)] > 0)
+                v = v - (v * trackWidth / (2 * radii[getArc(currentTime)]));
             else
-                v = v + (v * trackWidth / (2 * radii[getArc(t)]));
+                v = v + (v * trackWidth / (2 * radii[getArc(currentTime)]));
             v *= -1;
             return v;
         } else {
-            if (getArc(t) == -1) {
+            if (getArc(currentTime) == -1) {
                 this.setCompleted(true);
                 return 0;
             }
-            double v = getVelocity(t);
-            if (arcLengths[getArc(t)] > 0)
-                v = v - (v * trackWidth / (2 * radii[getArc(t)]));
+            double v = getVelocity(currentTime);
+            if (arcLengths[getArc(currentTime)] > 0)
+                v = v - (v * trackWidth / (2 * radii[getArc(currentTime)]));
             else
-                v = v + (v * trackWidth / (2 * radii[getArc(t)]));
+                v = v + (v * trackWidth / (2 * radii[getArc(currentTime)]));
             return v;
         }
     }
@@ -179,38 +205,43 @@ public class SplinePath extends NeoPath {
 
     /**
     * Get the right linear velocity based on the current time, accounting for negative arc lengths, reversed boolean, and different arc radii.
-    * @param t is the current time into the spline.
+    * @param currentTime is the current time into the spline.
     * @return the right wheel's linear velocity.
-    */    
+     * @Precondition currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
+     * @Postcondition the accurate right velocity is returned
+    */
     @Override
-    public double getRightVelocity(double t){
+    public double getRightVelocity(double currentTime){
+        assert arcLengths != null && times != null && currentTime >= 0 : "currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getRightVelocity()";
+
         if(moveWay == direction.FORWARD) {
-            if (getArc(t) == -1) {
+            if (getArc(currentTime) == -1) {
                 this.setCompleted(true);
                 return 0;
             }
-            double v = getVelocity(t);
-            if (arcLengths[getArc(t)] > 0)
-                return v + (v * trackWidth / (2 * radii[getArc(t)]));
-            return v - (v * trackWidth / (2 * radii[getArc(t)]));
+            double v = getVelocity(currentTime);
+            if (arcLengths[getArc(currentTime)] > 0)
+                return v + (v * trackWidth / (2 * radii[getArc(currentTime)]));
+            return v - (v * trackWidth / (2 * radii[getArc(currentTime)]));
         } else {
-            if (getArc(t) == -1) {
+            if (getArc(currentTime) == -1) {
                 this.setCompleted(true);
                 return 0;
             }
-            double v = getVelocity(t);
-            if (arcLengths[getArc(t)] > 0){
-                v = v + (v * trackWidth / (2 * radii[getArc(t)]));
+            double v = getVelocity(currentTime);
+            if (arcLengths[getArc(currentTime)] > 0){
+                v = v + (v * trackWidth / (2 * radii[getArc(currentTime)]));
                 v *= -1;
                 return v;
             }
-            v = v - (v * trackWidth / (2 * radii[getArc(t)]));
+            v = v - (v * trackWidth / (2 * radii[getArc(currentTime)]));
             return -1*v;
         }
     }
     /**
      * Get what type of path this is. Useful for debugging
      * @return The type of path, in this case a spline.
+     * @Postcondition the accurate PathType has been returned.
      */
     public PathType getType(){
         return PathType.SPLINE;

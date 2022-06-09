@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 
 /**
@@ -9,31 +10,43 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
  */
 public class Turn extends Line{
     /**
-     * @param a is the angle traveled (degrees)
-     * @param v is the maximum velocity to travel at
+     * @param angleToTurn is the angle traveled (degrees)
+     * @param trackWidth is the distance between the wheels
+     * @param maxVelocity is the maximum velocity to travel at
      */
-    public Turn(double a, double trackWidth, double v) {
-        super((3.14159*a*trackWidth)/360, v);
+    public Turn(double angleToTurn, double trackWidth, double maxVelocity) {
+        super((3.14159*angleToTurn*trackWidth)/360, maxVelocity);
     }
 
-    public Turn(double a, double trackWidth, double v, boolean notSymmetrical) {
-        super((3.14159*a*trackWidth)/360, v, notSymmetrical);
+    /**
+     *
+     * @param angleToTurn is the angle traveled (degrees)
+     * @param trackWidth is the distance between the wheels
+     * @param maxVelocity is the maximum velocity to travel at
+     * @param drivetrainSymmetryType is the drivetrain symmetrical or asymmetrical
+     */
+    public Turn(double angleToTurn, double trackWidth, double maxVelocity, DrivetrainSymmetry drivetrainSymmetryType) {
+        super((3.14159*angleToTurn*trackWidth)/360, maxVelocity, drivetrainSymmetryType);
     }
 
     /**
      * Get the left wheel velocity
-     * @param t the current time
+     * @param currentTime the current time
      * @return the left wheel velocity so as to turn the right amount.
+     * @Precondition current time is not less than zero
+     * @Postcondition the accurate left velocity is returned
      */
 
     @Override
-    public double getLeftVelocity(double t){
-        return -1*super.getLeftVelocity(t);
+    public double getLeftVelocity(double currentTime){
+        assert currentTime >= 0 : "currentTime in Turn.getLeftVelocity() must be greater than or equal to zero";
+        return -1*super.getLeftVelocity(currentTime);
     }
 
     /**
      * Get what type of path this is. Useful for debugging
      * @return The type of path, in this case a turn.
+     * @Postcondition the correct type is returned
      */
     @Override
     public PathType getType(){

@@ -104,7 +104,7 @@ public class KalmanFilter {
      * @return the predicted result.
      */
     // Filter a measurement: measured value is measurement, controlled input value is u.
-    public double filter(double measurement, double u){
+    public final double filter(double measurement, double u){
 
         if (Double.isNaN(this.x)) {
             this.x = (1 / this.C) * measurement;
@@ -129,7 +129,7 @@ public class KalmanFilter {
      * @return the predicted result.
      */
     // Filter a measurement taken
-    public double filter(double measurement){
+    public final double filter(double measurement){
         double u = 0;
         if (Double.isNaN(this.x)) {
             this.x = (1 / this.C) * measurement;
@@ -154,25 +154,24 @@ public class KalmanFilter {
      * @return the last measurement
      */
     // Return the last measurement taken
-    public double lastMeasurement(){
+    public final double lastMeasurement(){
         return this.x;
     }
 
     /**
-     * Set the noise
+     * Set the measurement noise
      * @param noise the measurement noise.
      */
     // Set measurement noise
-    public void setMeasurementNoise(double noise){
+    public final void setMeasurementNoise(double noise){
         this.Q = noise;
     }
 
     /**
-     * Set the noise
+     * Set the process noise
      * @param noise the process noise.
      */
-    // Set the process noise
-    public void setProcessNoise(double noise){
+    public final void setProcessNoise(double noise){
         this.R = noise;
     }
 }

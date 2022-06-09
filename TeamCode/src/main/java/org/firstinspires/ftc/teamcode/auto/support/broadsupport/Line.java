@@ -11,46 +11,48 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
  */
 
 public class Line extends NeoPath {
+    // Variables to model the type of line this path should follow
     private double distance;
     private double maxVelocity;
-    private double eT;
-    private DrivetrainSymmetry dt;
+    private double executeTime;
+    private DrivetrainSymmetry drivetrainSymmetryType;
 
     /**
-     *
+     * Constructor for this Line object. Here it make an assumption since it has not been given
+     * enough data - sets the drivtrain type to asymmetrical
      * @param d is the distance traveled
      * @param v is the maximum velocity to travel at
      */
     public Line(double d, double v){
+        assert v != 0 && d != 0: "The velocity or distance must not be equal to zero in Line.Line(...)!";
         distance = d;
         maxVelocity = v;
 
-        eT = 0;
+        executeTime = 0;
 
-        dt = DrivetrainSymmetry.ASYMMETRICAL;
+        drivetrainSymmetryType = DrivetrainSymmetry.ASYMMETRICAL;
     }
     /**
-     *
+     *Constructor for this Line object. Sets the type of drivetrain to
      * @param d is the distance traveled
      * @param v is the maximum velocity to travel at
-     * @param notSymmetrical is if the drivetrain is not mirrored across the axis (like in a differential swerve)
+     * @param drivetrainSymmetryType is if the drivetrain is not mirrored across the axis (like in a differential swerve)
      */
-    public Line(double d, double v, boolean notSymmetrical){
+    public Line(double d, double v, DrivetrainSymmetry drivetrainSymmetryType){
+        assert v != 0 && d != 0: "The velocity or distance must not be equal to zero in Line.Line(...)!";
         distance = d;
         maxVelocity = v;
-        eT = 0;
+        executeTime = 0;
 
-        if(notSymmetrical)
-            dt = DrivetrainSymmetry.ASYMMETRICAL;
-        else
-            dt = DrivetrainSymmetry.SYMMETRICAL;
+        this.drivetrainSymmetryType = drivetrainSymmetryType;
     }
     /**
      * Build the line trajectory.
+     * @Postcondition this path has been built successfully
      */
     @Override
-    public void build(){
-        eT = 3.14159265*Math.abs(distance)/(2*maxVelocity);
+    public final void build(){
+        executeTime = 3.14159265*Math.abs(distance)/(2*maxVelocity);
         setBuilt(true);
     }
 
@@ -59,8 +61,8 @@ public class Line extends NeoPath {
      * @return the execution time
      */
     @Override
-    public double getExecuteTime(){
-        return eT;
+    public final double getExecuteTime(){
+        return executeTime;
     }
 
     /**
@@ -68,11 +70,11 @@ public class Line extends NeoPath {
      * @param t the current time
      * @return the linear velocity of the bot
      */
-    public double getVelocity(double t){
-        if(t < eT){
+    private double getVelocity(double t){
+        if(t < executeTime){
             if(distance > 0)
-                return maxVelocity*Math.sin(3.1415925*t/eT);
-            return -1*maxVelocity*Math.sin(3.1415925*t/eT);
+                return maxVelocity*Math.sin(3.1415925*t/ executeTime);
+            return -1*maxVelocity*Math.sin(3.1415925*t/ executeTime);
         }
         else{
             this.setCompleted(true);
@@ -83,23 +85,23 @@ public class Line extends NeoPath {
 
     /**
      * Get the left linear velocity
-     * @param t the current time
+     * @param currentTime the current time
      * @return left linear velocity
      */
     @Override
-    public double getLeftVelocity(double t){
-        if(dt == DrivetrainSymmetry.ASYMMETRICAL)
-            return -getVelocity(t);
-        return getVelocity(t);
+    public double getLeftVelocity(double currentTime){
+        if(drivetrainSymmetryType == DrivetrainSymmetry.ASYMMETRICAL)
+            return -getVelocity(currentTime);
+        return getVelocity(currentTime);
     }
     /**
      * Get the right linear velocity
-     * @param t the current time
+     * @param currentTime the current time
      * @return right linear velocity
      */
     @Override
-    public double getRightVelocity(double t){
-        return getVelocity(t);
+    public double getRightVelocity(double currentTime){
+        return getVelocity(currentTime);
     }
 
     /**

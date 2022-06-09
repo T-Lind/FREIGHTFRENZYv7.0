@@ -14,6 +14,7 @@ public class RunnableCollective implements Runnable {
     // Signal the program when to stop running the markers
     private volatile static boolean stopMarkers;
 
+    // Threads
     private static Thread mainThread;
     private static Thread t1;
     private static Thread t2;

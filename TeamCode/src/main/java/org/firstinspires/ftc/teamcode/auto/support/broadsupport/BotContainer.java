@@ -16,17 +16,20 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 /**
- * Class to slim down autonomous programs for four motor drivetrains.
+ * Class to slim down autonomous programs for four motor drivetrains and execute markers.
  */
 abstract public class BotContainer extends LinearOpMode{
+   // Pathing and marker list objects
    private PathSequence pathSequence;
    private NeoMarkerList markerList;
-   private RunnableCollective runMarkerObject;
+   private RunnableCollectiveArray runMarkerObject;
 
+   // Camera objects
    private WebcamName weCam;
    private OpenCvCamera camera;
    private TSEDetectionPipeline pipeline; // Replace with some other pipeline
 
+   // These variables are protected so autonomous programs can use them easier
    protected DcMotorEx leftFront, leftBack, rightFront, rightBack;
    protected final double wheelR = 0.03715;
    protected final double trackWidth = 0.295;
@@ -38,22 +41,40 @@ abstract public class BotContainer extends LinearOpMode{
     *                     (final linear wheel velocities).
     */
    protected final void setPathSequence(PathSequence pathSequence) {
+      assert pathSequence != null : "You must enter a non-null object in BotContainer.setPathSequence()";
       this.pathSequence = pathSequence;
    }
 
+   /**
+    * Set the list of markers, also create the RunnableCollective object which creates the thread
+    * branches.
+    * @param markerList the list of markers (aliases it)
+    */
    protected final void setMarkerList(NeoMarkerList markerList){
+      assert markerList != null : "You must enter a non-null object in BotContainer.setMarkerList()";
       this.markerList = markerList;
-      runMarkerObject = new RunnableCollective(this.markerList);
+      runMarkerObject = new RunnableCollectiveArray(this.markerList);
    }
+
+   /**
+    * Start the markers according to the times given, also check for null
+    */
    protected final void executeMarkers(){
       // Start the markers
       if(runMarkerObject != null)
          runMarkerObject.activateMarkers();
    }
+
+   /**
+    * Interrupts all threads and stops the markers
+    */
    protected final void stopMarkers(){
       runMarkerObject.setStopMarkers();
    }
 
+   /**
+    * Follows the path and marker list given, assuming one was given.
+    */
    protected final void executeAuto() {
       // Only execute the auto when the button is pressed
       waitForStart();
@@ -67,9 +88,16 @@ abstract public class BotContainer extends LinearOpMode{
          pathSequence.follow();
    }
 
+   /**
+    * Initialize all and build the path sequence if not null, relay a successful initialization
+    * through the telemetry.
+    */
    protected final void initialize(){
+      // Initialize motors and camera
       initMotors();
       initCamera();
+
+      // Null check - if not null then build the path sequence
       if(pathSequence != null)
          pathSequence.buildAll();
 
@@ -82,6 +110,9 @@ abstract public class BotContainer extends LinearOpMode{
    }
 
 
+   /**
+    * Initialize and set the motors' properties
+    */
    private void initMotors(){
       // build the motor objects
       leftFront = (DcMotorEx) hardwareMap.dcMotor.get("FL");
@@ -89,22 +120,35 @@ abstract public class BotContainer extends LinearOpMode{
       rightFront = (DcMotorEx) hardwareMap.dcMotor.get("FR");
       rightBack = (DcMotorEx) hardwareMap.dcMotor.get("BR");
 
+      // Set the usage of encoders
       leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+      // Sets zero power behavior to braking
       leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
    }
 
+   /**
+    * Initialize the camera and set its properties.
+    */
    private void initCamera(){
+      // Get the webcam from the hardware map
       weCam = hardwareMap.get(WebcamName.class, "Webcam 1");
       int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+      // Create a new camera object in openCV
       camera = OpenCvCameraFactory.getInstance().createWebcam(weCam, cameraMonitorViewId);
+
+      // instantiate and add the pipeline
       pipeline = new TSEDetectionPipeline();
       camera.setPipeline(pipeline);
+
+      // Start the camera stream or throws an error
       camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
          @Override
          public void onOpened() {
