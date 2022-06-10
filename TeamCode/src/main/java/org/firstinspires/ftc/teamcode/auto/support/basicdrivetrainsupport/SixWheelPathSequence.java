@@ -1,11 +1,4 @@
 package org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport;
-/**
- * Program to take linear velocities from each wheel and translate
- * them into 6wd
- * Created by
- * @author Tiernan Lindauer
- * for FTC team 7797.
- */
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
@@ -16,9 +9,17 @@ import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
 
 import java.util.ArrayList;
 
+/**
+ * Program to take linear velocities from each wheel and translate
+ * them into 6wd
+ * Created by
+ * @author Tiernan Lindauer
+ * for FTC team 7797.
+ */
 public class SixWheelPathSequence extends PathSequenceFather {
     private DcMotorEx left1;
     private DcMotorEx left2;
@@ -28,7 +29,7 @@ public class SixWheelPathSequence extends PathSequenceFather {
     private DcMotorEx right3;
 
     /**
-     *
+     * Constructor that assigns the objects used in SixWheelPathSequence
      * @param paths is the ArrayList of paths
      * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
@@ -37,8 +38,6 @@ public class SixWheelPathSequence extends PathSequenceFather {
      * @param right2 is the right motor (presumed to be positive to go forward) does not matter which
      * @param right3 is the right motor (presumed to be positive to go forward) does not matter which
      * @param wheelR is the wheel's radius
-     *
-     * @Precondition the left and right motors are objects that have been externally created
      */
     public SixWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR){
         trajectory = paths;
@@ -55,10 +54,14 @@ public class SixWheelPathSequence extends PathSequenceFather {
 
     /**
      * Actually moves the robot along the specified NeoPaths.
-     * Also adheres to InsertMarkers if any.
+     * @Precondition the motor and trajectory objects have been created
+     * @Postcondition the path has been followed
      */
     @Override
     public final void follow(){
+        if(left1 == null || left2 == null || left3 == null || right1 == null || right2 == null || right3 == null || trajectory == null)
+            throw new InternalError("Null object parameter passed to SixWheelPathSequence (in SixWheelPathSequence.follow())");
+
         ElapsedTime t = new ElapsedTime();
         t.reset();
 
@@ -66,23 +69,23 @@ public class SixWheelPathSequence extends PathSequenceFather {
             if(!p.getBuilt())
                 p.build();
 
-            KalmanFilter kLeft1 = new KalmanFilter(0);
-            PIDController pidLeft1 = new PIDController(0);
+            KalmanFilter kLeft1 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidLeft1 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kLeft2 = new KalmanFilter(0);
-            PIDController pidLeft2 = new PIDController(0);
+            KalmanFilter kLeft2 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidLeft2 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kLeft3 = new KalmanFilter(0);
-            PIDController pidLeft3 = new PIDController(0);
+            KalmanFilter kLeft3 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidLeft3 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kRight1 = new KalmanFilter(0);
-            PIDController pidRight1 = new PIDController(0);
+            KalmanFilter kRight1 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidRight1 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kRight2 = new KalmanFilter(0);
-            PIDController pidRight2 = new PIDController(0);
+            KalmanFilter kRight2 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidRight2 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kRight3 = new KalmanFilter(0);
-            PIDController pidRight3 = new PIDController(0);
+            KalmanFilter kRight3 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidRight3 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
             double offset = t.milliseconds();
 

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
 
 import java.util.ArrayList;
 
@@ -26,15 +27,13 @@ public class FourWheelPathSequence extends PathSequenceFather {
     private DcMotorEx right2;
 
     /**
-     *
+     * Constructor for FourWheelPathSequence, assigns used objects
      * @param paths is the ArrayList of paths
      * @param left1 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param left2 and is a left motor (presumed to be negative to go forward) does not matter which
      * @param right1 is the right motor (presumed to be positive to go forward) does not matter which
      * @param right2 is the right motor (presumed to be positive to go forward) does not matter which
      * @param wheelR is the wheel's radius
-     *
-     * @Precondition the left and right motors are objects that have been externally created
      */
     public FourWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
         trajectory = paths;
@@ -44,14 +43,17 @@ public class FourWheelPathSequence extends PathSequenceFather {
         this.left2 = left2;
         this.right1 = right1;
         this.right2= right2;
-
     }
 
     /**
      * Actually moves the robot along the specified NeoPaths.
-     * Also adheres to InsertMarkers if any.
+     * @Precondition the motor and trajectory objects have been created
+     * @Postcondition the path has been followed
      */
     public final void follow(){
+        if(left1 == null || left2 == null || right1 == null || right2 == null || trajectory == null)
+            throw new InternalError("Null object parameter pssed to FourWheelPathSequence (in FourWheelPathSequence.follow())");
+
         ElapsedTime t = new ElapsedTime();
         t.reset();
         for(NeoPath p : trajectory){
@@ -59,17 +61,17 @@ public class FourWheelPathSequence extends PathSequenceFather {
                 p.build();
 
             // Create kalman filter and PID objects
-            KalmanFilter kLeft1 = new KalmanFilter(0);
-            PIDController pidLeft1 = new PIDController(0);
+            KalmanFilter kLeft1 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidLeft1 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kLeft2 = new KalmanFilter(0);
-            PIDController pidLeft2 = new PIDController(0);
+            KalmanFilter kLeft2 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidLeft2 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kRight1 = new KalmanFilter(0);
-            PIDController pidRight1 = new PIDController(0);
+            KalmanFilter kRight1 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidRight1 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kRight2 = new KalmanFilter(0);
-            PIDController pidRight2 = new PIDController(0);
+            KalmanFilter kRight2 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidRight2 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
             double offset = t.milliseconds();
 

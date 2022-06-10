@@ -14,7 +14,8 @@ public abstract class PathSequenceFather {
      * @Postcondition all paths have been successfully built
      */
     protected final void buildAll(){
-        assert trajectory != null : "Trajectory in PathSequenceFather.buildAll() must not be null!";
+        if(trajectory == null)
+            throw new InternalError("Trajectory in PathSequenceFather.buildAll() must not be null!");
         for(NeoPath path : trajectory)
             path.build();
     }
@@ -25,8 +26,10 @@ public abstract class PathSequenceFather {
      * @Postcondition the NeoPath at position i has been built.
      */
     protected final void build(int i){
-        assert trajectory != null : "Trajectory in PathSequenceFather.build(...) must not be null!";
-        assert i >= 0 : "The index i in PathSequenceFather.build(int i) must be greater than or equal to zero!";
+        if(trajectory == null)
+            throw new InternalError("Trajectory in PathSequenceFather.build(...) must not be null!");
+        if(i < 0)
+            throw new InternalError("Index in PathSequenceFather.buildAll() is not valid!");
         trajectory.get(i).build();
     }
 
@@ -36,9 +39,10 @@ public abstract class PathSequenceFather {
      * Sets the completed state of each path back to false to allow for path reusability
      * @Postcondition only the completed variable in each NeoPath in trajectory has been changed
      */
-
     protected final void resetPaths(){
-        assert trajectory != null : "Trajectory in PathSequenceFather.resetPaths() must not be null!";
+        if(trajectory == null)
+            throw new InternalError("Trajectory in PathSequenceFather.resetPaths() must not be null!");
+
         for(NeoPath path : trajectory)
             path.setCompleted(false);
     }

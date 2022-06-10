@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
+import java.util.ArrayList;
+
 /**
  * A PID control loop for general purpose,
  * created by
  * @author Tiernan Lindauer
  * for FTC team 7797.
  */
-
-import java.util.ArrayList;
 public class PIDController {
     // PID gains
     private double proportional;
@@ -28,38 +29,38 @@ public class PIDController {
         proportional = 0.3;
         integral = 0.3;
         derivative = 0.8;
-        data = new ArrayList<Long>();
-        time = new ArrayList<Long>();
+        data = new ArrayList<>();
+        time = new ArrayList<>();
         forgetLength = 64;
     }
     /**
-     * DeviceCode constructor
+     * DeviceCode based constructor
      * @param deviceCode corresponds to what the Kalman Filter is for to reduce code and code errors.
      *                   When deviceCode is 0, it is for motors
      *                   deviceCode 1 IS NOT USED IN PID - FOR DISTANCE SENSORS
      *                   When deviceCode is 2, i is for drivetrain motors in a turn.
      *      *
      */
-    public PIDController(int deviceCode){
-        if(deviceCode == 0){
+    public PIDController(PeripheralType deviceCode){
+        if(deviceCode == PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT){
             proportional = 0.4;
             integral = 0.5;
             derivative = 0.3;
-            data = new ArrayList<Long>();
-            time = new ArrayList<Long>();
+            data = new ArrayList<>();
+            time = new ArrayList<>();
             forgetLength = 64;
         }
-        else if(deviceCode == 2){
+        else if(deviceCode == PeripheralType.DRIVETRAIN_MOTOR_TURN){
             proportional = 0.8;
             integral = 0.8;
             derivative = 0.3;
-            data = new ArrayList<Long>();
-            time = new ArrayList<Long>();
+            data = new ArrayList<>();
+            time = new ArrayList<>();
             forgetLength = 64;
         }
     }
     /**
-     * construct PID controller
+     * Construct PID controller
      * @param Kp Proportional coefficient
      * @param Ki Integral coefficient
      * @param Kd Derivative coefficient
@@ -68,12 +69,12 @@ public class PIDController {
         proportional = Kp;
         integral = Ki;//*1000;
         derivative = Kd;
-        data = new ArrayList<Long>();
-        time = new ArrayList<Long>();
+        data = new ArrayList<>();
+        time = new ArrayList<>();
         forgetLength = 64;
     }
     /**
-     * construct PID controller
+     * Construct PID controller with forget length
      * @param Kp Proportional coefficient
      * @param Ki Integral coefficient
      * @param Kd Derivative coefficient
@@ -84,8 +85,8 @@ public class PIDController {
         integral = Ki*1000;
         derivative = Kd;
         forgetLength = len;
-        data = new ArrayList<Long>();
-        time = new ArrayList<Long>();
+        data = new ArrayList<>();
+        time = new ArrayList<>();
         forgetLength = len;
     }
 
@@ -96,7 +97,8 @@ public class PIDController {
      * @Postcondition the accurate integration has been performed and returned.
      */
     private long getIntegral(){
-        assert time != null && data != null : "time and data in PIDController.getIntegral() must not be equal to null!";
+        if(time == null || data == null)
+            throw new InternalError("time and data in PIDController.getIntegral() must not be equal to null!");
         long sum = 0;
         if(time.size() > 2){
             for(int i=0;i<time.size()-1;i++)

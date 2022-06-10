@@ -75,7 +75,8 @@ public class PathSequence {
      * @Postcondition the path sequence is returned successfully
      */
     public final PathSequenceFather getPathSequence(){
-        assert sequence != null : "Cannot run PathSequence.getPathSequence() if the sequence is null!";
+        if(sequence == null)
+            throw new InternalError("Cannot run PathSequence.getPathSequence() if the sequence is null!");
         return sequence;
     }
 
@@ -85,7 +86,8 @@ public class PathSequence {
      * @Postcondition each path in sequence has been built
      */
     public final void buildAll(){
-        assert sequence != null : "Cannot run PathSequence.buildAll() if the sequence is null!";
+        if(sequence == null)
+            throw new InternalError("Cannot run PathSequence.buildAll() if the sequence is null!");
         sequence.buildAll();
     }
 
@@ -95,7 +97,8 @@ public class PathSequence {
      * @Postcondition every sequence has been followed by the robot
      */
     public final void follow(){
-        assert sequence != null : "Cannot run PathSequence.follow() if the sequence is null!";
+        if(sequence == null)
+            throw new InternalError("Cannot run PathSequence.follow() if the sequence is null!");
         sequence.follow();
     }
 }

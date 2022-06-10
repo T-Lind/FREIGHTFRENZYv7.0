@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
-/**
- * Translates a series of circle radii/arc lengths into motor power values for a 2 wheeled robot.
- * created by
- * @author Tiernan Lindauer
- * for FTC team 7797.
- */
 
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.direction;
 
 import java.util.ArrayList;
 
+/**
+ * Translates a series of circle radii/arc lengths into motor power values for a 2 wheeled robot.
+ * created by
+ * @author Tiernan Lindauer
+ * for FTC team 7797.
+ */
 public class SplinePath extends NeoPath {
     // Variables to characterize the spline
     private double[] radii;
@@ -26,7 +26,7 @@ public class SplinePath extends NeoPath {
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.
 
     /**
-     * Constructor.
+     * Constructor for SplinePath.
      * Precondition: each static array in v is 3 long, size of r and v is equal
      * Convention: positive arc length is CCW, negative is CW
      * @param tw track width (m)
@@ -44,11 +44,11 @@ public class SplinePath extends NeoPath {
         additionalpathonetime = 0;
         additionalPathTwoTime = 0;
 
-        times = new ArrayList<Double>();
+        times = new ArrayList<>();
         moveWay = direction.FORWARD;
     }
     /**
-     * Constructor.
+     * Constructor for SplinePath with reversed boolean.
      * Each static array in v is 3 long, size of r and v is equal
      * Convention: positive arc length is CCW, negative is CW
      * @param tw track width (m)
@@ -67,7 +67,7 @@ public class SplinePath extends NeoPath {
         additionalpathonetime = 0;
         additionalPathTwoTime = 0;
 
-        times = new ArrayList<Double>();
+        times = new ArrayList<>();
 
         if(reversed)
             moveWay = direction.REVERSE;
@@ -82,7 +82,8 @@ public class SplinePath extends NeoPath {
      */
     @Override
     public void build(){
-        assert arcLengths != null && times != null : "arcLengths and times must not be null in SplinePath.build()";
+        if(arcLengths == null || times == null )
+            throw new InternalError("ArcLengths and times must be not null in SplinePath.build()");
 
         for(int i=1;i<arcLengths.length-1;i++)
             arcLengths[i]*=(2*3.14159265);
@@ -104,7 +105,8 @@ public class SplinePath extends NeoPath {
      */
     @Override
     public double getExecuteTime(){
-        assert times != null : "Times must not be equal to null in SplinePath.getExecuteTime()";
+        if(times == null)
+            throw new InternalError("Times must not be equal to null in SplinePath.getExecuteTime()");
 
         return times.get(times.size()-1);
     }
@@ -117,7 +119,8 @@ public class SplinePath extends NeoPath {
       * @Postcondition times is returned successfully
      */
     private ArrayList<Double> getTimes(){
-        assert times != null : "Times must not be equal to null in SplinePath.getTimes()";
+        if(times == null)
+            throw new InternalError("Times must not be equal to null in SplinePath.getTimes()");
 
         return times;
     }
@@ -129,7 +132,8 @@ public class SplinePath extends NeoPath {
      * @Postcondition the appropriate arc is returned
     */
     private int getArc(double currentTime){
-        assert times != null : "Times must not be equal to null in SplinePath.getArc()";
+        if(times == null || currentTime < 0)
+            throw new InternalError("Times must not be equal to null in SplinePath.getArc() and currentTime must be greater than zero");
 
         for(int i=0;i<times.size();i++)
             if(currentTime < times.get(i))
@@ -144,7 +148,8 @@ public class SplinePath extends NeoPath {
      * @Postcondition the appropriate velocity is returned
     */
     private double getVelocity(double currentTime){
-        assert arcLengths != null && times != null && currentTime >= 0 : "currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getVelocity()";
+        if(arcLengths == null || times == null || currentTime < 0)
+            throw new InternalError("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getVelocity()");
 
         int arc = getArc(currentTime);
         if(arc == -1)
@@ -174,7 +179,8 @@ public class SplinePath extends NeoPath {
     */
     @Override
     public double getLeftVelocity(double currentTime){
-        assert arcLengths != null && times != null && currentTime >= 0 : "currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getLeftVelocity()";
+        if(arcLengths == null || times == null)
+            throw new InternalError("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getLeftVelocity()");
 
         if(moveWay == direction.FORWARD) {
             if (getArc(currentTime) == -1) {
@@ -212,7 +218,8 @@ public class SplinePath extends NeoPath {
     */
     @Override
     public double getRightVelocity(double currentTime){
-        assert arcLengths != null && times != null && currentTime >= 0 : "currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getRightVelocity()";
+        if(arcLengths == null || times == null)
+            throw new InternalError("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getRightVelocity()");
 
         if(moveWay == direction.FORWARD) {
             if (getArc(currentTime) == -1) {

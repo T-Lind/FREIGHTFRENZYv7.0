@@ -24,7 +24,8 @@ public class Line extends NeoPath {
      * @param v is the maximum velocity to travel at
      */
     public Line(double d, double v){
-        assert v != 0 && d != 0: "The velocity or distance must not be equal to zero in Line.Line(...)!";
+        if(v == 0 || d == 0)
+            throw new InternalError("The velocity or distance must not be equal to zero in Line.Line(...)!");
         distance = d;
         maxVelocity = v;
 
@@ -39,7 +40,8 @@ public class Line extends NeoPath {
      * @param drivetrainSymmetryType is if the drivetrain is not mirrored across the axis (like in a differential swerve)
      */
     public Line(double d, double v, DrivetrainSymmetry drivetrainSymmetryType){
-        assert v != 0 && d != 0: "The velocity or distance must not be equal to zero in Line.Line(...)!";
+        if(v == 0 || d == 0)
+            throw new InternalError("The velocity or distance must not be equal to zero in Line.Line(...)!");
         distance = d;
         maxVelocity = v;
         executeTime = 0;

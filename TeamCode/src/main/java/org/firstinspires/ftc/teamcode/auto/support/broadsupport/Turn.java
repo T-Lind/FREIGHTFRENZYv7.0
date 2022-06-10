@@ -39,7 +39,8 @@ public class Turn extends Line{
 
     @Override
     public double getLeftVelocity(double currentTime){
-        assert currentTime >= 0 : "currentTime in Turn.getLeftVelocity() must be greater than or equal to zero";
+        if(currentTime < 0)
+            throw new InternalError("currentTime in Turn.getLeftVelocity() must be greater than or equal to zero");
         return -1*super.getLeftVelocity(currentTime);
     }
 

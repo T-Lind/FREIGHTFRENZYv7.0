@@ -1,12 +1,4 @@
 package org.firstinspires.ftc.teamcode.auto.support.diffysupport;
-/**
- * Program to take linear velocities from each wheel and translate
- * them into 4wd
- * Created by
- * @author Tiernan Lindauer
- * for FTC team 7797.
- */
-
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -16,9 +8,17 @@ import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
 
 import java.util.ArrayList;
 
+/**
+ * Program to take linear velocities from each wheel and translate
+ * them into 4wd
+ * Created by
+ * @author Tiernan Lindauer
+ * for FTC team 7797.
+ */
 public class DiffyPathSequence extends PathSequenceFather {
 
     // Motor variables specific to a diffy swerve
@@ -31,15 +31,13 @@ public class DiffyPathSequence extends PathSequenceFather {
     private final double DIFFY_FACTOR = 100;
 
     /**
-     *
+     * Constructor for DiffyPathSequence.
      * @param d is the ArrayList of paths
      * @param leftFront is the front left motor - CHUB side is the front
      * @param leftBack is the back left motor - CHUB side is the front
      * @param rightFront is the front right motor - CHUB side is the front
      * @param rightBack is the back right motor - CHUB side is the front
      * @param wheelR is the wheel's radius
-     *
-     * Precondition: the left and right motors are objects that have been externally created
      */
     public DiffyPathSequence(ArrayList<NeoPath> d, DcMotorEx leftFront, DcMotorEx leftBack, DcMotorEx rightFront, DcMotorEx rightBack, double wheelR){
         trajectory = d;
@@ -66,10 +64,16 @@ public class DiffyPathSequence extends PathSequenceFather {
      * Actually moves the robot along the specified NeoPaths.
      * Also adheres to InsertMarkers if any.
      * NOTE: cannot rotate diffy swerve pod angles at this time
+     * @Precondition motor objects are not null and have been instantiated
      * @Postcondition every path has been executed
      */
     @Override
     public final void follow(){
+        if(!(leftFront != null && leftBack != null && rightFront != null && rightBack != null))
+            throw new InternalError("All motor objects in DiffyPathSequence.follow() must not be null!");
+//        assert leftFront != null && leftBack != null && rightFront != null && rightBack != null : "All motor objects in DiffyPathSequence.follow() must not be null!";
+//        assert trajectory != null: "The trajectory in DiffyPathSequence.follow() cannot be null!";
+
         ElapsedTime t = new ElapsedTime();
         t.reset();
 
@@ -80,17 +84,17 @@ public class DiffyPathSequence extends PathSequenceFather {
                 path.build();
 
             // Create kalman filter and PID objects
-            KalmanFilter kLeft1 = new KalmanFilter(0);
-            PIDController pidLeft1 = new PIDController(0);
+            KalmanFilter kLeft1 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidLeft1 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kLeft2 = new KalmanFilter(0);
-            PIDController pidLeft2 = new PIDController(0);
+            KalmanFilter kLeft2 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidLeft2 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kRight1 = new KalmanFilter(0);
-            PIDController pidRight1 = new PIDController(0);
+            KalmanFilter kRight1 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidRight1 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-            KalmanFilter kRight2 = new KalmanFilter(0);
-            PIDController pidRight2 = new PIDController(0);
+            KalmanFilter kRight2 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+            PIDController pidRight2 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
 
             // Used to only consider the time into this individual path

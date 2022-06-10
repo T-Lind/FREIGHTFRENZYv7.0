@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class NeoMarkerList {
     // Variables to store in this complex list
     private NeoInsertMarker[] markers;
-    private double times[];
+    private double[] times;
 
     // Maximum amount of markers to allow created
     private int amountOfMarkers;
@@ -79,7 +79,8 @@ public class NeoMarkerList {
      * @Precondition markers and times must be of the same length
      */
     public NeoMarkerList(NeoInsertMarker[] markers, double[] times){
-        assert markers.length == times.length : "The length of markers and times must be the same in NeoMarkerList.NeoMarkerList(...)!";
+        if(markers.length != times.length)
+            throw new InternalError("The length of markers and times must be the same in NeoMarkerList.NeoMarkerList(...)!");
 
         amountOfMarkers = markers.length;
 

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
 
 /**
  * Program to take linear velocities from each wheel and translate
@@ -23,16 +24,14 @@ public class TwoWheelPathSequence extends PathSequenceFather{
     private DcMotorEx left;
     private DcMotorEx right;
     /**
-     *
-     * @param d is the ArrayList of paths
+     * Constructor for TwoWheelPathSequence to assign used objects
+     * @param paths is the ArrayList of paths
      * @param left is the left motor (presumed to be negative to go forward)
      * @param right is the right motor (presumed to be positive to go forward)
      * @param wheelR is the wheel's radius
-     *
-     * @Precondition the left and right motors are objects that have been externally created
      */
-    public TwoWheelPathSequence(ArrayList<NeoPath> d, DcMotorEx left, DcMotorEx right, double wheelR){
-        trajectory = d;
+    public TwoWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left, DcMotorEx right, double wheelR){
+        trajectory = paths;
         wheelRadius = wheelR;
 
         this.left = left;
@@ -43,9 +42,13 @@ public class TwoWheelPathSequence extends PathSequenceFather{
 
     /**
      * Actually moves the robot along the specified NeoPaths.
-     * Also adheres to InsertMarkers if any.
+     * @Precondition the motor and trajectory objects have been created
+     * @Postcondition the path has been followed
      */
     public final void follow(){
+        if(left == null || right == null || trajectory == null)
+            throw new InternalError("Null object parameter passed to TwoWheelPathSequence (in TwoWheelPathSequence.follow())");
+
         ElapsedTime t = new ElapsedTime();
         t.reset();
 
@@ -61,25 +64,25 @@ public class TwoWheelPathSequence extends PathSequenceFather{
             // Experimental bit here
             if(p.getType() == PathType.LINE || p.getType() == PathType.SPLINE){
 
-                k3 = new KalmanFilter(0);
-                pid3 = new PIDController(0);
+                k3 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+                pid3 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-                k4 = new KalmanFilter(0);
-                pid4 = new PIDController(0);
+                k4 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+                pid4 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
             }
             else if(p.getType() == PathType.TURN){
-                k3 = new KalmanFilter(2);
-                pid3 = new PIDController(2);
+                k3 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_TURN);
+                pid3 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_TURN);
 
-                k4 = new KalmanFilter(2);
-                pid4 = new PIDController(2);
+                k4 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_TURN);
+                pid4 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_TURN);
             }
             else{
-                k3 = new KalmanFilter(0);
-                pid3 = new PIDController(0);
+                k3 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+                pid3 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
 
-                k4 = new KalmanFilter(0);
-                pid4 = new PIDController(0);
+                k4 = new KalmanFilter(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
+                pid4 = new PIDController(PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT);
             }
 
             double offset = t.milliseconds();

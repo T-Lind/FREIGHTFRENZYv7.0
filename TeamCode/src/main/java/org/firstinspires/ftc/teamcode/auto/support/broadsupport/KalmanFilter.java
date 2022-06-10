@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
+
 /**
  * A Kalman Filter for 1D data.
  * It can be used for multiple dimensioned data, however a separate
@@ -43,8 +45,8 @@ public class KalmanFilter {
      *                   Additional deviceCodes will be added here.
      *                   This method is shared with the PIDController class.
      */
-    public KalmanFilter(int deviceCode){
-        if(deviceCode == 0){
+    public KalmanFilter(PeripheralType deviceCode){
+        if(deviceCode == PeripheralType.DRIVETRAIN_MOTOR_STRAIGHT){
             this.R = 18;
             this.Q = 6;
 
@@ -52,11 +54,11 @@ public class KalmanFilter {
             this.B = 10;
             this.A = 1.5;
         }
-        else if(deviceCode == 1){
+        else if(deviceCode == PeripheralType.DISTANCE_SENSOR){
             this.R = 2;
             this.Q = 10;
         }
-        else if(deviceCode == 2){
+        else if(deviceCode == PeripheralType.DRIVETRAIN_MOTOR_TURN){
             this.R = 15;
             this.Q = 30;
 
@@ -102,6 +104,7 @@ public class KalmanFilter {
      * @param measurement the measured value
      * @param u is the controlled input value
      * @return the predicted result.
+     * @Postcondition the appropriate filtered value has been returned
      */
     // Filter a measurement: measured value is measurement, controlled input value is u.
     public final double filter(double measurement, double u){
@@ -127,6 +130,7 @@ public class KalmanFilter {
      * Feed a new value into the Kalman filter and return what the predicted state is.
      * @param measurement the measured value
      * @return the predicted result.
+     * @Postcondition the appropriate filtered value has been returned
      */
     // Filter a measurement taken
     public final double filter(double measurement){
@@ -152,6 +156,7 @@ public class KalmanFilter {
     /**
      * Return the last measurement taken.
      * @return the last measurement
+     * @Postcondition returns the last measurement accurately
      */
     // Return the last measurement taken
     public final double lastMeasurement(){
@@ -161,6 +166,7 @@ public class KalmanFilter {
     /**
      * Set the measurement noise
      * @param noise the measurement noise.
+     * @Postcondition sets the measurement noise accurately
      */
     // Set measurement noise
     public final void setMeasurementNoise(double noise){
@@ -170,6 +176,7 @@ public class KalmanFilter {
     /**
      * Set the process noise
      * @param noise the process noise.
+     * @Postcondition sets the process noise accurately
      */
     public final void setProcessNoise(double noise){
         this.R = noise;

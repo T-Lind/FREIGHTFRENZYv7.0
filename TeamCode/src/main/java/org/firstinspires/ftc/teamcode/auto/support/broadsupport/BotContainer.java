@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -21,8 +18,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 abstract public class BotContainer extends LinearOpMode{
    // Pathing and marker list objects
    private PathSequence pathSequence;
-   private NeoMarkerList markerList;
-   private RunnableCollectiveArray runMarkerObject;
+   protected NeoMarkerList markerList;
+   private RunnableCollective runMarkerObject;
 
    // Camera objects
    private WebcamName weCam;
@@ -39,38 +36,12 @@ abstract public class BotContainer extends LinearOpMode{
     * Assign the path sequence to this LinearOpMode
     * @param pathSequence is the set of basic robot instructions to move along
     *                     (final linear wheel velocities).
+    * @Postcondition pathSequence is not null
     */
    protected final void setPathSequence(PathSequence pathSequence) {
-      assert pathSequence != null : "You must enter a non-null object in BotContainer.setPathSequence()";
       this.pathSequence = pathSequence;
    }
 
-   /**
-    * Set the list of markers, also create the RunnableCollective object which creates the thread
-    * branches.
-    * @param markerList the list of markers (aliases it)
-    */
-   protected final void setMarkerList(NeoMarkerList markerList){
-      assert markerList != null : "You must enter a non-null object in BotContainer.setMarkerList()";
-      this.markerList = markerList;
-      runMarkerObject = new RunnableCollectiveArray(this.markerList);
-   }
-
-   /**
-    * Start the markers according to the times given, also check for null
-    */
-   protected final void executeMarkers(){
-      // Start the markers
-      if(runMarkerObject != null)
-         runMarkerObject.activateMarkers();
-   }
-
-   /**
-    * Interrupts all threads and stops the markers
-    */
-   protected final void stopMarkers(){
-      runMarkerObject.setStopMarkers();
-   }
 
    /**
     * Follows the path and marker list given, assuming one was given.
@@ -81,11 +52,14 @@ abstract public class BotContainer extends LinearOpMode{
 
       // Start markers
       if (markerList != null)
-         executeMarkers();
+         activateMarkers();
 
       // Follow the path
       if (pathSequence != null)
          pathSequence.follow();
+
+      // Stop the insertMarkers
+      stopMarkers();
    }
 
    /**
@@ -109,6 +83,27 @@ abstract public class BotContainer extends LinearOpMode{
       while (!opModeIsActive());
    }
 
+   /**
+    * Start the markers according to the times given, also check for null
+    * @Precondition markerList has been assigned and is not null
+    * @Postcondition the multi-threaded execution of markers has started
+    */
+   private void activateMarkers(){
+      if(markerList == null)
+         throw new InternalError("Tried to execute");
+
+      runMarkerObject = new RunnableCollective(this.markerList);
+
+      // Start the markers
+      runMarkerObject.activateMarkers();
+   }
+
+   /**
+    * Interrupts all threads and stops the markers
+    */
+   private void stopMarkers(){
+      runMarkerObject.setStopMarkers();
+   }
 
    /**
     * Initialize and set the motors' properties
@@ -157,8 +152,7 @@ abstract public class BotContainer extends LinearOpMode{
          }
          @Override
          public void onError(int errorCode) {
-            telemetry.addData("Error in camera initialization! Error code",errorCode);
-            telemetry.update();
+            throw new InternalError("Error in camera initialization! Error code "+errorCode);
          }
       });
    }
