@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.direction;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.Direction;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @author Tiernan Lindauer
  * for FTC team 7797.
  */
-public class SplinePath extends NeoPath {
+public class SplinePath extends Path {
     // Variables to characterize the spline
     private double[] radii;
     private double[] arcLengths;
@@ -20,7 +20,7 @@ public class SplinePath extends NeoPath {
     private double accelerationTime;
     private double additionalpathonetime;
     private double additionalPathTwoTime;
-    private direction moveWay;
+    private Direction moveWay;
     private ArrayList<Double> times;
 
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.
@@ -45,7 +45,7 @@ public class SplinePath extends NeoPath {
         additionalPathTwoTime = 0;
 
         times = new ArrayList<>();
-        moveWay = direction.FORWARD;
+        moveWay = Direction.FORWARD;
     }
     /**
      * Constructor for SplinePath with reversed boolean.
@@ -70,9 +70,9 @@ public class SplinePath extends NeoPath {
         times = new ArrayList<>();
 
         if(reversed)
-            moveWay = direction.REVERSE;
+            moveWay = Direction.REVERSE;
         else
-            moveWay = direction.FORWARD;
+            moveWay = Direction.FORWARD;
     }
 
     /**
@@ -182,7 +182,7 @@ public class SplinePath extends NeoPath {
         if(arcLengths == null || times == null)
             throw new InternalError("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getLeftVelocity()");
 
-        if(moveWay == direction.FORWARD) {
+        if(moveWay == Direction.FORWARD) {
             if (getArc(currentTime) == -1) {
                 this.setCompleted(true);
                 return 0;
@@ -221,7 +221,7 @@ public class SplinePath extends NeoPath {
         if(arcLengths == null || times == null)
             throw new InternalError("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getRightVelocity()");
 
-        if(moveWay == direction.FORWARD) {
+        if(moveWay == Direction.FORWARD) {
             if (getArc(currentTime) == -1) {
                 this.setCompleted(true);
                 return 0;

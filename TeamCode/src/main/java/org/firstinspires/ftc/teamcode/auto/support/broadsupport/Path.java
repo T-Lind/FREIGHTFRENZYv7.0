@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
  * Parent class for paths that solely are composed of time to wheel velocity functions.
  * Essentially acts as a piecewise function over time for both the left and right velocity.
  */
-public abstract class NeoPath {
+public abstract class Path {
     // Variables common to each path.
     private double executeTime = 0;
     private boolean completed = false;
@@ -86,9 +86,7 @@ public abstract class NeoPath {
      * @Postcondition the accurate build status has been returned
     */
     public final boolean getBuilt(){
-        if(construction == BuildStatus.BUILT)
-            return true;
-        return false;
+        return construction == BuildStatus.BUILT;
     }
 
     /**
@@ -120,7 +118,7 @@ public abstract class NeoPath {
 
     /**
      * Get the right angle - meant to be overridden, defaults to zero.
-     * @param t is the current time into this specific NeoPath.
+     * @param currentTime is the current time into this specific NeoPath.
      */
     public double getRightAngle(double currentTime){
         assert currentTime >= 0 : "The time to get the right velocity for in NeoPath.getRightAngle(...) must not be less than zero!";

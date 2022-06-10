@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * A class for running the markers on different threads at the same time to run each marker.
@@ -10,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class RunnableCollective implements Runnable{
     // Create a NeoMarker list - essentially an object containing the InsertMarkers
     // (which are the things we want to do like raise an arm) and the times to execute them.
-    private final NeoMarkerList markerList;
+    private final MarkerList markerList;
 
     // Signal the program when to stop running the markers
     private boolean stopMarkers;
@@ -22,7 +20,7 @@ public class RunnableCollective implements Runnable{
      * Instantiate the object with a markerList to reference, used in the PathSequence family
      * @param markerList is the collection of markers and the time they should execute at
      */
-    public RunnableCollective(NeoMarkerList markerList){
+    public RunnableCollective(MarkerList markerList){
         if(markerList == null)
             throw new InternalError("markerList in RunnableCollectiveArray.RunnableCollectiveArray(...) must not be null!");
 

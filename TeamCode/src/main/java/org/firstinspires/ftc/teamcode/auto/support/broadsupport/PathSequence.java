@@ -27,7 +27,7 @@ public class PathSequence {
      * @param right the right motor object
      * @param wheelR the radius of the wheel
      */
-    public PathSequence(Drivetrain drivetrainType, ArrayList<NeoPath> paths, DcMotorEx left, DcMotorEx right, double wheelR){
+    public PathSequence(Drivetrain drivetrainType, ArrayList<Path> paths, DcMotorEx left, DcMotorEx right, double wheelR){
         sequence = new TwoWheelPathSequence(paths, left, right, wheelR);
         this.drivetrainType = drivetrainType;
     }
@@ -43,7 +43,7 @@ public class PathSequence {
      * @param right2 the second right motor object (order does not matter)
      * @param wheelR the radius of the wheel
      */
-    public PathSequence(Drivetrain drivetrainType, ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
+    public PathSequence(Drivetrain drivetrainType, ArrayList<Path> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
         if( drivetrainType == Drivetrain.FOURWD)
             sequence = new FourWheelPathSequence(paths, left1, left2, right1, right2, wheelR);
         else if( drivetrainType == Drivetrain.DIFFY)
@@ -63,7 +63,7 @@ public class PathSequence {
      * @param right3 the third right motor object (order does not matter)
      * @param wheelR the radius of the wheel
      */
-    public PathSequence(Drivetrain drivetrainType, ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR){
+    public PathSequence(Drivetrain drivetrainType, ArrayList<Path> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx left3, DcMotorEx right1, DcMotorEx right2, DcMotorEx right3, double wheelR){
         sequence = new SixWheelPathSequence(paths, left1, left2, left3, right1, right2, right3, wheelR);
         this.drivetrainType = drivetrainType;
     }

@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
  * Useful for running arms, motors, etc. while in movement.
  * @author Tiernan Lindauer
  */
-public interface NeoInsertMarker {
+public interface InsertMarker {
     /**
      * execute what the lambda expression says immediately
      */

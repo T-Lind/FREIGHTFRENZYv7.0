@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
@@ -30,7 +30,7 @@ public class TwoWheelPathSequence extends PathSequenceFather{
      * @param right is the right motor (presumed to be positive to go forward)
      * @param wheelR is the wheel's radius
      */
-    public TwoWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left, DcMotorEx right, double wheelR){
+    public TwoWheelPathSequence(ArrayList<Path> paths, DcMotorEx left, DcMotorEx right, double wheelR){
         trajectory = paths;
         wheelRadius = wheelR;
 
@@ -52,7 +52,7 @@ public class TwoWheelPathSequence extends PathSequenceFather{
         ElapsedTime t = new ElapsedTime();
         t.reset();
 
-        for(NeoPath p : trajectory){
+        for(Path p : trajectory){
             if(!p.getBuilt())
                 p.build();
 
@@ -86,9 +86,9 @@ public class TwoWheelPathSequence extends PathSequenceFather{
             }
 
             double offset = t.milliseconds();
-            while(!p.getCompleted()){
-                double leftV = NeoPath.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
-                double rightV = NeoPath.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
+            while(p.getCompleted()){
+                double leftV = Path.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = Path.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
                 double corL = pid3.update((long)leftV, (long)k3.filter(left.getVelocity(RADIANS)));
                 double corR = pid4.update((long)rightV, (long)k4.filter(right.getVelocity(RADIANS)));

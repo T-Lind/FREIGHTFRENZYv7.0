@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
@@ -35,7 +35,7 @@ public class FourWheelPathSequence extends PathSequenceFather {
      * @param right2 is the right motor (presumed to be positive to go forward) does not matter which
      * @param wheelR is the wheel's radius
      */
-    public FourWheelPathSequence(ArrayList<NeoPath> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
+    public FourWheelPathSequence(ArrayList<Path> paths, DcMotorEx left1, DcMotorEx left2, DcMotorEx right1, DcMotorEx right2, double wheelR){
         trajectory = paths;
         wheelRadius = wheelR;
 
@@ -56,7 +56,7 @@ public class FourWheelPathSequence extends PathSequenceFather {
 
         ElapsedTime t = new ElapsedTime();
         t.reset();
-        for(NeoPath p : trajectory){
+        for(Path p : trajectory){
             if(!p.getBuilt())
                 p.build();
 
@@ -76,10 +76,10 @@ public class FourWheelPathSequence extends PathSequenceFather {
             double offset = t.milliseconds();
 
             // Execute the path
-            while(!p.getCompleted()){
+            while(p.getCompleted()){
                 // Get the velocities from what the path says the end result velocities should be
-                double leftV = NeoPath.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
-                double rightV = NeoPath.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
+                double leftV = Path.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = Path.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
                 // Correct based on PID and kalman filter
                 double corL1 = pidLeft1.update((long)leftV, (long)kLeft1.filter(left1.getVelocity(RADIANS)));

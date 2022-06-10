@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
  * for FTC team 7797.
  */
 
-public class Line extends NeoPath {
+public class Line extends Path {
     // Variables to model the type of line this path should follow
     private double distance;
     private double maxVelocity;

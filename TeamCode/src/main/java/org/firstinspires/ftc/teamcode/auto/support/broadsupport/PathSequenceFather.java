@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public abstract class PathSequenceFather {
     // Common variables and objects among all path sequences
-    protected ArrayList<NeoPath> trajectory;
+    protected ArrayList<Path> trajectory;
     protected double wheelRadius;
 
 
@@ -16,7 +16,7 @@ public abstract class PathSequenceFather {
     protected final void buildAll(){
         if(trajectory == null)
             throw new InternalError("Trajectory in PathSequenceFather.buildAll() must not be null!");
-        for(NeoPath path : trajectory)
+        for(Path path : trajectory)
             path.build();
     }
     /**
@@ -43,7 +43,7 @@ public abstract class PathSequenceFather {
         if(trajectory == null)
             throw new InternalError("Trajectory in PathSequenceFather.resetPaths() must not be null!");
 
-        for(NeoPath path : trajectory)
+        for(Path path : trajectory)
             path.setCompleted(false);
     }
 

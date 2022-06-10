@@ -3,13 +3,11 @@ package org.firstinspires.ftc.teamcode.auto.executionprograms.experimentalautos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Timer;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.BotContainer;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Line;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoInsertMarker;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoMarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequence;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.Drivetrain;
 
@@ -28,8 +26,8 @@ public class AsynchTest extends BotContainer {
 
 
         // Create the sequence of paths
-        ArrayList<NeoPath> sequenceInstructions = new ArrayList<>();
-        NeoPath line = new Line(1.25, 0.2);
+        ArrayList<Path> sequenceInstructions = new ArrayList<>();
+        Path line = new Line(1.25, 0.2);
         sequenceInstructions.add(line);
 
         //         Create the path sequence
@@ -47,7 +45,7 @@ public class AsynchTest extends BotContainer {
         AtomicBoolean runLoop1 = new AtomicBoolean(true);
 
         // Realize the interface and assign it to the following code:
-        NeoInsertMarker telemetryLoop1 = ()-> {
+        InsertMarker telemetryLoop1 = ()-> {
             // Simply print the current time into this code!
             ElapsedTime t = new ElapsedTime();
             while(t.milliseconds()/1000.0 < 3 && runLoop1.get()){
@@ -62,7 +60,7 @@ public class AsynchTest extends BotContainer {
         // Assign variable to not run the risk of repeating the marker code
         AtomicBoolean runLoop2 = new AtomicBoolean(true);
 
-        NeoInsertMarker telemetryLoop2 = ()-> {
+        InsertMarker telemetryLoop2 = ()-> {
             // Simply print the current time into this code!
             ElapsedTime t = new ElapsedTime();
             while(t.milliseconds()/1000.0 < 3 && runLoop2.get()){
@@ -74,7 +72,7 @@ public class AsynchTest extends BotContainer {
             runLoop2.set(false);
         };
         // Assign these realized interfaces to the LinearOpMode (protected variable inherited)
-        markerList = new NeoMarkerList(telemetryLoop1, 0, telemetryLoop2, 0);
+        markerList = new MarkerList(telemetryLoop1, 0, telemetryLoop2, 0);
 
         // run the auto and any markers
         executeAuto();

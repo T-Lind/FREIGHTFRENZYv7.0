@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.auto.support;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * Basic class to make a simple
+ * Basic class to make a simple time keeping class
  */
 public class Timer {
     private double timeToLoop;
     private ElapsedTime elapsedTime;
 
     // Acceptable margin of error for time measurement in seconds for the timer
-    private static final double timerMarginOfError = 0.5;
+    private static final double TIMER_MARGIN_OF_ERROR = 0.01;
 
     /**
      * Establish a timer object. Not used for the static method sleep.
@@ -25,26 +25,42 @@ public class Timer {
     /**
      * Check to see if the current time for this Timer instance is past the time to loop
      * @return whether or not to continue looping
+     * @Precondition elapsedTime has been assigned
+     * @Postcondition returns the correct state of the timer
      */
-    public boolean inTimeRange(){
-        return elapsedTime.milliseconds() / 1000 < timeToLoop;
+    public final boolean inTimeRange(){
+        if(elapsedTime == null)
+            throw new InternalError("elaspsedTime in Timer.inTimeRange() cannot be null!");
+
+        return elapsedTime.milliseconds()/1000.0+TIMER_MARGIN_OF_ERROR < timeToLoop;
     }
 
     /**
      * Gets the current time of this Timer instance
      * @return the current time in seconds of this Timer instance
+     * @Precondition elapsedTime has been assigned
+     * @Postcondition returns the correct time of the timer
      */
-    public double getTime(){
+    public final double getTime(){
+        if(elapsedTime == null)
+            throw new InternalError("elaspsedTime in Timer.getTime() cannot be null!");
+
         return elapsedTime.milliseconds()/1000;
     }
 
     /**
      * Hang up the thread based on a time to sleep
      * @param timeToSleep the time the thread should sleep for
+     * @Postcondition the thread has slept for the appropriate time
      */
     public static void sleep(double timeToSleep){
         ElapsedTime currentTime = new ElapsedTime();
-        while(currentTime.milliseconds()/1000+timerMarginOfError < timeToSleep);
+
+        double marginedCurrentTime;
+        do{
+            marginedCurrentTime = currentTime.milliseconds()/1000+ TIMER_MARGIN_OF_ERROR;
+        }
+        while(marginedCurrentTime < timeToSleep);
     }
 
 }

@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 abstract public class BotContainer extends LinearOpMode{
    // Pathing and marker list objects
    private PathSequence pathSequence;
-   protected NeoMarkerList markerList;
+   protected MarkerList markerList;
    private RunnableCollective runMarkerObject;
 
    // Camera objects

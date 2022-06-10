@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.NeoPath;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
@@ -39,7 +39,7 @@ public class DiffyPathSequence extends PathSequenceFather {
      * @param rightBack is the back right motor - CHUB side is the front
      * @param wheelR is the wheel's radius
      */
-    public DiffyPathSequence(ArrayList<NeoPath> d, DcMotorEx leftFront, DcMotorEx leftBack, DcMotorEx rightFront, DcMotorEx rightBack, double wheelR){
+    public DiffyPathSequence(ArrayList<Path> d, DcMotorEx leftFront, DcMotorEx leftBack, DcMotorEx rightFront, DcMotorEx rightBack, double wheelR){
         trajectory = d;
         wheelRadius = wheelR;
 
@@ -78,7 +78,7 @@ public class DiffyPathSequence extends PathSequenceFather {
         t.reset();
 
         // Go through every path in the trajectory
-        for(NeoPath path : trajectory){
+        for(Path path : trajectory){
             // Make sure the path is built
             if(!path.getBuilt())
                 path.build();
@@ -101,7 +101,7 @@ public class DiffyPathSequence extends PathSequenceFather {
             double offset = t.milliseconds();
 
             // Execute the path
-            while(!path.getCompleted()){
+            while(path.getCompleted()){
                 // Get the velocities from what the path says the end result velocities should be
                 double leftV = path.getLeftVelocity((t.milliseconds()-offset)/1000);
                 double rightV = path.getRightVelocity((t.milliseconds()-offset)/1000);
