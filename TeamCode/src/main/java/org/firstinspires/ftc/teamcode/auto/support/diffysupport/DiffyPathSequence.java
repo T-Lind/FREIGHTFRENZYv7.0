@@ -15,21 +15,34 @@ import java.util.ArrayList;
 /**
  * Program to take linear velocities from each wheel and translate
  * them into 4wd
- * Created by
+ * 
+ * ---------------------------------
+ * IMPORTANT NOTICE:
+ * EXPERIMENTAL - REPLACE WITH YOUR OWN CODE!!
+ * ---------------------------------
+ * 
  * @author Tiernan Lindauer
- * for FTC team 7797.
  */
 public class DiffyPathSequence extends PathSequenceFather {
 
     // Motor variables specific to a diffy swerve
+    /**
+     * Left frontmost motor
+     */
     private DcMotorEx leftFront;
+    /**
+     * Left backmost motor
+     */
     private DcMotorEx leftBack;
+    /**
+     * Right frontmost motor
+     */
     private DcMotorEx rightFront;
+    /**
+     * Right backmost motor
+     */
     private DcMotorEx rightBack;
-
-    // Conversion number for diffy swerves
-    private final double DIFFY_FACTOR = 100;
-
+    
     /**
      * Constructor for DiffyPathSequence.
      * @param d is the ArrayList of paths
@@ -61,11 +74,11 @@ public class DiffyPathSequence extends PathSequenceFather {
 
 
     /**
-     * Actually moves the robot along the specified NeoPaths.
+     * Actually moves the robot along the specified Paths.
      * Also adheres to InsertMarkers if any.
      * NOTE: cannot rotate diffy swerve pod angles at this time
-     * @Precondition motor objects are not null and have been instantiated
-     * @Postcondition every path has been executed
+     * Precondition:  motor objects are not null and have been instantiated
+     * Postcondition: every path has been executed
      */
     @Override
     public final void follow(){

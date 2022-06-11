@@ -72,8 +72,8 @@ public class SixWheelPathSequence extends PathSequenceFather {
 
     /**
      * Actually moves the robot along the specified Paths.
-     * @Precondition the motor and trajectory objects have been created
-     * @Postcondition the path has been followed
+     * Precondition:  the motor and trajectory objects have been created
+     * Postcondition: the path has been followed
      */
     @Override
     public final void follow(){

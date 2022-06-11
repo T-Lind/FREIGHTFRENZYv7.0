@@ -33,8 +33,8 @@ public class Turn extends Line{
      * Get the left wheel velocity
      * @param currentTime the current time
      * @return the left wheel velocity so as to turn the right amount.
-     * @Precondition current time is not less than zero
-     * @Postcondition the accurate left velocity is returned
+     * Precondition:  current time is not less than zero
+     * Postcondition: the accurate left velocity is returned
      */
 
     @Override
@@ -47,7 +47,7 @@ public class Turn extends Line{
     /**
      * Get what type of path this is. Useful for debugging
      * @return The type of path, in this case a turn.
-     * @Postcondition the correct type is returned
+     * Postcondition: the correct type is returned
      */
     @Override
     public PathType getType(){

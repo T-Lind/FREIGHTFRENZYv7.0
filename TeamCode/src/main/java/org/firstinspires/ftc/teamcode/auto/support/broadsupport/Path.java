@@ -34,34 +34,34 @@ public abstract class Path {
      * Meant to compute the trajectory and essentially turn it into a piecewise function.
      * This method is supposed to be overriden.
      *
-     * @Precondition the construction variable has been instantiated
-     * @Postcondition the path is set to a built status
+     * Precondition:  the construction variable has been instantiated
+     * Postcondition: the path is set to a built status
      */
     public void build() {
         construction = BuildStatus.BUILT;
     }
 
     /**
-     * Set the execute time - time it takes to follow this specific NeoPath.
+     * Set the execute time - time it takes to follow this specific Path.
      *
      * @param executeTime is the new execute time.
-     * @Precondition execute time is greater than zero
-     * @Postcondition the execute time has been set
+     * Precondition:  execute time is greater than zero
+     * Postcondition: the execute time has been set
      */
     public final void setExecuteTime(double executeTime) {
         if(executeTime < 0)
-            throw new RuntimeException("The execute time in NeoPath.setExecuteTime(...) must be greater than zero!");
+            throw new RuntimeException("The execute time in Path.setExecuteTime(...) must be greater than zero!");
         this.executeTime = executeTime;
     }
 
     /**
-     * Get the current execute time - time it takes to follow this specific NeoPath.
+     * Get the current execute time - time it takes to follow this specific Path.
      *
      * @return the execute time.
      */
     public double getExecuteTime() {
         if(executeTime < 0)
-            throw new RuntimeException("The execute time in NeoPath.getExecuteTime(...) must be greater than zero!");
+            throw new RuntimeException("The execute time in Path.getExecuteTime(...) must be greater than zero!");
         return executeTime;
     }
 
@@ -69,8 +69,8 @@ public abstract class Path {
      * Set the completed status - not overriden.
      *
      * @param completionStatus is the new status of the path (should always be assigned as true).
-     * @Precondition the completion status parameter accurately reflects the state of the robot
-     * @Postcondition the completed variable is set
+     * Precondition:  the completion status parameter accurately reflects the state of the robot
+     * Postcondition: the completed variable is set
      */
     public void setCompleted(boolean completionStatus) {
         completed = completionStatus;
@@ -80,8 +80,8 @@ public abstract class Path {
      * Get the completed status - not overriden.
      *
      * @return the completed status.
-     * @Precondition the completed status has been accurately updated
-     * @Postcondition the status of completion has been returned
+     * Precondition:  the completed status has been accurately updated
+     * Postcondition: the status of completion has been returned
      */
     public final boolean getCompleted() {
         return completed;
@@ -91,8 +91,8 @@ public abstract class Path {
      * Set the built boolean.
      *
      * @param isBuilt is the build status.
-     * @Precondition the isBuilt parameter accurately reflects the status of the path
-     * @Postcondition the construction variable is accurately set
+     * Precondition:  the isBuilt parameter accurately reflects the status of the path
+     * Postcondition: the construction variable is accurately set
      */
     public final void setBuilt(boolean isBuilt) {
         if (isBuilt)
@@ -102,11 +102,11 @@ public abstract class Path {
     }
 
     /**
-     * Get the build status of this NeoPath.
+     * Get the build status of this Path.
      *
      * @return the built variable (build status).
-     * @Precondition the build status has been accurately updated
-     * @Postcondition the accurate build status has been returned
+     * Precondition:  the build status has been accurately updated
+     * Postcondition: the accurate build status has been returned
      */
     public final boolean getBuilt() {
         return construction == BuildStatus.BUILT;
@@ -114,52 +114,61 @@ public abstract class Path {
 
     /**
      * Get the left velocity - meant to be overridden, defaults to zero speed.
+     * Precondition: currentTime is greater than zero
      *
-     * @param currentTime is the current time into this specific NeoPath.
-     * @Precondition
+     * @param currentTime is the current time into this specific Path.
      */
     public double getLeftVelocity(double currentTime) {
-        assert currentTime >= 0 : "The time to get the left velocity for in NeoPath.getLeftVelocity(...) must not be less than zero!";
+        if(currentTime < 0)
+            throw new RuntimeException("The time to get the left velocity for in Path.getLeftVelocity(...) must not be less than zero!");
         return 0;
     }
 
     /**
      * Get the right velocity - meant to be overridden, defaults to zero speed.
+     * Precondition: currentTime is greater than zero
      *
-     * @param currentTime is the current time into this specific NeoPath.
+     * @param currentTime is the current time into this specific Path.
      */
     public double getRightVelocity(double currentTime) {
-        assert currentTime >= 0 : "The time to get the right velocity for in NeoPath.getRightVelocity(...) must not be less than zero!";
+        if(currentTime < 0)
+            throw new RuntimeException("The time to get the right velocity for in Path.getRightVelocity(...) must not be less than zero!");
         return 0;
     }
 
     /**
      * Get the left angle - meant to be overridden, defaults to zero.
+     * Precondition: currentTime is greater than zero
      *
-     * @param currentTime is the current time into this specific NeoPath.
+     * @param currentTime is the current time into this specific Paths
      */
     public double getLeftAngle(double currentTime) {
-        assert currentTime >= 0 : "The time to get the left velocity for in NeoPath.getLeftAngle(...) must not be less than zero!";
+        if(currentTime < 0)
+            throw new RuntimeException("The time to get the left velocity for in Path.getLeftAngle(...) must not be less than zero!");
         return 0;
     }
 
     /**
      * Get the right angle - meant to be overridden, defaults to zero.
+     * Precondition: currentTime is greater than zero
      *
-     * @param currentTime is the current time into this specific NeoPath.
+     * @param currentTime is the current time into this specific Path.
      */
     public double getRightAngle(double currentTime) {
-        assert currentTime >= 0 : "The time to get the right velocity for in NeoPath.getRightAngle(...) must not be less than zero!";
+        if(currentTime < 0)
+            throw new RuntimeException("The time to get the right velocity for in Path.getRightAngle(...) must not be less than zero!");
         return 0;
     }
 
     /**
+     * Method to convert distance for a simple 2/4/6 wheel drivetrain - NOT diffy swerve!
      * @param wheelRadius is the radius, NOT DIAMETER, of the wheel
      * @param velocity    is the linear velocity in m/s
      * @return the angular velocity in rad/s
      */
     public static double convert(double wheelRadius, double velocity) {
-        assert wheelRadius > 0 && velocity > 0 : "Wheel radius and velocity must be greater than zero in NeoPath.convert(...)";
+        if(wheelRadius < 0 || velocity < 0)
+            throw new RuntimeException("Wheel radius and velocity must be greater than zero in Path.convert(...)");
         velocity /= wheelRadius; // convert to angular velocity by radius
         velocity /= (2 * 3.14159);
         return velocity;

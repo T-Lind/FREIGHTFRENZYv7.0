@@ -59,7 +59,7 @@ abstract public class Robot extends BotContainer{
 
     /**
      * Initialize and set the motors' properties
-     * @Postcondition motors have been properly assigned
+     * Postcondition: motors have been properly assigned
      */
     private void initMotors(){
         // build the motor objects - add your code here
@@ -83,7 +83,7 @@ abstract public class Robot extends BotContainer{
 
     /**
      * Initialize the camera and set its properties.
-     * @Postcondition camera has been properly assigned
+     * Postcondition: camera has been properly assigned
      */
     private void initCamera(){
         // Build the camera objects - most likely you won't need to change this, but if you've renamed your webcam then you will!

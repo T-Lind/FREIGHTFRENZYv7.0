@@ -16,7 +16,13 @@ import java.util.ArrayList;
  */
 public class PathSequence {
     // Items necessary for each path - trajectory to follow and the time of drivetrain
+    /**
+     * Object of sequence to follow
+     */
     private PathSequenceFather sequence;
+    /**
+     * Type of drivetrain to run the sequence on
+     */
     private Drivetrain drivetrainType;
 
     /**
@@ -71,8 +77,8 @@ public class PathSequence {
     /**
      * Method to get the path sequence
      * @return the path sequence
-     * @Precondition sequence has been created and is not null
-     * @Postcondition the path sequence is returned successfully
+     * Precondition:  sequence has been created and is not null
+     * Postcondition: the path sequence is returned successfully
      */
     public final PathSequenceFather getPathSequence(){
         if(sequence == null)
@@ -82,8 +88,8 @@ public class PathSequence {
 
     /**
      * Build all of the paths in the passed sequence object
-     * @Precondition sequence is not null and has been instantiated
-     * @Postcondition each path in sequence has been built
+     * Precondition:  sequence is not null and has been instantiated
+     * Postcondition: each path in sequence has been built
      */
     public final void buildAll(){
         if(sequence == null)
@@ -93,8 +99,8 @@ public class PathSequence {
 
     /**
      * Actually follow the passed sequence object
-     * @Precondition sequence is not null and has been instantiated
-     * @Postcondition every sequence has been followed by the robot
+     * Precondition:  sequence is not null and has been instantiated
+     * Postcondition: every sequence has been followed by the robot
      */
     public final void follow(){
         if(sequence == null)

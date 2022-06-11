@@ -26,8 +26,8 @@ public class Toggle {
     /**
      * Get the value of the toggle
      * @return the value of the toggle
-     * @Precondition the object's starting conditions have been assigned correctly
-     * @Postcondition the appropriate state is returned
+     * Precondition:  the object's starting conditions have been assigned correctly
+     * Postcondition: the appropriate state is returned
      */
     public final boolean getToggleState(){
         return toggleState;
@@ -36,8 +36,8 @@ public class Toggle {
     /**
      * updates the current state according to a leading edge detector
      * @param currentInputState what the input currently reads (ex. a button on the control pad)
-     * @Precondition currentInputState accurately reflects the toggle state
-     * @Postcondition the object's state has been updated according to a leading edge detector
+     * Precondition:  currentInputState accurately reflects the toggle state
+     * Postcondition: the object's state has been updated according to a leading edge detector
      */
     public final void updateLeadingEdge(boolean currentInputState) {
         // if the past input state was false and the current input state is true then
@@ -53,8 +53,8 @@ public class Toggle {
     /**
      * updates the current state according to a falling edge detector
      * @param currentInputState what the input currently reads (ex. a button on the control pad)
-     * @Precondition currentInputState accurately reflects the toggle state
-     * @Postcondition the object's state has been updated according to a falling edge detector
+     * Precondition:  currentInputState accurately reflects the toggle state
+     * Postcondition: the object's state has been updated according to a falling edge detector
      */
     public final void updateFallingEdge(boolean currentInputState) {
         // if the past input state was false and the current input state is true then

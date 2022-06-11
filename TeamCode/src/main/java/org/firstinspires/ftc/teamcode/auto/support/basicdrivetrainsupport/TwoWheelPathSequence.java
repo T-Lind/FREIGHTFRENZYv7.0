@@ -21,7 +21,14 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
  * for FTC team 7797.
  */
 public class TwoWheelPathSequence extends PathSequenceFather{
+    /**
+     * Left motor object on your drivetrain
+     */
     private DcMotorEx left;
+
+    /**
+     * Right motor object on your drivetrain
+     */
     private DcMotorEx right;
     /**
      * Constructor for TwoWheelPathSequence to assign used objects
@@ -41,9 +48,9 @@ public class TwoWheelPathSequence extends PathSequenceFather{
 
 
     /**
-     * Actually moves the robot along the specified NeoPaths.
-     * @Precondition the motor and trajectory objects have been created
-     * @Postcondition the path has been followed
+     * Actually moves the robot along the specified Paths.
+     * Precondition:  the motor and trajectory objects have been created
+     * Postcondition: the path has been followed
      */
     public final void follow(){
         if(left == null || right == null || trajectory == null)

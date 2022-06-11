@@ -9,7 +9,7 @@ import java.util.Arrays;
  * Unlike the typical RunnableCollective, this can create as many threads as you want!
  */
 public class RunnableCollective implements Runnable{
-    // Create a NeoMarker list - essentially an object containing the InsertMarkers
+    // Create a MarkerList - essentially an object containing the InsertMarkers
     // (which are the things we want to do like raise an arm) and the times to execute them.
     private final MarkerList markerList;
 
@@ -39,8 +39,8 @@ public class RunnableCollective implements Runnable{
 
     /**
      * Start the thread that runs all of the markers
-     * @Precondition markerList is not null and has been instantiated
-     * @Postcondition the main thread has started
+     * Precondition:  markerList is not null and has been instantiated
+     * Postcondition: the main thread has started
      */
     public final void activateMarkers(){
         if(markerList == null)
@@ -53,8 +53,8 @@ public class RunnableCollective implements Runnable{
 
     /**
      * Set the stop condition and interrupts threads
-     * @Precondition childThreadList has been instantiated and is not null
-     * @Postcondition the markers have stopped running
+     * Precondition:  childThreadList has been instantiated and is not null
+     * Postcondition: the markers have stopped running
      */
     public final void setStopMarkers() {
         if(markerList == null)
@@ -77,8 +77,8 @@ public class RunnableCollective implements Runnable{
      * The broad run method - since the RunnableCollective itself is in a thread it needs to have
      * a run method, which is started whenever the thread is. It instantiates the new threads
      * and starts them as the time becomes right.
-     * @Precondition childThreadList and markerList has been instantiated and are not null
-     * @Postcondition each child thread has been started and executed according to the interface
+     * Precondition:  childThreadList and markerList has been instantiated and are not null
+     * Postcondition: each child thread has been started and executed according to the interface
      * realization with lambda in the runner program
      */
     @Override
@@ -133,13 +133,13 @@ public class RunnableCollective implements Runnable{
         }
 
         /**
-         * Method to execute the neoInsertMarker
-         *@Precondition markerList is not null, and index has been assigned
-         *@Postcondition the marker at this spot has started
+         * Method to execute the InsertMarker
+         *Precondition:  markerList is not null, and index has been assigned
+         *Postcondition: the marker at this spot has started
          */
         @Override
         public void run() {
-            markerList.getNeoInsertMarker(index).execute();
+            markerList.getInsertMarker(index).execute();
         }
     }
 }

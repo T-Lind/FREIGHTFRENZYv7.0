@@ -11,15 +11,32 @@ import java.util.ArrayList;
  */
 public class PIDController {
     // PID gains
+    /**
+     * Proportional gain
+     */
     private double proportional;
+    /**
+     * Integral gain
+     */
     private double integral;
+    /**
+     * Derivative gain
+     */
     private double derivative;
 
-    // Leftmost integration bound
+    /**
+     * Leftmost scrolling integration bound
+     */
     private int forgetLength;
 
     // ArrayLists to store the timing data
+    /**
+     * Error data to store
+     */
     private ArrayList<Long> data;
+    /**
+     * Time data to correspond to each error measurement
+     */
     private ArrayList<Long> time;
 
      /**
@@ -93,8 +110,8 @@ public class PIDController {
     /**
      * A private method to compute the integral term.
      * @return a right Riemann sum of the error so far.
-     * @Precondition time and data have been instantiated
-     * @Postcondition the accurate integration has been performed and returned.
+     * Precondition:  time and data have been instantiated
+     * Postcondition: the accurate integration has been performed and returned.
      */
     private long getIntegral(){
         if(time == null || data == null)
@@ -112,8 +129,8 @@ public class PIDController {
      * @param target where we would like to be, also called the reference
      * @param state where we currently are, I.E. motor position
      * @return the command to our motor, I.E. motor power
-     * @Precondition target and state are accurate
-     * @Postcondition the appropriate correction is returned
+     * Precondition:  target and state are accurate
+     * Postcondition: the appropriate correction is returned
      */
     public double update(long target, long state) {
         // PID logic and then return the output

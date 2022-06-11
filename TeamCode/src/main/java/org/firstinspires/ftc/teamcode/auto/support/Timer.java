@@ -34,8 +34,8 @@ public class Timer {
     /**
      * Check to see if the current time for this Timer instance is past the time to loop
      * @return whether or not to continue looping
-     * @Precondition elapsedTime has been assigned
-     * @Postcondition returns the correct state of the timer
+     * Precondition:  elapsedTime has been assigned
+     * Postcondition: returns the correct state of the timer
      */
     public final boolean inTimeRange(){
         if(elapsedTime == null)
@@ -47,8 +47,8 @@ public class Timer {
     /**
      * Gets the current time of this Timer instance
      * @return the current time in seconds of this Timer instance
-     * @Precondition elapsedTime has been assigned
-     * @Postcondition returns the correct time of the timer
+     * Precondition:  elapsedTime has been assigned
+     * Postcondition: returns the correct time of the timer
      */
     public final double getTime(){
         if(elapsedTime == null)
@@ -60,7 +60,7 @@ public class Timer {
     /**
      * Hang up the thread based on a time to sleep
      * @param timeToSleep the time the thread should sleep for
-     * @Postcondition the thread has slept for the appropriate time
+     * Postcondition: the thread has slept for the appropriate time
      */
     public static void sleep(double timeToSleep){
         ElapsedTime currentTime = new ElapsedTime();

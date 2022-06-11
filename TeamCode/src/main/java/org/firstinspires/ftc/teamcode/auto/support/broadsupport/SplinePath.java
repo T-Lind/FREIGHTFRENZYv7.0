@@ -27,7 +27,7 @@ public class SplinePath extends Path {
 
     /**
      * Constructor for SplinePath.
-     * Precondition: each static array in v is 3 long, size of r and v is equal
+     * Precondition:  : each static array in v is 3 long, size of r and v is equal
      * Convention: positive arc length is CCW, negative is CW
      * @param tw track width (m)
      * @param v maximum linear velocity (m/s)
@@ -77,8 +77,8 @@ public class SplinePath extends Path {
 
     /**
      * Compute the various aspects of the spline like ramp-up and ramp-down appending times, the times ArrayList, and ArcLengths list.
-     * @Precondition arcLengths and times is not null and has been instantiated
-     * @Postcondition times have been successfully computed and this path has been built,
+     * Precondition:  arcLengths and times is not null and has been instantiated
+     * Postcondition: times have been successfully computed and this path has been built,
      */
     @Override
     public void build(){
@@ -100,8 +100,8 @@ public class SplinePath extends Path {
     /**
      * Compute the execute time
      * @return return the execute time
-     * @Precondition times has been instantiated and is not null
-     * @Postcondition the appropriate execute time has been returned
+     * Precondition:  times has been instantiated and is not null
+     * Postcondition: the appropriate execute time has been returned
      */
     @Override
     public double getExecuteTime(){
@@ -115,8 +115,8 @@ public class SplinePath extends Path {
      /**
      * Get the times ArrayList - not used except for debugging, times is the time at which every sequential part of the spline executes
      * @return the times ArrayList
-      * @Precondition times is not null and has been instantiated
-      * @Postcondition times is returned successfully
+      * Precondition:  times is not null and has been instantiated
+      * Postcondition: times is returned successfully
      */
     private ArrayList<Double> getTimes(){
         if(times == null)
@@ -128,8 +128,8 @@ public class SplinePath extends Path {
     /**
     * Gets the current arc that is executing based on the current time
     * @param currentTime is the current time since the start of the spline
-     * @Precondition times is not null
-     * @Postcondition the appropriate arc is returned
+     * Precondition:  times is not null
+     * Postcondition: the appropriate arc is returned
     */
     private int getArc(double currentTime){
         if(times == null || currentTime < 0)
@@ -144,8 +144,8 @@ public class SplinePath extends Path {
     /**
     * Get the linear velocity of the WHOLE robot based off of the current time. It's only != to the velocity specified in the constructor in the ramp-up and ramp-down times.
     * @param currentTime is the current time into the spline
-     * @Precondition currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
-     * @Postcondition the appropriate velocity is returned
+     * Precondition:  currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
+     * Postcondition: the appropriate velocity is returned
     */
     private double getVelocity(double currentTime){
         if(arcLengths == null || times == null || currentTime < 0)
@@ -174,8 +174,8 @@ public class SplinePath extends Path {
     * @param currentTime is the current time into the spline.
     * @return the left wheel's linear velocity.
      *
-     * @Precondition currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
-     * @Postcondition the accurate left velocity is returned
+     * Precondition:  currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
+     * Postcondition: the accurate left velocity is returned
     */
     @Override
     public double getLeftVelocity(double currentTime){
@@ -213,8 +213,8 @@ public class SplinePath extends Path {
     * Get the right linear velocity based on the current time, accounting for negative arc lengths, reversed boolean, and different arc radii.
     * @param currentTime is the current time into the spline.
     * @return the right wheel's linear velocity.
-     * @Precondition currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
-     * @Postcondition the accurate right velocity is returned
+     * Precondition:  currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
+     * Postcondition: the accurate right velocity is returned
     */
     @Override
     public double getRightVelocity(double currentTime){
@@ -248,7 +248,7 @@ public class SplinePath extends Path {
     /**
      * Get what type of path this is. Useful for debugging
      * @return The type of path, in this case a spline.
-     * @Postcondition the accurate PathType has been returned.
+     * Postcondition: the accurate PathType has been returned.
      */
     @Override
     public PathType getType(){

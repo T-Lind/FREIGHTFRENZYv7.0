@@ -4,14 +4,21 @@ import java.util.ArrayList;
 
 public abstract class PathSequenceFather {
     // Common variables and objects among all path sequences
+    /**
+     * List of the paths to follow
+     */
     protected ArrayList<Path> trajectory;
+
+    /**
+     * Radius of the wheel
+     */
     protected double wheelRadius;
 
 
     /**
-     * Build each NeoPath in the trajectory.
-     * @Precondition trajectory is not null
-     * @Postcondition all paths have been successfully built
+     * Build each Path in the trajectory.
+     * Precondition:  trajectory is not null
+     * Postcondition: all paths have been successfully built
      */
     protected final void buildAll(){
         if(trajectory == null)
@@ -21,9 +28,9 @@ public abstract class PathSequenceFather {
     }
     /**
      * Build a specific trajectory
-     * @param i the index of the NeoPath that you want to build.
-     * @Precondition i is a valid index and trajectory is not null
-     * @Postcondition the NeoPath at position i has been built.
+     * @param i the index of the Path that you want to build.
+     * Precondition:  i is a valid index and trajectory is not null
+     * Postcondition: the Path at position i has been built.
      */
     protected final void build(int i){
         if(trajectory == null)
@@ -34,10 +41,10 @@ public abstract class PathSequenceFather {
     }
 
     /**
-     * @Precondition all paths have been build using the buildAll() method.
+     * Precondition:  all paths have been build using the buildAll() method.
      * Note that this is not technically necessary but reduces lag time.
      * Sets the completed state of each path back to false to allow for path reusability
-     * @Postcondition only the completed variable in each NeoPath in trajectory has been changed
+     * Postcondition: only the completed variable in each Path in trajectory has been changed
      */
     protected final void resetPaths(){
         if(trajectory == null)

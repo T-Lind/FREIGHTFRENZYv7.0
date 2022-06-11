@@ -21,9 +21,24 @@ import java.util.ArrayList;
  * for FTC team 7797.
  */
 public class FourWheelPathSequence extends PathSequenceFather {
+    /**
+     * Motor object - first left motor
+     */
     private DcMotorEx left1;
+
+    /**
+     * Motor object - second left motor
+     */
     private DcMotorEx left2;
+
+    /**
+     * Motor object - first right motor
+     */
     private DcMotorEx right1;
+
+    /**
+     * Motor object - second right motor
+     */
     private DcMotorEx right2;
 
     /**
@@ -46,9 +61,9 @@ public class FourWheelPathSequence extends PathSequenceFather {
     }
 
     /**
-     * Actually moves the robot along the specified NeoPaths.
-     * @Precondition the motor and trajectory objects have been created
-     * @Postcondition the path has been followed
+     * Actually moves the robot along the specified Paths.
+     * Precondition:  the motor and trajectory objects have been created
+     * Postcondition: the path has been followed
      */
     public final void follow(){
         if(left1 == null || left2 == null || right1 == null || right2 == null || trajectory == null)

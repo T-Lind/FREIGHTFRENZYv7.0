@@ -15,17 +15,37 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.PeripheralType;
  */
 public class KalmanFilter {
 
-    // Vectors
+
+    /**
+     * Vector A
+     */
     private double A = 1;
+    /**
+     * Vector B
+     */
     private double B = 0;
+    /**
+     * Vector C
+     */
     private double C = 1;
 
-    // Noise assumptions
+    /**
+     * Process noise
+     */
     private double R;
+    /**
+     * Measurement noise
+     */
     private double Q;
 
-    // Kalman filter return data
+    /**
+     * Covariance variable
+     */
     private double cov = Double.NaN;
+
+    /**
+     * State variable
+     */
     private double x = Double.NaN;
 
     /*
@@ -104,7 +124,7 @@ public class KalmanFilter {
      * @param measurement the measured value
      * @param u is the controlled input value
      * @return the predicted result.
-     * @Postcondition the appropriate filtered value has been returned
+     * Postcondition: the appropriate filtered value has been returned
      */
     // Filter a measurement: measured value is measurement, controlled input value is u.
     public final double filter(double measurement, double u){
@@ -130,7 +150,7 @@ public class KalmanFilter {
      * Feed a new value into the Kalman filter and return what the predicted state is.
      * @param measurement the measured value
      * @return the predicted result.
-     * @Postcondition the appropriate filtered value has been returned
+     * Postcondition: the appropriate filtered value has been returned
      */
     // Filter a measurement taken
     public final double filter(double measurement){
@@ -156,7 +176,7 @@ public class KalmanFilter {
     /**
      * Return the last measurement taken.
      * @return the last measurement
-     * @Postcondition returns the last measurement accurately
+     * Postcondition: returns the last measurement accurately
      */
     // Return the last measurement taken
     public final double lastMeasurement(){
@@ -166,7 +186,7 @@ public class KalmanFilter {
     /**
      * Set the measurement noise
      * @param noise the measurement noise.
-     * @Postcondition sets the measurement noise accurately
+     * Postcondition: sets the measurement noise accurately
      */
     // Set measurement noise
     public final void setMeasurementNoise(double noise){
@@ -176,7 +196,7 @@ public class KalmanFilter {
     /**
      * Set the process noise
      * @param noise the process noise.
-     * @Postcondition sets the process noise accurately
+     * Postcondition: sets the process noise accurately
      */
     public final void setProcessNoise(double noise){
         this.R = noise;

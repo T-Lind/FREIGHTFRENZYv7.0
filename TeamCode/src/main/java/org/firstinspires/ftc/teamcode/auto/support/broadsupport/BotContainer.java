@@ -44,8 +44,8 @@ abstract public class BotContainer extends LinearOpMode{
     * Assign the path sequence to this LinearOpMode
     * @param pathSequence is the set of basic robot instructions to move along
     *                     (final linear wheel velocities).
-    * @Precondition the parameter pathSequence is not null
-    * @Postcondition pathSequence is not null
+    * Precondition:  the parameter pathSequence is not null
+    * Postcondition: pathSequence is not null
     */
    protected final void setPathSequence(PathSequence pathSequence) {
       if(pathSequence == null)
@@ -74,8 +74,8 @@ abstract public class BotContainer extends LinearOpMode{
 
    /**
     * Follows the path and marker list given, assuming one was given.
-    * @Precondition either the marker list or the pathSequence has been assigned
-    * @Postcondition the path has been followed and the markers have stopped
+    * Precondition:  either the marker list or the pathSequence has been assigned
+    * Postcondition: the path has been followed and the markers have stopped
     */
    protected final void executeAuto() {
       if(markerList == null && pathSequence == null)
@@ -98,8 +98,8 @@ abstract public class BotContainer extends LinearOpMode{
 
    /**
     * Start the markers according to the times given, also check for null
-    * @Precondition markerList has been assigned and is not null
-    * @Postcondition the multi-threaded execution of markers has started
+    * Precondition:  markerList has been assigned and is not null
+    * Postcondition: the multi-threaded execution of markers has started
     */
    private void activateMarkers(){
       if(markerList == null)
@@ -113,8 +113,8 @@ abstract public class BotContainer extends LinearOpMode{
 
    /**
     * Interrupts all threads and stops the markers
-    * @Precondition markerList has been assigned and is not null
-    * @Postcondition the markers has been stopped
+    * Precondition:  markerList has been assigned and is not null
+    * Postcondition: the markers has been stopped
     */
    private void stopMarkers(){
       if(markerList == null)

@@ -12,10 +12,26 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 
 public class Line extends Path {
     // Variables to model the type of line this path should follow
+
+    /**
+     * Distance this path should go
+     */
     private double distance;
+
+    /**
+     * Maximum velocity the robot should reach
+     */
     private double maxVelocity;
+
+    /**
+     * Time it takes to complete this path
+     */
     private double executeTime;
-    private DrivetrainSymmetry drivetrainSymmetryType;
+
+    /**
+     * What kind of symmetry does the drivetrain have - important because motors may have to run in reverse to make a line
+     */
+    private final DrivetrainSymmetry drivetrainSymmetryType;
 
     /**
      * Constructor for this Line object. Here it make an assumption since it has not been given
@@ -50,7 +66,7 @@ public class Line extends Path {
     }
     /**
      * Build the line trajectory.
-     * @Postcondition this path has been built successfully
+     * Postcondition: this path has been built successfully
      */
     @Override
     public final void build(){
