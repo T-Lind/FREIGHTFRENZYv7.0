@@ -20,6 +20,7 @@ public class MarkerList {
      * All of these methods are just meant to nicely create a static array of the InsertMarker implementation.
      * If more than four markers are passed then you must first create them as separate static arrays
      * @param m the marker (listed m, m2, m3, etc.)
+     * @param time1 the corresponding time to the first marker
      */
     public MarkerList(InsertMarker m, double time1){
         markers = new InsertMarker[1];
@@ -106,7 +107,7 @@ public class MarkerList {
      * Get the InsertMarker at position i
      * @param i the index to get the InsertMarker in the markers list
      * @return The InsertMarker alias at i
-     * Precondition:  i must be >= 0
+     * Precondition:  i >= 0
      * Postcondition: the InsertMarker at index i is returned successfully
      */
     public final InsertMarker getInsertMarker(int i){

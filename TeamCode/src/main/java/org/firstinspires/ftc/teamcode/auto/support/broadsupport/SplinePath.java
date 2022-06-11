@@ -130,6 +130,7 @@ public class SplinePath extends Path {
     * @param currentTime is the current time since the start of the spline
      * Precondition:  times is not null
      * Postcondition: the appropriate arc is returned
+     * @return the arc which the path currently is executing
     */
     private int getArc(double currentTime){
         if(times == null || currentTime < 0)
@@ -146,6 +147,7 @@ public class SplinePath extends Path {
     * @param currentTime is the current time into the spline
      * Precondition:  currentTime is greater than or equal to zero and arcLengths and times is not null, and the path has been built
      * Postcondition: the appropriate velocity is returned
+     * @return the overall robot velocity
     */
     private double getVelocity(double currentTime){
         if(arcLengths == null || times == null || currentTime < 0)

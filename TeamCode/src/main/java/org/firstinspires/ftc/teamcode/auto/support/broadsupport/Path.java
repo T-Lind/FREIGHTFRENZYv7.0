@@ -117,6 +117,7 @@ public abstract class Path {
      * Precondition: currentTime is greater than zero
      *
      * @param currentTime is the current time into this specific Path.
+     * @return default - zero
      */
     public double getLeftVelocity(double currentTime) {
         if(currentTime < 0)
@@ -129,6 +130,7 @@ public abstract class Path {
      * Precondition: currentTime is greater than zero
      *
      * @param currentTime is the current time into this specific Path.
+     * @return default - zero
      */
     public double getRightVelocity(double currentTime) {
         if(currentTime < 0)
@@ -141,6 +143,7 @@ public abstract class Path {
      * Precondition: currentTime is greater than zero
      *
      * @param currentTime is the current time into this specific Paths
+     * @return default - zero
      */
     public double getLeftAngle(double currentTime) {
         if(currentTime < 0)
@@ -153,6 +156,7 @@ public abstract class Path {
      * Precondition: currentTime is greater than zero
      *
      * @param currentTime is the current time into this specific Path.
+     * @return default - zero
      */
     public double getRightAngle(double currentTime) {
         if(currentTime < 0)
