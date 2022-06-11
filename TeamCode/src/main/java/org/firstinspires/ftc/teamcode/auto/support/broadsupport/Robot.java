@@ -21,7 +21,7 @@ abstract public class Robot extends BotContainer{
      */
     protected final double wheelR = 0.03715;
 
-    /**
+     /**
      * trackWidth is the distance between the wheels of the robot (viewing down the center of the robot), replace with your track width
      */
     protected final double trackWidth = 0.295;
@@ -42,6 +42,11 @@ abstract public class Robot extends BotContainer{
 
     }
 
+    /**
+     * Run code while the init button has been pressed
+     * Precondition: initializeHardware() has been run
+     * Postcondition: the initialization phase has been successful.
+     */
     protected final void initialize(){
         // Null check - if not null then build the path sequence
         if(getPathSequence() != null)

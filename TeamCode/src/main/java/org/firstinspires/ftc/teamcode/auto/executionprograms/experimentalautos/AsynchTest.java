@@ -23,7 +23,7 @@ public class AsynchTest extends Robot {
     public void runOpMode() throws InterruptedException {
         initializeHardware();
 
-        // BotContainer is inherited, meaning that anything you put in BotContainer will be here as
+        // Robot is inherited, meaning that anything you put in Robot will be here as
         // well (as long as you make it protected), so is LinearOpMode (which BotContainer inherits)
 
 
@@ -45,6 +45,8 @@ public class AsynchTest extends Robot {
         // Add the path sequence to the robot
         setPathSequence(sequenceToFollow);
 
+
+
         // Temporal Markers (Insert Markers) to execute during the path
 
 
@@ -58,6 +60,7 @@ public class AsynchTest extends Robot {
             }
             telemetry.addLine("Finished loop 1 ");
             telemetry.update();
+
         };
         InsertMarker telemetryLoop2 = ()-> {
             // Simply print the current time into this code!
@@ -71,6 +74,9 @@ public class AsynchTest extends Robot {
         };
         // Assign these realized interfaces to the LinearOpMode (protected variable inherited)
         markerList = new MarkerList(telemetryLoop1, 0, telemetryLoop2, 1);
+
+        // End of temporal marker code
+
 
         initialize();
 
