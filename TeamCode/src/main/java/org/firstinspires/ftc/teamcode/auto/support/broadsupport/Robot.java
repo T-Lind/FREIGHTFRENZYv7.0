@@ -93,7 +93,7 @@ abstract public class Robot extends BotContainer{
 
 
         // Create a new camera object in openCV
-        camera = OpenCvCameraFactory.getInstance().createWebcam(getWebcameraName(), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcameraName, cameraMonitorViewId);
 
 
         // instantiate and add the pipeline

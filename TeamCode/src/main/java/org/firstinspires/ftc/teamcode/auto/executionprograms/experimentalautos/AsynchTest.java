@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequence;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Robot;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Turn;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.Drivetrain;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,8 +30,8 @@ public class AsynchTest extends Robot {
         // Create the sequence of paths
         ArrayList<Path> sequenceInstructions = new ArrayList<>();
 
-        Path line = new Line(0.5, 0.2);
-        Path turn = new Turn(90, 0.6, 0.2);
+        Path line = new Line(0.5, 0.2, DrivetrainSymmetry.SYMMETRICAL);
+        Path turn = new Turn(90, 0.6, 0.2, DrivetrainSymmetry.SYMMETRICAL);
 
         sequenceInstructions.add(line);
         sequenceInstructions.add(turn);

@@ -5,6 +5,12 @@ package org.firstinspires.ftc.teamcode.auto.support.enumerations;
  * For most drivetrain designs except differential swerve it will be asymmetrical.
  */
 public enum DrivetrainSymmetry {
+    /**
+     * The drivetrain is reflected over the center (intake) axis.
+     */
     SYMMETRICAL,
+    /**
+     * The drivetrain is not reflectd over the center axis. Typically only applies to differential swerves, but not all.
+     */
     ASYMMETRICAL
 }

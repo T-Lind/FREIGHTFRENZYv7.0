@@ -6,19 +6,34 @@ import java.util.Arrays;
 
 /**
  * A class for running the markers on different threads at the same time to run each marker.
- * Unlike the typical RunnableCollective, this can create as many threads as you want!
+ * You can create as many threads as you want!
  */
 public class RunnableCollective implements Runnable{
-    // Create a MarkerList - essentially an object containing the InsertMarkers
-    // (which are the things we want to do like raise an arm) and the times to execute them.
+    /**
+     * Create a MarkerList - essentially an object containing the Interface InsertMarkers
+     * which are realized with a lambda expression
+     * (which are the things we want to do like raise an arm) and the times to execute them.
+     */
     private final MarkerList markerList;
 
-    // Signal the program when to stop running the markers
+    /**
+     * Signals the program to shut off the markers
+     */
     private boolean stopMarkers;
 
+    /**
+     * Thread running all the other markers
+     */
     private Thread mainThread;
+
+    /**
+     * Static array containing all the other threads running the other markers
+     */
     private Thread[] childThreadList;
 
+    /**
+     * State array preventing repeated running of threads
+     */
     private boolean[] threadStates;
 
     /**
@@ -125,9 +140,16 @@ public class RunnableCollective implements Runnable{
      * Private thread object - correlates to a specific index of the markerList.
      */
     private final class ChildThread implements Runnable{
+        /**
+         * Which thread to run
+         */
         private final int index;
 
 
+        /**
+         * Assign an index to this thread
+         * @param index the index of which thread to execute
+         */
         public ChildThread(int index){
             this.index = index;
         }

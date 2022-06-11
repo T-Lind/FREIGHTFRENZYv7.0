@@ -13,14 +13,43 @@ import java.util.ArrayList;
  */
 public class SplinePath extends Path {
     // Variables to characterize the spline
+    /**
+     * List of radii to follow.
+     */
     private double[] radii;
+    /**
+     * List of arc lengths to follow.
+     */
     private double[] arcLengths;
+
+    /**
+     * Velocity to move at during the bulk of the spline.
+     */
     private double velocity;
+    /**
+     *  Distance between the wheels.
+     */
     private double trackWidth;
+    /**
+     * Time the robot should spend accelerating or decelerating.
+     */
     private double accelerationTime;
+    /**
+     * Additional time needed to fulfill the first arc.
+     */
     private double additionalpathonetime;
+    /**
+     *  Additional time needed to fufill the last arc.
+     */
     private double additionalPathTwoTime;
+    /**
+     * Whether the robot should move forward or go in reverse.
+     */
     private Direction moveWay;
+
+    /**
+     *  Times at which to execute each part of the spline.
+     */
     private ArrayList<Double> times;
 
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.

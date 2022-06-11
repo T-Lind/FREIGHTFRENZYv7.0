@@ -54,23 +54,13 @@ abstract public class BotContainer extends LinearOpMode{
       this.pathSequence = pathSequence;
    }
 
-   protected final void setCamera(OpenCvCamera camera){
-      this.camera = camera;
-   }
-
-
+   /**
+    * Method to get the private pathSequence object.
+    * @return the pathSequence object.
+    */
    protected final PathSequence getPathSequence(){
       return pathSequence;
    }
-
-   protected final WebcamName getWebcameraName(){
-      return webcameraName;
-   }
-
-   protected final OpenCvCamera getCamera(){
-      return camera;
-   }
-
 
    /**
     * Follows the path and marker list given, assuming one was given.
