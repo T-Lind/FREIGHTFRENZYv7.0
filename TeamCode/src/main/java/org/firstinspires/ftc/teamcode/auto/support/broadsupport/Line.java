@@ -25,7 +25,7 @@ public class Line extends Path {
      */
     public Line(double d, double v){
         if(v == 0 || d == 0)
-            throw new InternalError("The velocity or distance must not be equal to zero in Line.Line(...)!");
+            throw new RuntimeException("The velocity or distance must not be equal to zero in Line.Line(...)!");
         distance = d;
         maxVelocity = v;
 
@@ -41,7 +41,7 @@ public class Line extends Path {
      */
     public Line(double d, double v, DrivetrainSymmetry drivetrainSymmetryType){
         if(v == 0 || d == 0)
-            throw new InternalError("The velocity or distance must not be equal to zero in Line.Line(...)!");
+            throw new RuntimeException("The velocity or distance must not be equal to zero in Line.Line(...)!");
         distance = d;
         maxVelocity = v;
         executeTime = 0;

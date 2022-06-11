@@ -7,12 +7,14 @@ import java.util.Arrays;
  * For team 7797 Victorian Voltage.
  */
 public class MarkerList {
-    // Variables to store in this complex list
+    /**
+     * The list of temporal insert markers
+     */
     private InsertMarker[] markers;
+    /**
+     * The list of times at which to execute those markers
+     */
     private double[] times;
-
-    // Maximum amount of markers to allow created
-    private int amountOfMarkers;
 
     /**
      * All of these methods are just meant to nicely create a static array of the NeoNeoInsertMarker implementation.
@@ -20,34 +22,28 @@ public class MarkerList {
      * @param m the marker (listed m, m2, m3, etc.)
      */
     public MarkerList(InsertMarker m, double time1){
-        amountOfMarkers = 1;
-
         markers = new InsertMarker[1];
         markers[0] = m;
-        times = new double[amountOfMarkers];
+        times = new double[1];
         setTimesMax();
         times[0] = time1;
     }
     public MarkerList(InsertMarker m, double time1, InsertMarker m2, double time2){
-        amountOfMarkers = 2;
-
         markers = new InsertMarker[2];
         markers[0] = m;
         markers[1] = m2;
-        times = new double[amountOfMarkers];
+        times = new double[2];
         setTimesMax();
         times[0] = time1;
         times[1] = time2;
     }
     public MarkerList(InsertMarker m, double time1, InsertMarker m2, double time2,
                       InsertMarker m3, double time3){
-        amountOfMarkers = 3;
-
         markers = new InsertMarker[3];
         markers[0] = m;
         markers[1] = m2;
         markers[2] = m3;
-        times = new double[amountOfMarkers];
+        times = new double[3];
         setTimesMax();
 
         times[0] = time1;
@@ -56,14 +52,12 @@ public class MarkerList {
     }
     public MarkerList(InsertMarker m, double time1, InsertMarker m2, double time2,
                       InsertMarker m3, double time3, InsertMarker m4, double time4){
-        amountOfMarkers = 4;
-
         markers = new InsertMarker[4];
         markers[0] = m;
         markers[1] = m2;
         markers[2] = m3;
         markers[3] = m4;
-        times = new double[amountOfMarkers];
+        times = new double[4];
         setTimesMax();
 
         times[0] = time1;
@@ -80,10 +74,7 @@ public class MarkerList {
      */
     public MarkerList(InsertMarker[] markers, double[] times){
         if(markers.length != times.length)
-            throw new InternalError("The length of markers and times must be the same in NeoMarkerList.NeoMarkerList(...)!");
-
-        amountOfMarkers = markers.length;
-
+            throw new RuntimeException("The length of markers and times must be the same in NeoMarkerList.NeoMarkerList(...)!");
         this.markers = markers;
         this.times = times;
     }
@@ -94,7 +85,8 @@ public class MarkerList {
      * empty threads, taking up memory.
      */
     private void setTimesMax(){
-        assert markers != null : "Cannot run NeoMarkerList.setTimesMax() while markers is null!";
+        if(markers == null)
+            throw new RuntimeException("Cannot run NeoMarkerList.setTimesMax() while markers is null!");
         Arrays.fill(times, Double.MAX_VALUE);
     }
 
@@ -107,16 +99,6 @@ public class MarkerList {
     public final InsertMarker[] getMarkers(){
         assert markers != null : "Cannot run NeoMarkerList.getMarkers() while markers is null!";
         return markers;
-    }
-
-    /**
-     * Get the maximum amount of markers allowed
-     * @return the maximum amount of markers
-     * @Precondition amountOfMarkers has been set
-     * @Postcondition the amount of markers is returned successfully
-     */
-    public final int getAmountOfMarkers(){
-        return amountOfMarkers;
     }
 
     /**

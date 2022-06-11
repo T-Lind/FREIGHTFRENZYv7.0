@@ -4,7 +4,13 @@ package org.firstinspires.ftc.teamcode.auto.support;
  * Toggle Object - code to detect button presses and update a toggle variable in a fast loop
  * **/
 public class Toggle {
+    /**
+     * The state (true or false) that this object is set to
+     */
     private boolean toggleState;
+    /**
+     * The past input that was provided to this object
+     */
     private boolean pastInputState;
 
     /**

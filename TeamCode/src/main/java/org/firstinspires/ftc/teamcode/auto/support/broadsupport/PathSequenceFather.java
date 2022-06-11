@@ -15,7 +15,7 @@ public abstract class PathSequenceFather {
      */
     protected final void buildAll(){
         if(trajectory == null)
-            throw new InternalError("Trajectory in PathSequenceFather.buildAll() must not be null!");
+            throw new RuntimeException("Trajectory in PathSequenceFather.buildAll() must not be null!");
         for(Path path : trajectory)
             path.build();
     }
@@ -27,9 +27,9 @@ public abstract class PathSequenceFather {
      */
     protected final void build(int i){
         if(trajectory == null)
-            throw new InternalError("Trajectory in PathSequenceFather.build(...) must not be null!");
+            throw new RuntimeException("Trajectory in PathSequenceFather.build(...) must not be null!");
         if(i < 0)
-            throw new InternalError("Index in PathSequenceFather.buildAll() is not valid!");
+            throw new RuntimeException("Index in PathSequenceFather.buildAll() is not valid!");
         trajectory.get(i).build();
     }
 
@@ -41,7 +41,7 @@ public abstract class PathSequenceFather {
      */
     protected final void resetPaths(){
         if(trajectory == null)
-            throw new InternalError("Trajectory in PathSequenceFather.resetPaths() must not be null!");
+            throw new RuntimeException("Trajectory in PathSequenceFather.resetPaths() must not be null!");
 
         for(Path path : trajectory)
             path.setCompleted(false);

@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Arrays;
+
 /**
  * A class for running the markers on different threads at the same time to run each marker.
  * Unlike the typical RunnableCollective, this can create as many threads as you want!
@@ -16,17 +19,22 @@ public class RunnableCollective implements Runnable{
     private Thread mainThread;
     private Thread[] childThreadList;
 
+    private boolean[] threadStates;
+
     /**
      * Instantiate the object with a markerList to reference, used in the PathSequence family
      * @param markerList is the collection of markers and the time they should execute at
      */
     public RunnableCollective(MarkerList markerList){
         if(markerList == null)
-            throw new InternalError("markerList in RunnableCollectiveArray.RunnableCollectiveArray(...) must not be null!");
+            throw new RuntimeException("markerList in RunnableCollectiveArray.RunnableCollectiveArray(...) must not be null!");
 
         this.markerList = markerList;
         childThreadList = new Thread[markerList.getMarkers().length];
         stopMarkers = false;
+
+        threadStates = new boolean[markerList.getMarkers().length];
+        Arrays.fill(threadStates, false);
     }
 
     /**
@@ -36,7 +44,7 @@ public class RunnableCollective implements Runnable{
      */
     public final void activateMarkers(){
         if(markerList == null)
-            throw new InternalError("markerList in RunnableCollectiveArray.activateMarkers() must not be null!");
+            throw new RuntimeException("markerList in RunnableCollectiveArray.activateMarkers() must not be null!");
 
         mainThread = new Thread(this);
         mainThread.start();
@@ -50,9 +58,9 @@ public class RunnableCollective implements Runnable{
      */
     public final void setStopMarkers() {
         if(markerList == null)
-            throw new InternalError("markerList in RunnableCollectiveArray.setStopMarkers() must not be null!");
+            throw new RuntimeException("markerList in RunnableCollectiveArray.setStopMarkers() must not be null!");
         if(childThreadList == null)
-            throw new InternalError("childThreadList in RunnableCollectiveArray.setStopMarkers() must not be null!");
+            throw new RuntimeException("childThreadList in RunnableCollectiveArray.setStopMarkers() must not be null!");
 
         // Interrupt any child thread currently being used
         stopMarkers = true;
@@ -76,9 +84,9 @@ public class RunnableCollective implements Runnable{
     @Override
     public final void run(){
         if(markerList == null)
-            throw new InternalError("markerList in RunnableCollectiveArray.run() must not be null!");
+            throw new RuntimeException("markerList in RunnableCollectiveArray.run() must not be null!");
         if(childThreadList == null)
-            throw new InternalError("childThreadList in RunnableCollectiveArray.setStopMarkers() must not be null!");
+            throw new RuntimeException("childThreadList in RunnableCollectiveArray.setStopMarkers() must not be null!");
 
 //
         // Declare the ElapsedTime object here to reduce lag after runMarkers is true
@@ -94,15 +102,25 @@ public class RunnableCollective implements Runnable{
         // Look and start the threads if the time is right and they have not been started before
         while(!stopMarkers)
             for(int i=0;i<childThreadList.length;i++){
-                if(markerList.getTime(i) < markerTime.milliseconds()/1000 && !childThreadList[i].isAlive()){
+                if(markerList.getTime(i) < markerTime.milliseconds()/1000 && !threadStates[i] && !childThreadList[i].isAlive()){
                     childThreadList[i].start();
-//                    if(i == 1){
-//                        telemetry.addLine("inside if statement");
-//                        telemetry.update();
-//                    }
+                    setThreadComplete(i);
                 }
             }
     }
+
+    /**
+     * Set a thread to a complete status - don't run it multiple times
+     * @param i the index at which to set a thread to a complete status
+     */
+    private void setThreadComplete(int i){
+        if(i < 0 || i >= markerList.getMarkers().length)
+            throw new RuntimeException("i must be a valid index in RunnableCollective.setThreadComplete(...)!");
+
+        threadStates[i] = true;
+        childThreadList[i].interrupt();
+    }
+
     /**
      * Private thread object - correlates to a specific index of the markerList.
      */

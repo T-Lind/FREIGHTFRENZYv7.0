@@ -3,13 +3,22 @@ package org.firstinspires.ftc.teamcode.auto.support;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * Basic class to make a simple time keeping class
+ * Basic class to make a simple time keeping object
  */
 public class Timer {
+    /**
+     * The time the timer should loop for before returning a true value
+     */
     private double timeToLoop;
+
+    /**
+     * Time keeping object
+     */
     private ElapsedTime elapsedTime;
 
-    // Acceptable margin of error for time measurement in seconds for the timer
+    /**
+     * Acceptable margin of error for time measurement in seconds for the timer
+     */
     private static final double TIMER_MARGIN_OF_ERROR = 0.01;
 
     /**
@@ -30,7 +39,7 @@ public class Timer {
      */
     public final boolean inTimeRange(){
         if(elapsedTime == null)
-            throw new InternalError("elaspsedTime in Timer.inTimeRange() cannot be null!");
+            throw new RuntimeException("elaspsedTime in Timer.inTimeRange() cannot be null!");
 
         return elapsedTime.milliseconds()/1000.0+TIMER_MARGIN_OF_ERROR < timeToLoop;
     }
@@ -43,7 +52,7 @@ public class Timer {
      */
     public final double getTime(){
         if(elapsedTime == null)
-            throw new InternalError("elaspsedTime in Timer.getTime() cannot be null!");
+            throw new RuntimeException("elaspsedTime in Timer.getTime() cannot be null!");
 
         return elapsedTime.milliseconds()/1000;
     }

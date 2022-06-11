@@ -47,7 +47,7 @@ public class TwoWheelPathSequence extends PathSequenceFather{
      */
     public final void follow(){
         if(left == null || right == null || trajectory == null)
-            throw new InternalError("Null object parameter passed to TwoWheelPathSequence (in TwoWheelPathSequence.follow())");
+            throw new RuntimeException("Null object parameter passed to TwoWheelPathSequence (in TwoWheelPathSequence.follow())");
 
         ElapsedTime t = new ElapsedTime();
         t.reset();
@@ -86,7 +86,7 @@ public class TwoWheelPathSequence extends PathSequenceFather{
             }
 
             double offset = t.milliseconds();
-            while(p.getCompleted()){
+            while(!p.getCompleted()){
                 double leftV = Path.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
                 double rightV = Path.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 

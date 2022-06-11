@@ -98,7 +98,7 @@ public class PIDController {
      */
     private long getIntegral(){
         if(time == null || data == null)
-            throw new InternalError("time and data in PIDController.getIntegral() must not be equal to null!");
+            throw new RuntimeException("time and data in PIDController.getIntegral() must not be equal to null!");
         long sum = 0;
         if(time.size() > 2){
             for(int i=0;i<time.size()-1;i++)

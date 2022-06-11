@@ -21,11 +21,29 @@ import java.util.ArrayList;
  * for FTC team 7797.
  */
 public class SixWheelPathSequence extends PathSequenceFather {
+    /**
+     * First left motor object (order doesn't matter but for the sake of argument let's start with the rearmost motors on the robot)
+     */
     private DcMotorEx left1;
+    /**
+     * Second left motor object
+     */
     private DcMotorEx left2;
+    /**
+     * Third left motor object
+     */
     private DcMotorEx left3;
+    /**
+     * First right motor object (rearmost right motor)
+     */
     private DcMotorEx right1;
+    /**
+     * Second right motor object
+     */
     private DcMotorEx right2;
+    /**
+     * Third right motor object
+     */
     private DcMotorEx right3;
 
     /**
@@ -53,14 +71,14 @@ public class SixWheelPathSequence extends PathSequenceFather {
     }
 
     /**
-     * Actually moves the robot along the specified NeoPaths.
+     * Actually moves the robot along the specified Paths.
      * @Precondition the motor and trajectory objects have been created
      * @Postcondition the path has been followed
      */
     @Override
     public final void follow(){
         if(left1 == null || left2 == null || left3 == null || right1 == null || right2 == null || right3 == null || trajectory == null)
-            throw new InternalError("Null object parameter passed to SixWheelPathSequence (in SixWheelPathSequence.follow())");
+            throw new RuntimeException("Null object parameter passed to SixWheelPathSequence (in SixWheelPathSequence.follow())");
 
         ElapsedTime t = new ElapsedTime();
         t.reset();
@@ -90,7 +108,7 @@ public class SixWheelPathSequence extends PathSequenceFather {
             double offset = t.milliseconds();
 
             // Execute the path
-            while(p.getCompleted()){
+            while(!p.getCompleted()){
                 // Get the velocities from what the path says the end result velocities should be
                 double leftV = Path.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
                 double rightV = Path.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));

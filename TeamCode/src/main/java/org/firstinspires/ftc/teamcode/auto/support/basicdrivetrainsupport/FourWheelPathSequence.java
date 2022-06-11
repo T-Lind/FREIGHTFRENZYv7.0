@@ -52,7 +52,7 @@ public class FourWheelPathSequence extends PathSequenceFather {
      */
     public final void follow(){
         if(left1 == null || left2 == null || right1 == null || right2 == null || trajectory == null)
-            throw new InternalError("Null object parameter pssed to FourWheelPathSequence (in FourWheelPathSequence.follow())");
+            throw new RuntimeException("Null object parameter pssed to FourWheelPathSequence (in FourWheelPathSequence.follow())");
 
         ElapsedTime t = new ElapsedTime();
         t.reset();
@@ -76,7 +76,7 @@ public class FourWheelPathSequence extends PathSequenceFather {
             double offset = t.milliseconds();
 
             // Execute the path
-            while(p.getCompleted()){
+            while(!p.getCompleted()){
                 // Get the velocities from what the path says the end result velocities should be
                 double leftV = Path.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
                 double rightV = Path.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));

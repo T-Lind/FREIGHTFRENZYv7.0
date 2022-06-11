@@ -83,7 +83,7 @@ public class SplinePath extends Path {
     @Override
     public void build(){
         if(arcLengths == null || times == null )
-            throw new InternalError("ArcLengths and times must be not null in SplinePath.build()");
+            throw new RuntimeException("ArcLengths and times must be not null in SplinePath.build()");
 
         for(int i=1;i<arcLengths.length-1;i++)
             arcLengths[i]*=(2*3.14159265);
@@ -106,7 +106,7 @@ public class SplinePath extends Path {
     @Override
     public double getExecuteTime(){
         if(times == null)
-            throw new InternalError("Times must not be equal to null in SplinePath.getExecuteTime()");
+            throw new RuntimeException("Times must not be equal to null in SplinePath.getExecuteTime()");
 
         return times.get(times.size()-1);
     }
@@ -120,7 +120,7 @@ public class SplinePath extends Path {
      */
     private ArrayList<Double> getTimes(){
         if(times == null)
-            throw new InternalError("Times must not be equal to null in SplinePath.getTimes()");
+            throw new RuntimeException("Times must not be equal to null in SplinePath.getTimes()");
 
         return times;
     }
@@ -133,7 +133,7 @@ public class SplinePath extends Path {
     */
     private int getArc(double currentTime){
         if(times == null || currentTime < 0)
-            throw new InternalError("Times must not be equal to null in SplinePath.getArc() and currentTime must be greater than zero");
+            throw new RuntimeException("Times must not be equal to null in SplinePath.getArc() and currentTime must be greater than zero");
 
         for(int i=0;i<times.size();i++)
             if(currentTime < times.get(i))
@@ -149,7 +149,7 @@ public class SplinePath extends Path {
     */
     private double getVelocity(double currentTime){
         if(arcLengths == null || times == null || currentTime < 0)
-            throw new InternalError("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getVelocity()");
+            throw new RuntimeException("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getVelocity()");
 
         int arc = getArc(currentTime);
         if(arc == -1)
@@ -180,7 +180,7 @@ public class SplinePath extends Path {
     @Override
     public double getLeftVelocity(double currentTime){
         if(arcLengths == null || times == null)
-            throw new InternalError("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getLeftVelocity()");
+            throw new RuntimeException("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getLeftVelocity()");
 
         if(moveWay == Direction.FORWARD) {
             if (getArc(currentTime) == -1) {
@@ -219,7 +219,7 @@ public class SplinePath extends Path {
     @Override
     public double getRightVelocity(double currentTime){
         if(arcLengths == null || times == null)
-            throw new InternalError("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getRightVelocity()");
+            throw new RuntimeException("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getRightVelocity()");
 
         if(moveWay == Direction.FORWARD) {
             if (getArc(currentTime) == -1) {
@@ -250,6 +250,7 @@ public class SplinePath extends Path {
      * @return The type of path, in this case a spline.
      * @Postcondition the accurate PathType has been returned.
      */
+    @Override
     public PathType getType(){
         return PathType.SPLINE;
     }

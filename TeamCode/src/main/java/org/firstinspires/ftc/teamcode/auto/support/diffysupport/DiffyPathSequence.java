@@ -70,9 +70,7 @@ public class DiffyPathSequence extends PathSequenceFather {
     @Override
     public final void follow(){
         if(!(leftFront != null && leftBack != null && rightFront != null && rightBack != null))
-            throw new InternalError("All motor objects in DiffyPathSequence.follow() must not be null!");
-//        assert leftFront != null && leftBack != null && rightFront != null && rightBack != null : "All motor objects in DiffyPathSequence.follow() must not be null!";
-//        assert trajectory != null: "The trajectory in DiffyPathSequence.follow() cannot be null!";
+            throw new RuntimeException("All motor objects in DiffyPathSequence.follow() must not be null!");
 
         ElapsedTime t = new ElapsedTime();
         t.reset();
@@ -101,7 +99,7 @@ public class DiffyPathSequence extends PathSequenceFather {
             double offset = t.milliseconds();
 
             // Execute the path
-            while(path.getCompleted()){
+            while(!path.getCompleted()){
                 // Get the velocities from what the path says the end result velocities should be
                 double leftV = path.getLeftVelocity((t.milliseconds()-offset)/1000);
                 double rightV = path.getRightVelocity((t.milliseconds()-offset)/1000);

@@ -76,7 +76,7 @@ public class PathSequence {
      */
     public final PathSequenceFather getPathSequence(){
         if(sequence == null)
-            throw new InternalError("Cannot run PathSequence.getPathSequence() if the sequence is null!");
+            throw new RuntimeException("Cannot run PathSequence.getPathSequence() if the sequence is null!");
         return sequence;
     }
 
@@ -87,7 +87,7 @@ public class PathSequence {
      */
     public final void buildAll(){
         if(sequence == null)
-            throw new InternalError("Cannot run PathSequence.buildAll() if the sequence is null!");
+            throw new RuntimeException("Cannot run PathSequence.buildAll() if the sequence is null!");
         sequence.buildAll();
     }
 
@@ -98,7 +98,7 @@ public class PathSequence {
      */
     public final void follow(){
         if(sequence == null)
-            throw new InternalError("Cannot run PathSequence.follow() if the sequence is null!");
+            throw new RuntimeException("Cannot run PathSequence.follow() if the sequence is null!");
         sequence.follow();
     }
 }
