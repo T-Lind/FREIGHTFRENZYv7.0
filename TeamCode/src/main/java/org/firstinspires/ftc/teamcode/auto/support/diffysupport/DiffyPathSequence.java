@@ -69,7 +69,7 @@ public class DiffyPathSequence extends PathSequenceFather {
      * @return the distance or velocity in radians
      */
     private double convertDistance(double meters){
-        return meters*(18.1*meters+9.61);
+        return 6.803*meters;
     }
 
 

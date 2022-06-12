@@ -16,12 +16,12 @@ public class Line extends Path {
     /**
      * Distance this path should go
      */
-    private double distance;
+    private final double distance;
 
     /**
      * Maximum velocity the robot should reach
      */
-    private double maxVelocity;
+    private final double maxVelocity;
 
     /**
      * Time it takes to complete this path
@@ -36,14 +36,14 @@ public class Line extends Path {
     /**
      * Constructor for this Line object. Here it make an assumption since it has not been given
      * enough data - sets the drivtrain type to asymmetrical
-     * @param d is the distance traveled
-     * @param v is the maximum velocity to travel at
+     * @param distance is the distance traveled
+     * @param maxVelocity is the maximum velocity to travel at
      */
-    public Line(double d, double v){
-        if(v == 0 || d == 0)
+    public Line(double distance, double maxVelocity){
+        if(maxVelocity == 0 || distance == 0)
             throw new RuntimeException("The velocity or distance must not be equal to zero in Line.Line(...)!");
-        distance = d;
-        maxVelocity = v;
+        this.distance = distance;
+        this.maxVelocity = maxVelocity;
 
         executeTime = 0;
 
@@ -51,15 +51,15 @@ public class Line extends Path {
     }
     /**
      *Constructor for this Line object. Sets the type of drivetrain to
-     * @param d is the distance traveled
-     * @param v is the maximum velocity to travel at
+     * @param distance is the distance traveled
+     * @param maxVelocity is the maximum velocity to travel at
      * @param drivetrainSymmetryType is if the drivetrain is not mirrored across the axis (like in a differential swerve)
      */
-    public Line(double d, double v, DrivetrainSymmetry drivetrainSymmetryType){
-        if(v == 0 || d == 0)
+    public Line(double distance, double maxVelocity, DrivetrainSymmetry drivetrainSymmetryType){
+        if(maxVelocity == 0 || distance == 0)
             throw new RuntimeException("The velocity or distance must not be equal to zero in Line.Line(...)!");
-        distance = d;
-        maxVelocity = v;
+        this.distance = distance;
+        this.maxVelocity = maxVelocity;
         executeTime = 0;
 
         this.drivetrainSymmetryType = drivetrainSymmetryType;

@@ -31,7 +31,7 @@ public class AsynchTest extends Robot {
         ArrayList<Path> sequenceInstructions = new ArrayList<>();
 
         Path line = new Line(0.5, 0.2, DrivetrainSymmetry.SYMMETRICAL);
-        Path turn = new Turn(90, 0.6, 0.2, DrivetrainSymmetry.SYMMETRICAL);
+        Path turn = new Turn(90, 0.31, 0.1);
 
         sequenceInstructions.add(line);
         sequenceInstructions.add(turn);
