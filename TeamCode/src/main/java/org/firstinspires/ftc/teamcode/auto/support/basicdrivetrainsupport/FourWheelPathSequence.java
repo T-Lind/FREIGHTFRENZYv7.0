@@ -93,8 +93,8 @@ public class FourWheelPathSequence extends PathSequenceFather {
             // Execute the path
             while(!p.getCompleted()){
                 // Get the velocities from what the path says the end result velocities should be
-                double leftV = Path.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
-                double rightV = Path.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
+                double leftV = Path.convertForStandardDrivetrain(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = Path.convertForStandardDrivetrain(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
                 // Correct based on PID and kalman filter
                 double corL1 = pidLeft1.update((long)leftV, (long)kLeft1.filter(left1.getVelocity(RADIANS)));

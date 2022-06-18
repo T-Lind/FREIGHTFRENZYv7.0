@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.BuildStatus;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.Direction;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 
 /**
@@ -22,6 +24,59 @@ public abstract class Path {
      * The build status of this path instantiation
      */
     private BuildStatus construction = BuildStatus.UNBUILT;
+
+    /**
+     * Whether the robot is moving forward or backward in this path
+     */
+    private Direction moveState = Direction.FORWARD;
+
+    /**
+     * Velocity coefficients for driving an asymmetrical drivetrain
+     */
+    protected static final int[][] asymmetricalDriveCoefficientLookup = {
+            {-1, 1}, // LEFT FORWARD, LEFT REVERSE
+            {1, -1} // RIGHT FORWARD, RIGHT REVERSE
+    };
+
+    /**
+     * Velocity coefficients for driving a symmetrical drivetrain
+     */
+    protected static final int[][] symmetricalDriveCoefficientLookup = {
+            {1, -1}, // LEFT FORWARD, LEFT REVERSE
+            {1, -1} // RIGHT FORWARD, RIGHT REVERSE
+    };
+
+    /**
+     * What type of drivetrain is being used
+     */
+    private static DrivetrainSymmetry symmetryState;
+
+    /**
+     * Track width of the robot
+     */
+    private static double trackWidth;
+
+
+    public void setMoveState(Direction moveState){
+        this.moveState = moveState;
+    }
+    public Direction getMoveState(){
+        return moveState;
+    }
+
+    public static void setSymmetryState(DrivetrainSymmetry symmetryState){
+        Path.symmetryState = symmetryState;
+    }
+    public static DrivetrainSymmetry getSymmetryState(){
+        return symmetryState;
+    }
+
+    public static void setTrackWidth(double trackWidth){
+        Path.trackWidth = trackWidth;
+    }
+    public static double getTrackWidth(){
+        return trackWidth;
+    }
 
     /**
      * Method returning the type of path this specific path is
@@ -170,11 +225,38 @@ public abstract class Path {
      * @param velocity    is the linear velocity in m/s
      * @return the angular velocity in rad/s
      */
-    public static double convert(double wheelRadius, double velocity) {
+    public static double convertForStandardDrivetrain(double wheelRadius, double velocity) {
         if(wheelRadius < 0 || velocity < 0)
             throw new RuntimeException("Wheel radius and velocity must be greater than zero in Path.convert(...)");
         velocity /= wheelRadius; // convert to angular velocity by radius
         velocity /= (2 * 3.14159);
         return velocity;
+    }
+
+    /**
+     * Use the provided lookup tables to identify the velocity easier
+     * @param asymmetrical the asymmetrical lookup table
+     * @param symmetrical the symmetrical lookup table
+     * @param sideIndex the side index - 0 is left, 1 is right
+     * @return the correct velocity for the motor
+     * Precondition: current time is not less than zero, arrays are 2x2 each, side index is 0 or 1
+     * Postcondition: accurate velocity is returned
+     */
+    protected double velocityLookupTable(int[][] asymmetrical, int[][] symmetrical, int sideIndex){
+        if(asymmetrical.length != 2 || symmetrical.length != 2 || sideIndex < 0 || sideIndex > 1)
+            throw new RuntimeException("Invalid parameter in Line.velocityLookupTable(...)!");
+
+        int lookupIndex = 0;
+        if(getMoveState() == Direction.REVERSE)
+            lookupIndex = 1;
+
+        int coeff;
+
+        if(symmetryState == DrivetrainSymmetry.ASYMMETRICAL)
+            coeff = asymmetrical[sideIndex][lookupIndex];
+        else
+            coeff = symmetrical[sideIndex][lookupIndex];
+
+        return coeff;
     }
 }

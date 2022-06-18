@@ -26,10 +26,7 @@ public class SplinePath extends Path {
      * Velocity to move at during the bulk of the spline.
      */
     private double velocity;
-    /**
-     *  Distance between the wheels.
-     */
-    private double trackWidth;
+
     /**
      * Time the robot should spend accelerating or decelerating.
      */
@@ -42,10 +39,6 @@ public class SplinePath extends Path {
      *  Additional time needed to fufill the last arc.
      */
     private double additionalPathTwoTime;
-    /**
-     * Whether the robot should move forward or go in reverse.
-     */
-    private Direction moveWay;
 
     /**
      *  Times at which to execute each part of the spline.
@@ -55,53 +48,48 @@ public class SplinePath extends Path {
     // track width is how far the wheels are apart, r is the radius of each of the turns, v is an ArrayList of static arrays of the velocities.
 
     /**
-     * Constructor for SplinePath.
-     * Precondition:  : each static array in v is 3 long, size of r and v is equal
+     * Constructor for SplinePath with reversed boolean.
+     * Each static array in v is 3 long, size of r and v is equal
      * Convention: positive arc length is CCW, negative is CW
-     * @param tw track width (m)
-     * @param v maximum linear velocity (m/s)
-     * @param accTime acceleration and deceleration time (s)
-     * @param r is the radii of the arcs in the spline
-     * @param al are the arc lengths travelled in each corresponding radii.
+     * @param velocity maximum linear velocity (m/s)
+     * @param accelerationTime acceleration and deceleration time (s)
+     * @param radii is the radii of the arcs in the spline
+     * @param arcLengths are the arc lengths travelled in each corresponding radii.
      */
-    public SplinePath(double tw, double v, double accTime, double[] r, double[] al){
-        trackWidth = tw;
-        radii = r;
-        arcLengths = al;
-        velocity = v;
-        accelerationTime = accTime;
+    public SplinePath(double velocity, double accelerationTime, double[] radii, double[] arcLengths){
+        this.radii = radii;
+        this.arcLengths = arcLengths;
+        this.velocity = velocity;
+        this.accelerationTime = accelerationTime;
         additionalpathonetime = 0;
         additionalPathTwoTime = 0;
 
         times = new ArrayList<>();
-        moveWay = Direction.FORWARD;
+
+
     }
     /**
      * Constructor for SplinePath with reversed boolean.
      * Each static array in v is 3 long, size of r and v is equal
      * Convention: positive arc length is CCW, negative is CW
-     * @param tw track width (m)
-     * @param v maximum linear velocity (m/s)
-     * @param accTime acceleration and deceleration time (s)
-     * @param r is the radii of the arcs in the spline
-     * @param al are the arc lengths travelled in each corresponding radii.
+     * @param velocity maximum linear velocity (m/s)
+     * @param accelerationTime acceleration and deceleration time (s)
+     * @param radii is the radii of the arcs in the spline
+     * @param arcLengths are the arc lengths travelled in each corresponding radii.
      * @param reversed is if the path should be followed backwards.
      */
-    public SplinePath(double tw, double v, double accTime, double[] r, double[] al, boolean reversed){
-        trackWidth = tw;
-        radii = r;
-        arcLengths = al;
-        velocity = v;
-        accelerationTime = accTime;
+    public SplinePath(double velocity, double accelerationTime, double[] radii, double[] arcLengths, boolean reversed){
+        this.radii = radii;
+        this.arcLengths = arcLengths;
+        this.velocity = velocity;
+        this.accelerationTime = accelerationTime;
         additionalpathonetime = 0;
         additionalPathTwoTime = 0;
 
         times = new ArrayList<>();
 
         if(reversed)
-            moveWay = Direction.REVERSE;
-        else
-            moveWay = Direction.FORWARD;
+            setMoveState(Direction.REVERSE);
     }
 
     /**
@@ -209,36 +197,21 @@ public class SplinePath extends Path {
      * Postcondition: the accurate left velocity is returned
     */
     @Override
-    public double getLeftVelocity(double currentTime){
-        if(arcLengths == null || times == null)
+    public double getLeftVelocity(double currentTime) {
+        if (arcLengths == null || times == null)
             throw new RuntimeException("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getLeftVelocity()");
 
-        if(moveWay == Direction.FORWARD) {
-            if (getArc(currentTime) == -1) {
-                this.setCompleted(true);
-                return 0;
-            }
-            double v = getVelocity(currentTime);
-            if (arcLengths[getArc(currentTime)] > 0)
-                v = v - (v * trackWidth / (2 * radii[getArc(currentTime)]));
-            else
-                v = v + (v * trackWidth / (2 * radii[getArc(currentTime)]));
-            v *= -1;
-            return v;
-        } else {
-            if (getArc(currentTime) == -1) {
-                this.setCompleted(true);
-                return 0;
-            }
-            double v = getVelocity(currentTime);
-            if (arcLengths[getArc(currentTime)] > 0)
-                v = v - (v * trackWidth / (2 * radii[getArc(currentTime)]));
-            else
-                v = v + (v * trackWidth / (2 * radii[getArc(currentTime)]));
-            return v;
+        // Termination condition
+        if (getArc(currentTime) == -1) {
+            this.setCompleted(true);
+            return 0;
         }
+
+        double rawVelocity = getVelocity(currentTime);
+
+        double sideVelocity = rawVelocity - (rawVelocity*Path.getTrackWidth()/(2*radii[getArc(currentTime)]));
+        return sideVelocity * velocityLookupTable(asymmetricalDriveCoefficientLookup, symmetricalDriveCoefficientLookup, 0);
     }
-    
 
     /**
     * Get the right linear velocity based on the current time, accounting for negative arc lengths, reversed boolean, and different arc radii.
@@ -252,29 +225,16 @@ public class SplinePath extends Path {
         if(arcLengths == null || times == null)
             throw new RuntimeException("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getRightVelocity()");
 
-        if(moveWay == Direction.FORWARD) {
-            if (getArc(currentTime) == -1) {
-                this.setCompleted(true);
-                return 0;
-            }
-            double v = getVelocity(currentTime);
-            if (arcLengths[getArc(currentTime)] > 0)
-                return v + (v * trackWidth / (2 * radii[getArc(currentTime)]));
-            return v - (v * trackWidth / (2 * radii[getArc(currentTime)]));
-        } else {
-            if (getArc(currentTime) == -1) {
-                this.setCompleted(true);
-                return 0;
-            }
-            double v = getVelocity(currentTime);
-            if (arcLengths[getArc(currentTime)] > 0){
-                v = v + (v * trackWidth / (2 * radii[getArc(currentTime)]));
-                v *= -1;
-                return v;
-            }
-            v = v - (v * trackWidth / (2 * radii[getArc(currentTime)]));
-            return -1*v;
+        // Termination condition
+        if (getArc(currentTime) == -1) {
+            this.setCompleted(true);
+            return 0;
         }
+
+        double rawVelocity = getVelocity(currentTime);
+
+        double sideVelocity = rawVelocity - (rawVelocity*Path.getTrackWidth()/(2*radii[getArc(currentTime)]));
+        return sideVelocity * velocityLookupTable(asymmetricalDriveCoefficientLookup, symmetricalDriveCoefficientLookup, 0);
     }
     /**
      * Get what type of path this is. Useful for debugging

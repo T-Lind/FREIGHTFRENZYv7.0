@@ -9,39 +9,63 @@ import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
  * Uses the Line Class and cleverly overrides the left motor velocity.
  */
 public class Turn extends Line{
+
+    /**
+     * Velocity coefficients for driving an asymmetrical drivetrain
+     */
+    protected static final int[][] asymmetricalDriveCoefficientLookup = {
+            {1, -1}, // LEFT CCW, LEFT CW
+            {1, -1} // RIGHT CCW, RIGHT CW
+    };
+
+    /**
+     * Velocity coefficients for driving a symmetrical drivetrain
+     */
+    protected static final int[][] symmetricalDriveCoefficientLookup = {
+            {-1, 1}, // LEFT CCW, LEFT CW
+            {1, -1} // RIGHT CCW, RIGHT CW
+    };
+
     /**
      * @param angleToTurn is the angle traveled (degrees)
-     * @param trackWidth is the distance between the wheels
      * @param maxVelocity is the maximum velocity to travel at
      */
-    public Turn(double angleToTurn, double trackWidth, double maxVelocity) {
-        super((3.14159*angleToTurn*trackWidth)/360, maxVelocity);
+    public Turn(double angleToTurn, double maxVelocity) {
+        super((3.14159*angleToTurn*Path.getTrackWidth())/360, maxVelocity);
     }
 
     /**
-     *
      * @param angleToTurn is the angle traveled (degrees)
-     * @param trackWidth is the distance between the wheels
      * @param maxVelocity is the maximum velocity to travel at
-     * @param drivetrainSymmetryType is the drivetrain symmetrical or asymmetrical
+     * @param reversed is whether or not the drivetrain is reversed
      */
-    public Turn(double angleToTurn, double trackWidth, double maxVelocity, DrivetrainSymmetry drivetrainSymmetryType) {
-        super((3.14159*angleToTurn*trackWidth)/360, maxVelocity, drivetrainSymmetryType);
+    public Turn(double angleToTurn, double maxVelocity, boolean reversed) {
+        super((3.14159*angleToTurn*Path.getTrackWidth())/360, maxVelocity, reversed);
     }
 
     /**
-     * Get the left wheel velocity
+     * Get the left linear velocity
      * @param currentTime the current time
-     * @return the left wheel velocity so as to turn the right amount.
-     * Precondition:  current time is not less than zero
-     * Postcondition: the accurate left velocity is returned
+     * @return left linear velocity
      */
-
     @Override
     public double getLeftVelocity(double currentTime){
+        return getVelocity(currentTime)*velocityLookupTable(asymmetricalDriveCoefficientLookup, symmetricalDriveCoefficientLookup, 0);
+    }
+
+    /**
+     * Get the right side velocity
+     * @param currentTime the current time
+     * @return the right side velocity so as to turn a certain amount.
+     * Precondition:  current time is not less than zero
+     * Postcondition: the accurate right velocity is returned
+     */
+    @Override
+    public double getRightVelocity(double currentTime){
         if(currentTime < 0)
-            throw new RuntimeException("currentTime in Turn.getLeftVelocity() must be greater than or equal to zero");
-        return -1*super.getLeftVelocity(currentTime);
+            throw new RuntimeException("currentTime in Turn.getRightVelocity() must be greater than or equal to zero");
+
+        return getVelocity(currentTime)*velocityLookupTable(asymmetricalDriveCoefficientLookup, symmetricalDriveCoefficientLookup, 1);
     }
 
     /**

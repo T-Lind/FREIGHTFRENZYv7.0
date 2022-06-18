@@ -83,7 +83,8 @@ abstract public class BotContainer extends LinearOpMode{
          pathSequence.follow();
 
       // Stop the insertMarkers
-      stopMarkers();
+      if (markerList != null)
+         stopMarkers();
    }
 
    /**

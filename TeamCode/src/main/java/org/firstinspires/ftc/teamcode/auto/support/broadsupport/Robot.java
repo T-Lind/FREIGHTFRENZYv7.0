@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -21,21 +22,27 @@ abstract public class Robot extends BotContainer{
      */
     protected final double wheelR = 0.03715;
 
-     /**
-     * trackWidth is the distance between the wheels of the robot (viewing down the center of the robot), replace with your track width
-     */
-    protected final double trackWidth = 0.295;
 
     /**
      * pipeline here is of type TSEDetectionPipeline, replace this with whatever pipeline you've made!
      */
     private TSEDetectionPipeline pipeline;
 
+    private final DrivetrainSymmetry symmetryState = DrivetrainSymmetry.SYMMETRICAL;
+    /**
+     * trackWidth is the distance between the wheels of the robot (viewing down the center of the robot), replace with your track width
+     */
+    private final double trackWidth = 0.295;
+
     /**
      * Initialize all and build the path sequence if not null, relay a successful initialization
      * through the telemetry.
      */
     protected final void initializeHardware(){
+        // Initialize the drivetrain symmetry
+        Path.setSymmetryState(symmetryState);
+        Path.setTrackWidth(trackWidth);
+
         // Initialize motors and camera
         initMotors();
         initCamera();

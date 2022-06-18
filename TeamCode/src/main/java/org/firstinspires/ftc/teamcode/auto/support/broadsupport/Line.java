@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
+import org.firstinspires.ftc.teamcode.auto.support.enumerations.Direction;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 
@@ -28,10 +29,6 @@ public class Line extends Path {
      */
     private double executeTime;
 
-    /**
-     * What kind of symmetry does the drivetrain have - important because motors may have to run in reverse to make a line
-     */
-    private final DrivetrainSymmetry drivetrainSymmetryType;
 
     /**
      * Constructor for this Line object. Here it make an assumption since it has not been given
@@ -46,24 +43,29 @@ public class Line extends Path {
         this.maxVelocity = maxVelocity;
 
         executeTime = 0;
-
-        drivetrainSymmetryType = DrivetrainSymmetry.ASYMMETRICAL;
     }
     /**
-     *Constructor for this Line object. Sets the type of drivetrain to
+     * Constructor for this Line object. Here it make an assumption since it has not been given
+     * enough data - sets the drivtrain type to asymmetrical
      * @param distance is the distance traveled
      * @param maxVelocity is the maximum velocity to travel at
-     * @param drivetrainSymmetryType is if the drivetrain is not mirrored across the axis (like in a differential swerve)
+     * @param reversed is whether or not the drivetrain is reversed
      */
-    public Line(double distance, double maxVelocity, DrivetrainSymmetry drivetrainSymmetryType){
+    public Line(double distance, double maxVelocity, boolean reversed){
         if(maxVelocity == 0 || distance == 0)
             throw new RuntimeException("The velocity or distance must not be equal to zero in Line.Line(...)!");
         this.distance = distance;
         this.maxVelocity = maxVelocity;
+
         executeTime = 0;
 
-        this.drivetrainSymmetryType = drivetrainSymmetryType;
+        if(!reversed)
+            setMoveState(Direction.FORWARD);
+        else
+            setMoveState(Direction.REVERSE);
     }
+
+
     /**
      * Build the line trajectory.
      * Postcondition: this path has been built successfully
@@ -88,7 +90,7 @@ public class Line extends Path {
      * @param t the current time
      * @return the linear velocity of the bot
      */
-    private double getVelocity(double t){
+    protected double getVelocity(double t){
         if(t < executeTime){
             if(distance > 0)
                 return maxVelocity*Math.sin(3.1415925*t/ executeTime);
@@ -100,7 +102,6 @@ public class Line extends Path {
         }
     }
 
-
     /**
      * Get the left linear velocity
      * @param currentTime the current time
@@ -108,9 +109,7 @@ public class Line extends Path {
      */
     @Override
     public double getLeftVelocity(double currentTime){
-        if(drivetrainSymmetryType == DrivetrainSymmetry.ASYMMETRICAL)
-            return -getVelocity(currentTime);
-        return getVelocity(currentTime);
+        return getVelocity(currentTime)*velocityLookupTable(asymmetricalDriveCoefficientLookup, symmetricalDriveCoefficientLookup, 0);
     }
     /**
      * Get the right linear velocity
@@ -119,7 +118,7 @@ public class Line extends Path {
      */
     @Override
     public double getRightVelocity(double currentTime){
-        return getVelocity(currentTime);
+        return getVelocity(currentTime)*velocityLookupTable(asymmetricalDriveCoefficientLookup, symmetricalDriveCoefficientLookup, 1);
     }
 
     /**

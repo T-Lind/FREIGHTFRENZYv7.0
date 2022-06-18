@@ -118,10 +118,10 @@ public class DiffyPathSequence extends PathSequenceFather {
                 double rightV = path.getRightVelocity((t.milliseconds()-offset)/1000);
 
                 // Convert the velocities into pod velocities
-                double leftFrontTargetV = -convertDistance(leftV);
+                double leftFrontTargetV = convertDistance(-leftV);
                 double leftBackTargetV = convertDistance(leftV);
-                double rightFrontTargetV = convertDistance(rightV);
-                double rightBackTargetV = -convertDistance(leftV);
+                double rightFrontTargetV = convertDistance(-rightV);
+                double rightBackTargetV = convertDistance(rightV);
 
                 // Correct using PID loop and Kalman Filter
                 double corL1 = pidLeft1.update((long)leftFrontTargetV, (long)kLeft1.filter(leftFront.getVelocity(RADIANS)));

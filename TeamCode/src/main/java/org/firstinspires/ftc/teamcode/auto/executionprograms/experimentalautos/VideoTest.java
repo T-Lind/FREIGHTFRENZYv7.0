@@ -26,8 +26,8 @@ public class VideoTest extends Robot {
 
         ArrayList<Path> sequenceOfInstructions = new ArrayList<>();
 
-        Path line = new Line(0.5, 0.5, DrivetrainSymmetry.SYMMETRICAL);
-        Path turn = new Turn(-90, 0.3, 0.5, DrivetrainSymmetry.SYMMETRICAL);
+        Path line = new Line(0.5, 0.5, true);
+        Path turn = new Turn(-90, 0.3, true);
 
         sequenceOfInstructions.add(line);
         sequenceOfInstructions.add(turn);

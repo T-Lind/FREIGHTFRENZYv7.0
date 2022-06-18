@@ -94,8 +94,8 @@ public class TwoWheelPathSequence extends PathSequenceFather{
 
             double offset = t.milliseconds();
             while(!p.getCompleted()){
-                double leftV = Path.convert(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
-                double rightV = Path.convert(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
+                double leftV = Path.convertForStandardDrivetrain(wheelRadius, p.getLeftVelocity((t.milliseconds()-offset)/1000));
+                double rightV = Path.convertForStandardDrivetrain(wheelRadius, p.getRightVelocity((t.milliseconds()-offset)/1000));
 
                 double corL = pid3.update((long)leftV, (long)k3.filter(left.getVelocity(RADIANS)));
                 double corR = pid4.update((long)rightV, (long)k4.filter(right.getVelocity(RADIANS)));
