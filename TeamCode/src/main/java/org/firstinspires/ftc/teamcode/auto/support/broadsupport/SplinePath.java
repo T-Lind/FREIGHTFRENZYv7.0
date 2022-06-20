@@ -98,7 +98,7 @@ public class SplinePath extends Path {
      * Postcondition: times have been successfully computed and this path has been built,
      */
     @Override
-    public void build(){
+    public final void build(){
         if(arcLengths == null || times == null )
             throw new RuntimeException("ArcLengths and times must be not null in SplinePath.build()");
 
@@ -121,25 +121,11 @@ public class SplinePath extends Path {
      * Postcondition: the appropriate execute time has been returned
      */
     @Override
-    public double getExecuteTime(){
+    public final double getExecuteTime(){
         if(times == null)
             throw new RuntimeException("Times must not be equal to null in SplinePath.getExecuteTime()");
 
         return times.get(times.size()-1);
-    }
-
-    
-     /**
-     * Get the times ArrayList - not used except for debugging, times is the time at which every sequential part of the spline executes
-     * @return the times ArrayList
-      * Precondition:  times is not null and has been instantiated
-      * Postcondition: times is returned successfully
-     */
-    private ArrayList<Double> getTimes(){
-        if(times == null)
-            throw new RuntimeException("Times must not be equal to null in SplinePath.getTimes()");
-
-        return times;
     }
 
     /**
@@ -166,7 +152,7 @@ public class SplinePath extends Path {
      * Postcondition: the appropriate velocity is returned
      * @return the overall robot velocity
     */
-    private double getVelocity(double currentTime){
+    protected final double getVelocity(double currentTime){
         if(arcLengths == null || times == null || currentTime < 0)
             throw new RuntimeException("currentTime must be greater than or equal to zero and arcLengths and times is not null in SplinePath.getVelocity()");
 

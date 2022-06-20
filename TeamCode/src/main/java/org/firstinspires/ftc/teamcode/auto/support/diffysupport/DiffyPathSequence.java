@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto.support.diffysupport;
+
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,7 +25,6 @@ import java.util.ArrayList;
  * @author Tiernan Lindauer
  */
 public class DiffyPathSequence extends PathSequenceFather {
-
     // Motor variables specific to a diffy swerve
     /**
      * Left frontmost motor
@@ -42,6 +42,8 @@ public class DiffyPathSequence extends PathSequenceFather {
      * Right backmost motor
      */
     private DcMotorEx rightBack;
+
+    private static final double SQRT_2 = 1.4142;
     
     /**
      * Constructor for DiffyPathSequence.
@@ -116,20 +118,30 @@ public class DiffyPathSequence extends PathSequenceFather {
                 // Get the velocities from what the path says the end result velocities should be
                 double leftV = path.getLeftVelocity((t.milliseconds()-offset)/1000);
                 double rightV = path.getRightVelocity((t.milliseconds()-offset)/1000);
+                double leftPodV = path.getLeftAngularVelocity((t.milliseconds()-offset)/1000);
+                double rightPodV = path.getRightAngularVelocity((t.milliseconds()-offset)/1000);
 
-                // Convert the velocities into pod velocities
-                double leftFrontTargetV = convertDistance(-leftV);
-                double leftBackTargetV = convertDistance(leftV);
-                double rightFrontTargetV = convertDistance(-rightV);
-                double rightBackTargetV = convertDistance(rightV);
+                // Convert velocities into pod velocities
+                double leftFrontTargetV = convertDistance((leftPodV-leftV)/SQRT_2);
+                double leftBackTargetV = convertDistance((leftPodV+leftV)/SQRT_2);
 
-                // Correct using PID loop and Kalman Filter
+                double rightFrontTargetV = convertDistance((rightPodV+rightV)/SQRT_2);
+                double rightBackTargetV = convertDistance((rightPodV-rightV)/SQRT_2);
+
+
+//                // Convert the velocities into pod velocities
+//                double leftFrontTargetV = convertDistance(-leftV);
+//                double leftBackTargetV = convertDistance(leftV);
+//                double rightFrontTargetV = convertDistance(-rightV);
+//                double rightBackTargetV = convertDistance(rightV);
+//
+//                // Correct using PID loop and Kalman Filter
                 double corL1 = pidLeft1.update((long)leftFrontTargetV, (long)kLeft1.filter(leftFront.getVelocity(RADIANS)));
                 double corL2 = pidLeft2.update((long)leftBackTargetV, (long)kLeft2.filter(leftBack.getVelocity(RADIANS)));
                 double corR1 = pidRight1.update((long)rightFrontTargetV, (long)kRight1.filter(rightFront.getVelocity(RADIANS)));
                 double corR2 = pidRight2.update((long)rightBackTargetV, (long)kRight2.filter(rightBack.getVelocity(RADIANS)));
-
-                // Write the corrected velocities to the motors
+//
+//                // Write the corrected velocities to the motors
                 leftFront.setVelocity(leftFrontTargetV+corL1, RADIANS);
                 leftBack.setVelocity(leftBackTargetV+corL2, RADIANS);
                 rightFront.setVelocity(rightFrontTargetV+corR1, RADIANS);

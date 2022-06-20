@@ -200,7 +200,7 @@ public abstract class Path {
      * @param currentTime is the current time into this specific Paths
      * @return default - zero
      */
-    public double getLeftAngle(double currentTime) {
+    public double getLeftAngularVelocity(double currentTime) {
         if(currentTime < 0)
             throw new RuntimeException("The time to get the left velocity for in Path.getLeftAngle(...) must not be less than zero!");
         return 0;
@@ -213,7 +213,7 @@ public abstract class Path {
      * @param currentTime is the current time into this specific Path.
      * @return default - zero
      */
-    public double getRightAngle(double currentTime) {
+    public double getRightAngularVelocity(double currentTime) {
         if(currentTime < 0)
             throw new RuntimeException("The time to get the right velocity for in Path.getRightAngle(...) must not be less than zero!");
         return 0;
@@ -242,7 +242,7 @@ public abstract class Path {
      * Precondition: current time is not less than zero, arrays are 2x2 each, side index is 0 or 1
      * Postcondition: accurate velocity is returned
      */
-    protected double velocityLookupTable(int[][] asymmetrical, int[][] symmetrical, int sideIndex){
+    protected final double velocityLookupTable(int[][] asymmetrical, int[][] symmetrical, int sideIndex){
         if(asymmetrical.length != 2 || symmetrical.length != 2 || sideIndex < 0 || sideIndex > 1)
             throw new RuntimeException("Invalid parameter in Line.velocityLookupTable(...)!");
 

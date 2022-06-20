@@ -49,7 +49,7 @@ public class Turn extends Line{
      * @return left linear velocity
      */
     @Override
-    public double getLeftVelocity(double currentTime){
+    public final double getLeftVelocity(double currentTime){
         return getVelocity(currentTime)*velocityLookupTable(asymmetricalDriveCoefficientLookup, symmetricalDriveCoefficientLookup, 0);
     }
 
@@ -61,7 +61,7 @@ public class Turn extends Line{
      * Postcondition: the accurate right velocity is returned
      */
     @Override
-    public double getRightVelocity(double currentTime){
+    public final double getRightVelocity(double currentTime){
         if(currentTime < 0)
             throw new RuntimeException("currentTime in Turn.getRightVelocity() must be greater than or equal to zero");
 
@@ -74,7 +74,7 @@ public class Turn extends Line{
      * Postcondition: the correct type is returned
      */
     @Override
-    public PathType getType(){
+    public final PathType getType(){
         return PathType.TURN;
     }
 }

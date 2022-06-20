@@ -12,5 +12,7 @@ public enum PathType {
     /**
      * The path to move in a turn.
      */
-    SPLINE
+    SPLINE,
+
+    CONSTANTSPLINE
 }
