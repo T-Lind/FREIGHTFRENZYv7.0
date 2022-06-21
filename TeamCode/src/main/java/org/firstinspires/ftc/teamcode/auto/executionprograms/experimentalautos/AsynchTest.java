@@ -31,10 +31,10 @@ public class AsynchTest extends Robot {
 //        sequenceInstructions.add(line);
 //        sequenceInstructions.add(turn);
 
-        double[] radii = {1,0.35,1.5};
-        double[] arcLengths = {0.5,0.3,-1};
+        double[] radii = {1,0.35,-1.5};
+        double[] arcLengths = {0.5,0.3,1};
 
-        Path spline = new ConstantHeadingSpline(0.4, 0.2, radii, arcLengths);
+        Path spline = new ConstantHeadingSpline(0.2, 0.2, radii, arcLengths);
         sequenceInstructions.add(spline);
 
 

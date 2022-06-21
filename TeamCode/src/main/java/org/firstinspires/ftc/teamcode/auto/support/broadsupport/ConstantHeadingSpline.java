@@ -23,11 +23,9 @@ public class ConstantHeadingSpline extends SplinePath{
        double leftV = super.getLeftVelocity(currentTime);
        double rightV = super.getRightVelocity(currentTime);
 
-       return leftV-rightV;
-
-//       if(leftV < 0)
-//           return -(Math.abs(leftV-rightV));
-//        return (Math.abs(leftV-rightV));
+       if(leftV > rightV)
+           return leftV-(leftV-rightV);
+        return rightV-(rightV-leftV);
     }
 
     @Override
