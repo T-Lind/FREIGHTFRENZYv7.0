@@ -57,6 +57,7 @@ public class AsynchTest extends Robot {
             telemetry.addLine("Finished loop 2 ");
             telemetry.update();
         };
+
         // Assign these realized interfaces to the LinearOpMode (protected variable inherited)
         markerList = new MarkerList(telemetryLoop1, 0, telemetryLoop2, 1);
 

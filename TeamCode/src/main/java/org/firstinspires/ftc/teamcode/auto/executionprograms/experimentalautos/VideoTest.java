@@ -34,14 +34,14 @@ public class VideoTest extends Robot {
 
         // Path sequence
 
-        PathSequence sequenceToFollow = new PathSequence(
-                Drivetrain.DIFFY,
-                sequenceOfInstructions,
-                leftFront, leftBack, rightFront, rightBack,
-                wheelR
-        );
-
-        setPathSequence(sequenceToFollow);
+//        PathSequence sequenceToFollow = new PathSequence(
+//                Drivetrain.DIFFY,
+//                sequenceOfInstructions,
+//                leftFront, leftBack, rightFront, rightBack,
+//                wheelR
+//        );
+//
+//        setPathSequence(sequenceToFollow);
 
         // Temporal markers (InsertMarkers) to execute during the path
 

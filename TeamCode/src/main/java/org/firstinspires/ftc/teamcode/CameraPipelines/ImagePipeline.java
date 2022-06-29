@@ -5,7 +5,7 @@ import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 
-public class imagePipeline extends OpenCvPipeline {
+public class ImagePipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input){
