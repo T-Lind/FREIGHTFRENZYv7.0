@@ -13,4 +13,16 @@ public class RotatePods extends Path{
     public PathType getType() {
         return PathType.PODTURN;
     }
+
+    /**
+     * Meant to compute the trajectory and essentially turn it into a piecewise function.
+     * This method is supposed to be overriden.
+     * <p>
+     * Precondition:  the construction variable has been instantiated
+     * Postcondition: the path is set to a built status
+     */
+    @Override
+    public void build() {
+
+    }
 }

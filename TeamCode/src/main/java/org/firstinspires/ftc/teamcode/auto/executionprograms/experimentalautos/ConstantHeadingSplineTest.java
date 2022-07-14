@@ -21,20 +21,18 @@ public class ConstantHeadingSplineTest extends Robot {
     public void runOpMode() throws InterruptedException {
         initializeHardware();
 
-        // Robot is inherited, meaning that anything you put in Robot will be here as
-        // well (as long as you make it protected), so is LinearOpMode (which BotContainer inherits)
-
-        // Create the sequence of paths
-
+        // Define the spline parts
         double[] radii = {1,0.35,-1.5};
         double[] arcLengths = {0.5,0.3,1};
 
         Path spline = new ConstantHeadingSpline(0.2, 0.2, radii, arcLengths);
+
         addPath(spline);
 
+        // Initialize the robot
         initialize();
 
-        // run the auto and any markers
+        // Run the auto and any markers
         executeAuto();
     }
 }

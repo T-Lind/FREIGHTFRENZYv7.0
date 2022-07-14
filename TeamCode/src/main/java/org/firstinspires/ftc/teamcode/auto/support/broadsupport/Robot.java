@@ -22,7 +22,7 @@ abstract public class Robot extends BotContainer{
     /**
      * pipeline here is of type TSEDetectionPipeline, replace this with whatever pipeline you've made!
      */
-    private final ImagePipeline pipeline = new ImagePipeline();;
+    private final ImagePipeline pipeline = new ImagePipeline();
 
     /**
      * Define whether the drivetrain is symmetrical or not - if both sides of the robot are powered
@@ -54,7 +54,6 @@ abstract public class Robot extends BotContainer{
 
         do{
             // In initialization - add your code here
-
 
             telemetry.addData("The initialization has started successfully.","");
             telemetry.update();

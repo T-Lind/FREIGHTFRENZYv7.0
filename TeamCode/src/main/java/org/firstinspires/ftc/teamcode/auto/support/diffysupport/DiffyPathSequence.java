@@ -16,12 +16,7 @@ import java.util.ArrayList;
 /**
  * Program to take linear velocities from each wheel and translate
  * them into 4wd
- * 
- * ---------------------------------
- * IMPORTANT NOTICE:
- * EXPERIMENTAL - REPLACE WITH YOUR OWN CODE!!
- * ---------------------------------
- * 
+ *
  * @author Tiernan Lindauer
  */
 public class DiffyPathSequence extends PathSequenceFather {
