@@ -31,4 +31,6 @@ dependencies {
     implementation 'com.github.Eeshwar-Krishnan.PhotonFTC:NeutrinoI2C:v1.0.5'
 
     implementation 'com.acmerobotics.roadrunner:core:0.5.4'
+
+    implementation 'org.ftclib.ftclib:core:2.0.1' // core
 }
