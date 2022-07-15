@@ -41,7 +41,15 @@ abstract public class TeleOpContainer extends OpMode {
      */
     private Timing.Timer matchTimer;
 
+    /**
+     * Status variable to signal if the timer is started
+     */
     private boolean matchTimerStarted;
+
+    /**
+     * Constant to multiply velocities by to improve motion
+     */
+    private static final double VEL_MULTIPLIER = 0.80;
 
     /**
      * Method to get the field centric state variable for displaying in telemetry, etc.
@@ -162,9 +170,9 @@ abstract public class TeleOpContainer extends OpMode {
 
             // optional fourth parameter for squared inputs
             drive.driveRobotCentric(
-                    driverOp.getLeftX(),
-                    driverOp.getLeftY(),
-                    driverOp.getRightX(),
+                    convertSpeed(driverOp.getLeftX()),
+                    convertSpeed(driverOp.getLeftY()),
+                    convertSpeed(driverOp.getRightX()),
                     false
             );
         } else {
@@ -186,9 +194,9 @@ abstract public class TeleOpContainer extends OpMode {
 
             // optional fifth parameter for squared inputs
             drive.driveFieldCentric(
-                    driverOp.getLeftX(),
-                    driverOp.getLeftY(),
-                    driverOp.getRightX(),
+                    convertSpeed(driverOp.getLeftX()),
+                    convertSpeed(driverOp.getLeftY()),
+                    convertSpeed(driverOp.getRightX()),
                     imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                     false
             );
@@ -227,6 +235,10 @@ abstract public class TeleOpContainer extends OpMode {
             telemetry.speak("two");
         else if(matchTimer.remainingTime() == 1)
             telemetry.speak("one");
+    }
+
+    private double convertSpeed(double input) {
+        return VEL_MULTIPLIER * Math.pow(input, 3)+input*(1-VEL_MULTIPLIER);
     }
 
     /**
