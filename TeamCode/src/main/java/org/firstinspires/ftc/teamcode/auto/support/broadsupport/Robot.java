@@ -41,6 +41,26 @@ abstract public class Robot extends BotContainer{
      */
     private final double trackWidth = 0.295;
 
+
+
+
+    /***************************************/
+
+    // PID Controller Coefficients
+    public final static double kP = 0.4;
+    public final static double kI = 0.5;
+    public final static double kD = 0.3;
+
+    // Kalman Filter Coefficients
+    public final static double R = 18;
+    public final static double Q = 6;
+    public final static double C = 2.7;
+    public final static double B = 10;
+    public final static double A = 1.5;
+
+     /***************************************/
+
+
     /**
      * Run code while the init button has been pressed
      * Precondition: initializeHardware() has been run
