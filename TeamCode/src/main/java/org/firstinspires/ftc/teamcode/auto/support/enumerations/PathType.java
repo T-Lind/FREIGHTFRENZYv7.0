@@ -22,5 +22,10 @@ public enum PathType {
     /**
      * Turn only differential swerve pods
      */
-    PODTURN
+    PODTURN,
+
+    /**
+     *  Move in a line at a constant heading for any given angle - only for mecanum!
+     */
+    MECLINE
 }

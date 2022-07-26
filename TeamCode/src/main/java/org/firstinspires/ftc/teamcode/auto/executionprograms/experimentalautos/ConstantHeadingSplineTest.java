@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.auto.support.broadsupport.ConstantHeadingS
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Line;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MecLine;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequence;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Robot;

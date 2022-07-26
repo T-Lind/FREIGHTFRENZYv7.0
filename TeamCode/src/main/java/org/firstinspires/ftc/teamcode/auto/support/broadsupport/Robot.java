@@ -90,7 +90,7 @@ abstract public class Robot extends BotContainer{
         if(getListOfPaths() != null){
             // Create the path sequence
             PathSequence sequenceToFollow = new PathSequence(
-                    Drivetrain.DIFFY,                           // REPLACE WITH WHATEVER DRIVETRAIN YOU HAVE
+                    Drivetrain.MECANUM,                           // REPLACE WITH WHATEVER DRIVETRAIN YOU HAVE
                     getListOfPaths(),                                // **DO NOT REPLACE
                     leftFront, leftBack, rightFront, rightBack, // REPLACE WITH YOUR MOTOR VARIABLES
                     wheelR);                                    // **DO NOT REPLACE

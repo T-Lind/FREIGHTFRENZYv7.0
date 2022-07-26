@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.FourWheelPathSequence;
+import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.MecanumPathSequence;
 import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.SixWheelPathSequence;
 import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.TwoWheelPathSequence;
 import org.firstinspires.ftc.teamcode.auto.support.diffysupport.DiffyPathSequence;
@@ -54,6 +55,8 @@ public class PathSequence {
             sequence = new FourWheelPathSequence(paths, left1, left2, right1, right2, wheelR);
         else if( drivetrainType == Drivetrain.DIFFY)
             sequence = new DiffyPathSequence(paths, left1, left2, right1, right2, wheelR);
+        else if( drivetrainType == Drivetrain.MECANUM)
+            sequence = new MecanumPathSequence(paths, left1, left2, right1, right2, wheelR);
         this.drivetrainType = drivetrainType;
     }
 

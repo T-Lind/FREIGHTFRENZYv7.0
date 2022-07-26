@@ -21,6 +21,11 @@ public enum Drivetrain {
     /**
      * Differential swerve type drivetrain. Assumes two driving wheels centered along the middle of the robot.
      */
-    DIFFY
+    DIFFY,
+
+    /**
+     * Mecanum type 4wd drivetrain, commonly used in FTC
+     */
+    MECANUM
 
 }
