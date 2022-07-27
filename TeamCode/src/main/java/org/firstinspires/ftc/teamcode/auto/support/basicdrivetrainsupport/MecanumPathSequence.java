@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MecLine;
+import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MecPath;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
 import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
@@ -115,13 +116,13 @@ public class MecanumPathSequence extends PathSequenceFather {
                 else {
                     // Create kalman filter and PID objects
                     double leftFrontV = Path.convertForStandardDrivetrain(wheelRadius,
-                            ((MecLine)p).getLeftFrontVelocity((t.milliseconds() - offset) / 1000));
+                            ((MecPath)p).getLeftFrontVelocity((t.milliseconds() - offset) / 1000));
                     double leftBackV = Path.convertForStandardDrivetrain(wheelRadius,
-                            ((MecLine)p).getLeftBackVelocity((t.milliseconds() - offset) / 1000));
+                            ((MecPath)p).getLeftBackVelocity((t.milliseconds() - offset) / 1000));
                     double rightFrontV = Path.convertForStandardDrivetrain(wheelRadius,
-                            ((MecLine)p).getRightFrontVelocity((t.milliseconds() - offset) / 1000));
+                            ((MecPath)p).getRightFrontVelocity((t.milliseconds() - offset) / 1000));
                     double rightBackV = Path.convertForStandardDrivetrain(wheelRadius,
-                            ((MecLine)p).getRightBackVelocity((t.milliseconds() - offset) / 1000));
+                            ((MecPath)p).getRightBackVelocity((t.milliseconds() - offset) / 1000));
 
                     double corLF = pidLeft1.update((long) leftFrontV, (long) kLeft1.filter(leftFront.getVelocity(RADIANS)));
                     double corLB = pidLeft2.update((long) leftBackV, (long) kLeft2.filter(leftBack.getVelocity(RADIANS)));

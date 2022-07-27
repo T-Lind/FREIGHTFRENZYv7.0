@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
 
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
 
-public class MecLine extends Path{
+public class MecLine extends MecPath{
     /**
      * What angle the robot is moving in a line at - unit circle convention, in degrees
      */
@@ -17,6 +17,10 @@ public class MecLine extends Path{
      * Maximum velocity to travel at
      */
     private double maxVelocity;
+
+    private double posDiagonalVelocity;
+
+    private double negDiagonalVelocity;
 
     public MecLine(double angle, double distance, double maxVelocity){
         this.angle = angle;
@@ -37,23 +41,42 @@ public class MecLine extends Path{
      * Build the MecLine type path
      */
     @Override
-    public void build(){
-
+    public void build() {
+        posDiagonalVelocity = Math.sin(Math.toRadians(angle) - 1.0 / 4 * Math.PI);
+        negDiagonalVelocity = Math.sin(Math.toRadians(angle) + 1.0 / 4 * Math.PI);
+        setExecuteTime(3.14159265*Math.abs(distance)/(2*maxVelocity));
+        setBuilt(true);
     }
 
+    @Override
     public double getLeftFrontVelocity(double time) {
-        return 0; // TODO: Work out the math to find each of these linear velocities
+        return getLinearVelocity(time)*negDiagonalVelocity;
     }
 
+    @Override
     public double getLeftBackVelocity(double time) {
-        return 0; // TODO: Work out the math to find each of these linear velocities
+        return getLinearVelocity(time)*posDiagonalVelocity;
     }
 
+    @Override
     public double getRightFrontVelocity(double time) {
-        return 0; // TODO: Work out the math to find each of these linear velocities
+        return getLeftBackVelocity(time);
     }
 
+    @Override
     public double getRightBackVelocity(double time) {
-        return 0; // TODO: Work out the math to find each of these linear velocities
+        return getLeftFrontVelocity(time);
+    }
+
+    private double getLinearVelocity(double t) {
+        if(t < getExecuteTime()){
+            if(distance > 0)
+                return maxVelocity*Math.sin(3.1415925*t/ getExecuteTime());
+            return -1*maxVelocity*Math.sin(3.1415925*t/ getExecuteTime());
+        }
+        else{
+            this.setCompleted(true);
+            return 0;
+        }
     }
 }
