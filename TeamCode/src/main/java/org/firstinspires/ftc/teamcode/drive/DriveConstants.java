@@ -31,7 +31,7 @@ public class DriveConstants {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static final boolean RUN_USING_ENCODER = true;
+    public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(27, 0, 4.16,
             12.701463784898394);
 
@@ -65,10 +65,12 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 15;
-    public static double MAX_ACCEL = 15;
-    public static double MAX_ANG_VEL = 4;
-    public static double MAX_ANG_ACCEL = 6;
+    public static double MAX_VEL = 45; // Technically 61.74. This comes from the equation
+                                       // max v = rpm/60  *  gear_ratio * wheel_radius * 2pi
+                                       // It is not recommended to go over 80% of the motors' max v
+    public static double MAX_ACCEL = 30;
+    public static double MAX_ANG_VEL = Math.toRadians(612);
+    public static double MAX_ANG_ACCEL = Math.toRadians(178);
 
 
 
