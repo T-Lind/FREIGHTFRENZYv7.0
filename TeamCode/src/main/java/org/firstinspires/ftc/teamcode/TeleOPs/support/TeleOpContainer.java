@@ -49,7 +49,7 @@ abstract public class TeleOpContainer extends OpMode {
     /**
      * Constant to multiply velocities by to improve motion
      */
-    private static final double VEL_MULTIPLIER = 0.80;
+    private static final double VEL_MULTIPLIER = 0.9;
 
     /**
      * Method to get the field centric state variable for displaying in telemetry, etc.
