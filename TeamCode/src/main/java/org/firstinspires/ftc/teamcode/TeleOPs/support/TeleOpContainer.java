@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOPs.support;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -8,7 +9,9 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.TeleOPs.roadrunner.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.auto.support.Toggle;
+import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 abstract public class TeleOpContainer extends OpMode {
     /**
@@ -50,6 +53,16 @@ abstract public class TeleOpContainer extends OpMode {
      * Constant to multiply velocities by to improve motion
      */
     private static final double VEL_MULTIPLIER = 0.9;
+
+    /**
+     * 3 wheel odo localizer
+     */
+    private StandardTrackingWheelLocalizer myLocalizer;
+
+    /**
+     * Current robot pose
+     */
+    private Pose2d myPose;
 
     /**
      * Method to get the field centric state variable for displaying in telemetry, etc.
@@ -124,12 +137,36 @@ abstract public class TeleOpContainer extends OpMode {
         // Create a new toggle object for field-robot centric switching mid match
         fieldCentric = new Toggle(true);
 
+
+        // This is assuming you are using StandardTrackingWheelLocalizer.java
+        // Switch this class to something else (Like TwoWheeTrackingLocalizer.java) if your
+        // configuration differs
+        myLocalizer = new StandardTrackingWheelLocalizer(hardwareMap);
+
+        // Retrieve our pose from the PoseStorage.currentPose static field
+        // See AutoTransferPose.java for further details
+        myLocalizer.setPoseEstimate(PoseStorage.currentPose);
+
+
+
         // Create the new timer object to keep track of match time
         matchTimer = new Timing.Timer(120);
         matchTimerStarted = false;
 
         // Initialize the mechanisms of the robot
         initSpecificMechanisms();
+    }
+
+    protected double getX() {
+        return myPose.getX();
+    }
+
+    protected double getY() {
+        return myPose.getY();
+    }
+
+    protected double getAngle() {
+        return myPose.getHeading();
     }
 
     /**
@@ -206,6 +243,11 @@ abstract public class TeleOpContainer extends OpMode {
 
         // Alert the driver to the amount of time left through a voice command.
         alertToTiming();
+
+        myLocalizer.update();
+
+        // Retrieve your pose
+        myPose = myLocalizer.getPoseEstimate();
 
         // Update the mechanisms
         updateMechanisms();

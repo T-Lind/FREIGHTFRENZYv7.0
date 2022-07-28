@@ -68,10 +68,10 @@ public class TeleOpJustLocalizer extends LinearOpMode {
 
         public Robot(HardwareMap hardwareMap) {
             // Initialize motors
-            leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-            leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-            rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-            rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+            leftFront = hardwareMap.get(DcMotorEx.class, "FL");
+            leftRear = hardwareMap.get(DcMotorEx.class, "BL");
+            rightRear = hardwareMap.get(DcMotorEx.class, "BR");
+            rightFront = hardwareMap.get(DcMotorEx.class, "FR");
 
             // Reverse right side motor directions
             // This may need to be flipped to the left side depending on your motor rotation direction

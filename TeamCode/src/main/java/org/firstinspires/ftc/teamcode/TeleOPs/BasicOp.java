@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.TeleOPs;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.TeleOPs.roadrunner.advanced.PoseStorage;
+import org.firstinspires.ftc.teamcode.TeleOPs.roadrunner.advanced.TeleOpJustLocalizer;
 import org.firstinspires.ftc.teamcode.TeleOPs.support.TeleOpContainer;
+import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 
 /**
@@ -16,12 +20,12 @@ import org.firstinspires.ftc.teamcode.TeleOPs.support.TeleOpContainer;
 @TeleOp(name="BasicOp")
 public class BasicOp extends TeleOpContainer {
 //    protected ServoEx servo;
-
     @Override
     protected void initSpecificMechanisms() {
 //        servo = new SimpleServo(
 //                hardwareMap, "s1", 0, 180
 //        );
+
     }
 
     /**
@@ -35,20 +39,13 @@ public class BasicOp extends TeleOpContainer {
 
         telemetry.addData("Time left in match: ", getRemainingMatchTime());
         telemetry.addData("Field Centric Drive Type", getFieldCentric());
+
+        telemetry.addData("x", getX());
+        telemetry.addData("y", getY());
+        telemetry.addData("heading", getAngle());
         telemetry.update();
+
     }
 
-//    private void updateServo() {
-//        if(driverOp.getButton(GamepadKeys.Button.X)) {
-//            servo.turnToAngle(0);
-//        }
-//
-//        else if(driverOp.getButton(GamepadKeys.Button.Y)) {
-//            servo.turnToAngle(90);
-//        }
-//
-//        else if(driverOp.getButton(GamepadKeys.Button.B)) {
-//            servo.turnToAngle(180);
-//        }
-//    }
+
 }
