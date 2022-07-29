@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CameraPipelines.ImagePipeline;
-import org.firstinspires.ftc.teamcode.CameraPipelines.TSEDetectionPipeline;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.Drivetrain;
 import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -22,24 +21,24 @@ abstract public class Robot extends BotContainer{
     /**
      * pipeline here is of type TSEDetectionPipeline, replace this with whatever pipeline you've made!
      */
-    private final ImagePipeline pipeline = new ImagePipeline();
+    private ImagePipeline pipeline = new ImagePipeline();
 
     /**
      * Define whether the drivetrain is symmetrical or not - if both sides of the robot are powered
      * positively and the robot moves forward then the robot is symmetrical, if it turns then it is
      * asymmetrical.
      */
-    private final DrivetrainSymmetry symmetryState = DrivetrainSymmetry.SYMMETRICAL;
+    private final DrivetrainSymmetry SYMMETRY_STATE = DrivetrainSymmetry.SYMMETRICAL;
 
     /**
      * wheelR is the radius of the wheel and should be replaced with your robots driven wheel radius
      */
-    private final double wheelR = 0.03715;
+    private final double WHEEL_RADIUS = 0.048;
 
     /**
      * trackWidth is the distance between the wheels of the robot (viewing down the center of the robot), replace with your track width
      */
-    private final double trackWidth = 0.295;
+    private final double TRACK_WIDTH = 0.367;
 
 
 
@@ -93,7 +92,7 @@ abstract public class Robot extends BotContainer{
                     Drivetrain.MECANUM,                           // REPLACE WITH WHATEVER DRIVETRAIN YOU HAVE
                     getListOfPaths(),                                // **DO NOT REPLACE
                     leftFront, leftBack, rightFront, rightBack, // REPLACE WITH YOUR MOTOR VARIABLES
-                    wheelR);                                    // **DO NOT REPLACE
+                    WHEEL_RADIUS);                                    // **DO NOT REPLACE
 
             // Add the path sequence to the robot
             setPathSequence(sequenceToFollow);
@@ -162,8 +161,8 @@ abstract public class Robot extends BotContainer{
      */
     protected final void initializeHardware(){
         // Initialize the drivetrain symmetry
-        Path.setSymmetryState(symmetryState);
-        Path.setTrackWidth(trackWidth);
+        Path.setSymmetryState(SYMMETRY_STATE);
+        Path.setTrackWidth(TRACK_WIDTH);
 
         // Initialize motors and camera
         initMotors();
