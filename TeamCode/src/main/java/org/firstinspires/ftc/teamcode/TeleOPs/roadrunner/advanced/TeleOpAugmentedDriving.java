@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.TeleOPs.roadrunner.advanced.SampleMecanumDriveCancelable;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.PoseStorage;
 
 /**
  * This opmode demonstrates how one can augment driver control by following Road Runner arbitrary

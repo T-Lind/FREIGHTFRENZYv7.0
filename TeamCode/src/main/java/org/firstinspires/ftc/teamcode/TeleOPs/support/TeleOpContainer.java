@@ -9,7 +9,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.TeleOPs.roadrunner.advanced.PoseStorage;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.PoseStorage;
 import org.firstinspires.ftc.teamcode.auto.support.Toggle;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 

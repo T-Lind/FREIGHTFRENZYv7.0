@@ -24,7 +24,7 @@ public class RoadrunnerCustomTest extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(10)
+                .lineToLinearHeading(new Pose2d(30, 30, Math.toRadians(90)))
                 .build();
 
         waitForStart();

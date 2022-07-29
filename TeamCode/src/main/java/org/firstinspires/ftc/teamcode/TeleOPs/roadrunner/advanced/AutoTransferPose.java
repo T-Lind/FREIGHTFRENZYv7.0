@@ -4,8 +4,10 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.auto.roadrunner.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /**
@@ -30,6 +32,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * to a file in the event of an app crash. This way, the pose can be retrieved and set even if
  * something disastrous occurs. Such a sample has not been included.
  */
+@Disabled
 @Autonomous(group = "advanced")
 public class AutoTransferPose extends LinearOpMode {
     @Override
