@@ -5,8 +5,10 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name="RoadrunnerCustomTest")
 public class RoadrunnerCustomTest extends LinearOpMode {
@@ -23,14 +25,26 @@ public class RoadrunnerCustomTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, 30, Math.toRadians(90)))
+        Pose2d startPose = new Pose2d(0, 0, 0);
+
+        drive.setPoseEstimate(startPose);
+
+        TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(10, 0), 0)
+                .splineTo(new Vector2d(10,10),Math.toRadians(90))
+                .addTemporalMarker(1, () -> {
+                    telemetry.addData("","Ran!");
+                    telemetry.update();
+                })
+                .splineToLinearHeading(new Pose2d(10, 20), 0)
+                .back(10)
+                .turn(Math.toRadians(90))
                 .build();
 
         waitForStart();
 
         if(isStopRequested()) return;
 
-        drive.followTrajectory(myTrajectory);
+        drive.followTrajectorySequence(trajectorySequence);
     }
 }
