@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+
+//TODO: JAVADOC THESE METHODS
 
 public class WrapperBuilder {
     public TrajectorySequenceBuilder trajectorySequenceBuilder;
