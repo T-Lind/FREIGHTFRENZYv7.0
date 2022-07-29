@@ -58,7 +58,7 @@ public class TrajectorySequenceBuilder {
 
     private TrajectoryBuilder currentTrajectoryBuilder;
 
-    private double currentDuration;
+    public double currentDuration;
     private double currentDisplacement;
 
     private double lastDurationTraj;
@@ -702,6 +702,7 @@ public class TrajectorySequenceBuilder {
                 closestPoint = comparingPoint;
         }
 
+        assert closestPoint != null;
         return displacementToTime(sequenceSegments, closestPoint.thisPathDisplacement);
     }
 
