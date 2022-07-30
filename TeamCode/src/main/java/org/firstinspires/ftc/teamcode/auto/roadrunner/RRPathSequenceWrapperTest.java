@@ -1,0 +1,33 @@
+package org.firstinspires.ftc.teamcode.auto.roadrunner;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.RoadrunnerUnit;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.pathsequencewrapper.RoadrunnerWrapperPS;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.pathsequencewrapper.RobotCommonPS;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.pathsequencewrapper.SequenceWrapperPS;
+import org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.pathsequencewrapper.WrapperBuilderPS;
+
+@Autonomous(name="RRPathSequenceWrapperTest")
+public class RRPathSequenceWrapperTest extends RobotCommonPS {
+
+    /**
+     * Override this method and place your code here.
+     * <p>
+     * Please do not swallow the InterruptedException, as it is used in cases
+     * where the op mode needs to be terminated early.
+     *
+     * @throws InterruptedException
+     */
+    @Override
+    public void runOpMode() throws InterruptedException {
+        pathing = new RoadrunnerWrapperPS(hardwareMap, RoadrunnerUnit.CM);
+        pathing.sequenceWrapperPS = new SequenceWrapperPS(new WrapperBuilderPS(pathing)
+                .lineToLinearHeading(50, 20, 0)
+                .splineTo(50, 70, 90)
+        );
+        initialize();
+
+        run();
+    }
+}

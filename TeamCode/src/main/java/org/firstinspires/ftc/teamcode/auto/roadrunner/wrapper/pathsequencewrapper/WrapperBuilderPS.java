@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper;
+package org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.pathsequencewrapper;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 
+import org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.RoadrunnerUnit;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
 /**
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuild
  * convert to radians
  * For use ONLY by Team 7797 Victorian Voltage.
  */
-public class WrapperBuilder {
+public class WrapperBuilderPS {
     public TrajectorySequenceBuilder trajectorySequenceBuilder;
     private RoadrunnerUnit units;
     private static final double METRIC_CONVERSION_FACTOR = 0.3937008;
@@ -22,7 +23,7 @@ public class WrapperBuilder {
      * Mandatory constructor for WrapperBuilder. A drive and starting pose object is required!
      * @param rrWrapper the RoadrunnerWrapper object being passed
      */
-    public WrapperBuilder(RoadrunnerWrapper rrWrapper) {
+    public WrapperBuilderPS(RoadrunnerWrapperPS rrWrapper) {
         trajectorySequenceBuilder = rrWrapper.getDrivetrain()
                 .trajectorySequenceBuilder(rrWrapper.getStartPose());
         this.units = rrWrapper.getUnit();
@@ -33,7 +34,7 @@ public class WrapperBuilder {
      * @param distance the distance to travel in, either in inches or the unit you specify
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder forward(double distance) {
+    public WrapperBuilderPS forward(double distance) {
         trajectorySequenceBuilder.forward(toInches(distance));
         return this;
     }
@@ -43,7 +44,7 @@ public class WrapperBuilder {
      * @param distance the distance to travel in, either in inches or the unit you specify
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder back(double distance) {
+    public WrapperBuilderPS back(double distance) {
         trajectorySequenceBuilder.back(toInches(distance));
         return this;
     }
@@ -53,7 +54,7 @@ public class WrapperBuilder {
      * @param distance the distance to travel in, either in inches or the unit you specify
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder strafeLeft(double distance) {
+    public WrapperBuilderPS strafeLeft(double distance) {
         trajectorySequenceBuilder.strafeLeft(toInches(distance));
         return this;
     }
@@ -63,7 +64,7 @@ public class WrapperBuilder {
      * @param distance the distance to travel in, either in inches or the unit you specify
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder strafeRight(double distance) {
+    public WrapperBuilderPS strafeRight(double distance) {
         trajectorySequenceBuilder.strafeRight(toInches(distance));
         return this;
     }
@@ -74,7 +75,7 @@ public class WrapperBuilder {
      * @param y is the y coordinate to strafe to
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder lineTo(double x, double y) {
+    public WrapperBuilderPS lineTo(double x, double y) {
         trajectorySequenceBuilder.lineTo(new Vector2d(toInches(x), toInches(y)));
         return this;
     }
@@ -86,7 +87,7 @@ public class WrapperBuilder {
      * @param endHeading the end heading the robot should be at
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder lineToLinearHeading(double x, double y, double endHeading) {
+    public WrapperBuilderPS lineToLinearHeading(double x, double y, double endHeading) {
         trajectorySequenceBuilder.lineToLinearHeading(new Pose2d(
                 toInches(x), toInches(y), Math.toRadians(endHeading)));
         return this;
@@ -100,7 +101,7 @@ public class WrapperBuilder {
      * @param endHeading the end heading the robot should be at
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder lineToSplineHeading(double x, double y, double endHeading) {
+    public WrapperBuilderPS lineToSplineHeading(double x, double y, double endHeading) {
         trajectorySequenceBuilder.lineToSplineHeading(new Pose2d(
                 toInches(x), toInches(y), Math.toRadians(endHeading)));
         return this;
@@ -114,7 +115,7 @@ public class WrapperBuilder {
      * @param endHeading the end heading for the robot to be at
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder splineTo(double x, double y, double endHeading) {
+    public WrapperBuilderPS splineTo(double x, double y, double endHeading) {
         trajectorySequenceBuilder.splineTo(new Vector2d(toInches(x), toInches(y)),
                 Math.toRadians(endHeading));
         return this;
@@ -128,7 +129,7 @@ public class WrapperBuilder {
      * @return this object to use in a builder design pattern
      */
 
-    public WrapperBuilder splineToConstantHeading(double x, double y, double endTangent) {
+    public WrapperBuilderPS splineToConstantHeading(double x, double y, double endTangent) {
         trajectorySequenceBuilder.splineToConstantHeading(new Vector2d(toInches(x), toInches(y)),
                 Math.toRadians(endTangent));
         return this;
@@ -144,7 +145,7 @@ public class WrapperBuilder {
      *                   endHeading!)
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder splineToLinearHeading(double x, double y, double endHeading, double endTangent) {
+    public WrapperBuilderPS splineToLinearHeading(double x, double y, double endHeading, double endTangent) {
         trajectorySequenceBuilder.splineToLinearHeading(new Pose2d(toInches(x), toInches(y),
                         Math.toRadians(endHeading)),
                 Math.toRadians(endTangent));
@@ -161,7 +162,7 @@ public class WrapperBuilder {
      *                   endHeading!)
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder splineToSplineHeading(double x, double y, double endHeading, double endTangent) {
+    public WrapperBuilderPS splineToSplineHeading(double x, double y, double endHeading, double endTangent) {
         trajectorySequenceBuilder.splineToSplineHeading(new Pose2d(toInches(x), toInches(y),
                         Math.toRadians(endHeading)),
                 Math.toRadians(endTangent));
@@ -173,7 +174,7 @@ public class WrapperBuilder {
      * @param angle angle to turn at
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder turn(double angle) {
+    public WrapperBuilderPS turn(double angle) {
         trajectorySequenceBuilder.turn(Math.toRadians(angle));
         return this;
     }
@@ -184,7 +185,7 @@ public class WrapperBuilder {
      * @param callback the temporal marker
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder addTemporalMarker(double time, MarkerCallback callback) {
+    public WrapperBuilderPS addTemporalMarker(double time, MarkerCallback callback) {
         trajectorySequenceBuilder.addTemporalMarker(0.0, time, callback);
         return this;
     }
@@ -195,7 +196,7 @@ public class WrapperBuilder {
      * @param callback the temporal marker
      * @return this object to use in a builder design pattern
      */
-    public WrapperBuilder UNSTABLE_addTemporalMarkerOffset(double offset, MarkerCallback callback) {
+    public WrapperBuilderPS UNSTABLE_addTemporalMarkerOffset(double offset, MarkerCallback callback) {
         trajectorySequenceBuilder.addTemporalMarker(
                 trajectorySequenceBuilder.currentDuration + offset, callback);
         return this;
@@ -206,7 +207,7 @@ public class WrapperBuilder {
      * Build this object
      * @return this object to be used in a builder design pattern
      */
-    public WrapperBuilder build() {
+    public WrapperBuilderPS build() {
         trajectorySequenceBuilder.build();
         return this;
     }

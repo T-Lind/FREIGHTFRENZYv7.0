@@ -1,21 +1,18 @@
-package org.firstinspires.ftc.teamcode.auto.roadrunner;
+package org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.pathsequencewrapper;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CameraPipelines.ImagePipeline;
-import org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.RoadrunnerUnit;
-import org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.RoadrunnerWrapper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-abstract public class RobotCommon extends LinearOpMode {
+abstract public class RobotCommonPS extends LinearOpMode {
     /**
      * Roadrunner wrapped object - only change the units here if something else is being used
      */
-    protected RoadrunnerWrapper pathing;
+    protected RoadrunnerWrapperPS pathing;
 
     /**
      * Name object for the webcam
