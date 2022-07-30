@@ -23,8 +23,10 @@ public class RRPathSequenceWrapperTest extends RobotCommonPS {
     public void runOpMode() throws InterruptedException {
         pathing = new RoadrunnerWrapperPS(hardwareMap, RoadrunnerUnit.CM);
         pathing.sequenceWrapperPS = new SequenceWrapperPS(new WrapperBuilderPS(pathing)
-                .lineToLinearHeading(50, 20, 0)
-                .splineTo(50, 70, 90)
+                .lineToLinearHeading(50, 20, 90)
+                .strafeLeft(10)
+                .forward(10)
+                .lineToSplineHeading(50, 20, 0)
         );
         initialize();
 

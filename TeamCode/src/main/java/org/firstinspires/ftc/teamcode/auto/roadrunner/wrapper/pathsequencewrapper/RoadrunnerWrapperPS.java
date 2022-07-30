@@ -151,6 +151,8 @@ public class RoadrunnerWrapperPS {
             return distance;
         if(unit == RoadrunnerUnit.FT)
             return distance*12;
+        if(unit == RoadrunnerUnit.MM)
+            return distance*METRIC_CONVERSION_FACTOR/10;
         if(unit == RoadrunnerUnit.CM)
             return distance*METRIC_CONVERSION_FACTOR;
         if(unit == RoadrunnerUnit.M)
