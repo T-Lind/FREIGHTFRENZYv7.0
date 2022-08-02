@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport;
 
 abstract public class MecPath extends Path{
     /**

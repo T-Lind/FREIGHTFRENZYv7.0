@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport;
 
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.Direction;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.Direction;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.PathType;
 
 /**
  * Creates a list of velocities for the wheels on a robot to move at.

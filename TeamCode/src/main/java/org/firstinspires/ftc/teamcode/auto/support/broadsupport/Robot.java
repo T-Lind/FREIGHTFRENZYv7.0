@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.CameraPipelines.ImagePipeline;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.Drivetrain;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.Drivetrain;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.DrivetrainSymmetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;

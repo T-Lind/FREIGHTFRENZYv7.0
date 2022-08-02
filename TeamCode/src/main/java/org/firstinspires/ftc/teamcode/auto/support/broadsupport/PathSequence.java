@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.FourWheelPathSequence;
-import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.MecanumPathSequence;
-import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.SixWheelPathSequence;
-import org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport.TwoWheelPathSequence;
-import org.firstinspires.ftc.teamcode.auto.support.diffysupport.DiffyPathSequence;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.Drivetrain;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.basicdrivetrainsupport.FourWheelPathSequence;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.basicdrivetrainsupport.MecanumPathSequence;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.basicdrivetrainsupport.SixWheelPathSequence;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.basicdrivetrainsupport.TwoWheelPathSequence;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.diffysupport.DiffyPathSequence;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.Drivetrain;
 
 import java.util.ArrayList;
 

@@ -10,7 +10,7 @@ import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.auto.roadrunner.PoseStorage;
-import org.firstinspires.ftc.teamcode.auto.support.Toggle;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.Toggle;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 abstract public class TeleOpContainer extends OpMode {

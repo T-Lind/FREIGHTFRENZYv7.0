@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.auto.support.Toggle;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.Toggle;
 
 @Disabled
 @TeleOp(name="DiffyTestOp")

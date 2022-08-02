@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport;
 
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.DrivetrainSymmetry;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.PathType;
 
 /**
  * Program to turn a specified angle.

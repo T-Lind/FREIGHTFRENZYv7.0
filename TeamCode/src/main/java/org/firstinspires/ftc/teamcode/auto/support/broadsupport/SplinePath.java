@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.auto.support.broadsupport;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport;
 
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.Direction;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.PathType;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.Direction;
 
 import java.util.ArrayList;
 

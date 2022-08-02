@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.basicdrivetrainsupport;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.Path;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.PIDController;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.PathSequenceFather;
 
 import java.util.ArrayList;
 

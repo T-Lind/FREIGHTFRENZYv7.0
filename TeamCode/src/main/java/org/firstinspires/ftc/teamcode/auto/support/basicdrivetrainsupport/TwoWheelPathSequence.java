@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support.basicdrivetrainsupport;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.basicdrivetrainsupport;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.KalmanFilter;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PIDController;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequenceFather;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.PathType;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.KalmanFilter;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.Path;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.PIDController;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.PathSequenceFather;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations.PathType;
 
 /**
  * Program to take linear velocities from each wheel and translate

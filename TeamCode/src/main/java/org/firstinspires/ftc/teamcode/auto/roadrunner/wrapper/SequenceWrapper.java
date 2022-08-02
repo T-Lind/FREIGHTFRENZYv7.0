@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.pathsequencewrapper;
+package org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper;
 
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
 /**
  * Wrapper object for Roadrunner - uses the builder design pattern object WrapperBuilder
  */
-public class SequenceWrapperPS {
+public class SequenceWrapper {
     /**
      * Public object to be referenced later
      */
@@ -15,7 +15,7 @@ public class SequenceWrapperPS {
      * Constructor to assign the trajectorySequenceBuilder
      * @param builder the wrapper for trajectorySequenceBuilder with the new features
      */
-    public SequenceWrapperPS(WrapperBuilderPS builder) {
+    public SequenceWrapper(WrapperBuilder builder) {
         trajectorySequenceBuilder = builder.trajectorySequenceBuilder;
 
     }

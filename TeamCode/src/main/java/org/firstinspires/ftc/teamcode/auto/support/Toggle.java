@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport;
 
 /**
  * Toggle Object - code to detect button presses and update a toggle variable in a fast loop

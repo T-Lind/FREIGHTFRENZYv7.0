@@ -1,20 +1,10 @@
 package org.firstinspires.ftc.teamcode.auto.executionprograms.experimentalautos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.ConstantHeadingSpline;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.InsertMarker;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Line;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MarkerList;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.MecLine;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Path;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.PathSequence;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Robot;
-import org.firstinspires.ftc.teamcode.auto.support.broadsupport.Turn;
-import org.firstinspires.ftc.teamcode.auto.support.enumerations.Drivetrain;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.ConstantHeadingSpline;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.Path;
+import org.firstinspires.ftc.teamcode.auto.coyotesupport.broadsupport.Robot;
 
 @Autonomous(name="ConstantHeadingSplineTest")
 public class ConstantHeadingSplineTest extends Robot {

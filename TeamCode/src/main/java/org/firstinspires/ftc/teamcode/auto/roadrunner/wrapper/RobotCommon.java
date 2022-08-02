@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper.pathsequencewrapper;
+package org.firstinspires.ftc.teamcode.auto.roadrunner.wrapper;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -8,11 +8,11 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-abstract public class RobotCommonPS extends LinearOpMode {
+abstract public class RobotCommon extends LinearOpMode {
     /**
      * Roadrunner wrapped object - only change the units here if something else is being used
      */
-    protected RoadrunnerWrapperPS pathing;
+    protected RoadrunnerWrapper pathing;
 
     /**
      * Name object for the webcam

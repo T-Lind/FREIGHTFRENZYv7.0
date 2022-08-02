@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.support.enumerations;
+package org.firstinspires.ftc.teamcode.auto.coyotesupport.enumerations;
 
 /**
  * Enumeration to specify the build status.
